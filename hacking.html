@@ -1,0 +1,83 @@
+<div>
+    <div id="vignette" style="max-width: 800px;">
+        <div class="heading">Prüfungsfragen hacken</div>
+        <div class="smalltext">
+            <p>
+                Es sollen Prüfungsfragen vom Institut für Psychologie gehackt werden. Du wirst die unten eingeblendete Konsole verwenden, um dich mit einem Computer am Institut zu verbinden und diesen nach Prüfungen zu durchsuchen.
+            </p>
+            <p>
+                Neben der Konsole wirst du gelegentlich ein zweites Browserfenster nutzen, um im Internet nach Informationen zu suchen, die dir den Einbruch erleichtern. Die folgenden Anweisungen sollen dir dabei helfen, den Hack erfolgreich durchzuführen.
+            </p>
+        </div>
+        <div class="subheading">Schritt 1: Angriffsziel identifizieren</div>
+        <div class="smalltext">
+            <p>
+                Du weißt nicht, auf welchem Computer des Instituts Prüfungsfragen abgelegt werden. Es kann aber sein, dass sie auf demselben Rechner liegen, auf dem auch die Webseite des Instituts betrieben wird. Diesen Rechner solltest du als erstes Angriffsziel wählen, da er besonders leicht identifiziert werden kann. Seine IP-Adresse lässt sich direkt über die Webseite bestimmen und lautet 141.35.104.86. Du wirst sie im nächsten Schritt benötigen.
+            </p>
+        </div>
+        <div class="subheading">Schritt 2: Verbindung herstellen</div>
+        <div class="smalltext">
+            <p>
+                Verwende den Befehl <b>CONNECT 141.35.104.86</b> um eine Verbindung mit dem Computer zu initiieren. Nachdem du den Befehl eingegeben und mittels <span class="keyButton">Enter</span> abgeschickt hast, werden weitere Informationen verlangt.
+            </p>
+            <p>
+                Zunächst musst du festlegen, über welches Protokoll mit dem Computer kommuniziert werden soll. Es existieren verschiedene Zugriffsprotokolle, eine übersichtliche Tabelle findest du <a href="https://en.wikipedia.org/wiki/Comparison_of_file_transfer_protocols" target="_blank">in diesem Wikipedia-Artikel</a>. Es ist nicht bekannt, welche Protokolle vom Computer unterstützt werden - mit hoher Wahrscheinlichkeit handelt es sich jedoch um Protokolle, die in einem Standard (z.B. ISO oder RFC) beschrieben und deshalb weit verbreitet sind. Probiere verschiedene Möglichkeiten aus, indem du jeweils die Abkürzung eines Protokolls (engl. Abbreviation, z.B. FTAM für das Protokoll <i>File Transfer and Management</i>) in die Konsole eingibst und mit <span class="keyButton">Enter</span> bestätigst. Es wird anschließend geprüft, ob das gewählte Protokoll unterstützt wird.
+            </p>
+            <p>
+                Natürlich ist der Computer gesichert. Nach Festlegung des Protokolls ist deshalb ein Passwort einzugeben. Bei der Inbetriebnahme neuer Computer durch die IT-Abteilung wird meist ein einfaches Passwort festgelegt, z.B. der Nachname des Institutsdirektors oder seiner Assistenz. Häufig wird dieses aus Bequemlichkeit später nicht mehr geändert. Versuche die Nachnamen genannter Personen über die <a href="https://www.psychologie.uni-jena.de/" target="_blank">Webseite des Instituts</a> herauszufinden und als Passwort einzugeben. Probiere bei der Eingabe sowohl Groß- als auch Kleinschreibung aus. Wenn das Passwort korrekt ist, wird die Verbindung hergestellt. Dies kann einen Moment dauern.
+            </p>
+        </div>
+        <div class="subheading">Schritt 3: Computer durchsuchen</div>
+        <div class="smalltext">
+            <p>
+                Sobald die Verbindung steht, kann durch Eingabe des Befehls <b>LIST</b> eine Liste aller auf dem Computer vorhandenen Ordner angezeigt werden. In dieser Ansicht kannst du eventuell bereits erkennen, ob ein Ordner existiert, in dem sich Prüfungsfragen befinden.
+            </p>
+            <p>
+                Um die in einem Ordner abgelegten Dateien einzusehen, kannst du den Befehl <b>OPEN</b> gefolgt vom Namen des zu öffnenden Ordners nutzen (z.B. OPEN Dokumente, falls es einen Ordner <i>Dokumente</i> auf dem Rechner gibt).
+            </p>
+            <p>
+                Anschließend wird angezeigt, welche Dateien sich im Ordner befinden. Wenn du auf eine Datei klickst, wird ihr Inhalt in einem neuen Tab angezeigt. Du kannst sie anschließend auf deinem Computer speichern. Versuche alle Dokumente mit Prüfungsfragen einzusehen und herunterzuladen.
+            </p>
+        </div>
+        <div class="heading">Angriff erfolgreich?</div>
+        <div class="smalltext">
+            <p>
+                Sobald du alle Dokumente mit Prüfungsfragen angesehen und heruntergeladen hast, bist du für den zweiten Teil der Studie qualifiziert. Bitte gib nachfolgend ein paar Informationen ein, damit der Erfolg deines Hacks überprüft werden kann. Klicke dann auf Weiter.
+            </p>
+            <p>
+                Welches Kommunikationsprotokoll wurde verwendet? 
+            </p>
+            <p>
+                <input type="text" id="protocol">
+            </p>
+            <p>
+                Mit welchem Passwort wurde in den Computer eingebrochen?
+            </p>
+            <p>
+                <input type="text" id="password">
+            </p>
+            <p>
+                In welchem Ordner lagen Dokumente mit Prüfungsfragen?
+            </p>
+            <p>
+                <input type="text" id="folder">
+            </p>
+            <p>
+                Zu welchem Fachgebiet gehörten die gehackten Prüfungen?
+            </p>
+            <p>
+                <select id="area">
+                    <option>Allgemeine Psychologie</option>
+                    <option>Arbeits- und Organisationspsychologie</option>
+                    <option>Entwicklungspsychologie</option>
+                    <option>Klinische Psychologie</option>
+                    <option>Pädagogische Psychologie</option>
+                    <option>Sozialpsychologie</option>
+                    <option>Statistik</option>
+                </select>
+            </p>
+            <button class="navbutton" type="button" id="next">Weiter</button>
+        </div>
+    </div>
+</div>
+<div style="height: 300px;"></div>

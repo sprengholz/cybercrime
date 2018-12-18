@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Experiment</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <script src="js/jspsych.js"></script>
+
+        <script src="js/plugins/jspsych-html-button-response.js"></script>
+        <script src="js/plugins/jspsych-html-keyboard-response.js"></script>
+        <script src="js/plugins/jspsych-image-keyboard-response.js"></script>
+        <script src="js/plugins/jspsych-external-html.js"></script>
+        <script src="js/plugins/jspsych-fullscreen.js"></script>
+        <script src="js/plugins/jspsych-instructions.js"></script> 
+
+        <script src="js/plugins/jspsych-vignette.js"></script>
+        <script src="js/plugins/jspsych-word-sequence.js"></script>
+        <script src="js/plugins/jspsych-flyin.js"></script> 
+
+        <script src="js/jquery.min.js"></script>
+        <script src="js/anime.min.js"></script>
+        <script src="js/download.min.js"></script>
+
+        <script src="js/jquery.terminal-2.0.1.min.js"></script>
+
+        <link href="css/jquery.terminal-2.0.1.css" rel="stylesheet" type="text/css"/>
+        <link href="css/jspsych.css" rel="stylesheet" type="text/css"/>
+    </head>
+    <body>
+        <div id="alertOverlay">
+            <span id="alertText"></span>     
+        </div>
+        <div id="terminal">
+        </div>
+
+        <div id="experiment" ></div>
+    </body>
+    <script>
+
+        /*
+         * Helper
+         */
+
+        function load(element, file, callback) {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.open("GET", file, true);
+            xmlhttp.onload = function () {
+                if (xmlhttp.status === 200 || xmlhttp.status === 0) {
+                    element.innerHTML = xmlhttp.responseText;
+                    callback();
+                }
+            };
+            xmlhttp.send();
+        }
+
+
+        /*
+         * Alert Overlay Management
+         */
+
+        function showAlert(message)
+        {
+            $('#alertOverlay').show();
+            $('#alertText').text(message);
+        }
+
+        function clearAlerts()
+        {
+            $('#alertOverlay').hide();
+        }
+
+
+        /*
+         * Global Variables
+         */
+
+        // questions
+        var questions = ['Welches Protokoll wurde verwendet?',
+                         'Wie lautete das Passwort?',
+                         'Welcher Ordner enthielt die Prüfungsfragen?', 
+                         'Zu welchem Fach gehörten die Prüfungsfragen?'];
+
+        // secret and non-secret (irrelevant) answers
+        var secrets = ['FTP', 
+                       'kessler', 
+                       'Klausuren',
+                       'Statistik'];
+        
+        var nonsecrets = ['AS2', 
+                          'miltner', 
+                          'Tests',
+                          'Sozialpsychologie'];
+
+        // parameters for decisions
+        var decisions = [];
+
+        // parameters for go/nogo tasks
+        var tasks = [];
+
+        // timeline
+        var timeline = [];
+
+
+        /*
+         * Setup Go/NoGo Tasks
+         */
+
+        actions = ['go', 'nogo'];
+
+        for (action of actions)
+        {
+            for (i = 0; i < questions.length; i++)
+            {
+                // first: congruent tasks (each task 6 times)
+
+                for (j = 0; j < 6; j++)
+                {
+                    // secret target
+                    task = {
+                        action: action,
+                        question: questions[i],
+                        congruency: 'congruent',
+                        secrecy: 'secret',
+                        target: secrets[i]
+                    };
+                    tasks.push(task);
+
+                    // nonsecret target
+                    task = {
+                        action: action,
+                        question: questions[i],
+                        congruency: 'congruent',
+                        secrecy: 'nonsecret',
+                        target: nonsecrets[i]
+                    };
+                    tasks.push(task);
+                }
+
+                // second: incongruent tasks (each task 2 times)
+
+                incongruentSecrets = secrets.slice();
+                incongruentSecrets.splice(i, 1);
+
+                incongruentNonsecrets = nonsecrets.slice();
+                incongruentNonsecrets.splice(i, 1);
+
+                for (j = 0; j < incongruentSecrets.length; j++)
+                {
+                    for (k = 0; k < 2; k++)
+                    {
+                        // secret target
+                        task = {
+                            action: action,
+                            question: questions[i],
+                            congruency: 'incongruent',
+                            secrecy: 'secret',
+                            target: incongruentSecrets[j]
+                        };
+                        tasks.push(task);
+
+                        // nonsecret target
+                        task = {
+                            action: action,
+                            question: questions[i],
+                            congruency: 'incongruent',
+                            secrecy: 'nonsecret',
+                            target: incongruentNonsecrets[j]
+                        };
+                        tasks.push(task);
+                    }
+                }
+            }
+        }
+
+
+        /*
+         * Setup Check Tasks
+         */
+
+        // first: 8 congruent tasks 
+
+        for (i = 0; i < questions.length; i++)
+        {
+            // secrect target
+            task = {
+                action: 'check',
+                question: questions[i],
+                congruency: 'congruent',
+                secrecy: 'secret',
+                target: secrets[i]
+            };
+            tasks.push(task);
+
+            // nonsecret target
+            task = {
+                action: 'check',
+                question: questions[i],
+                congruency: 'congruent',
+                secrecy: 'nonsecret',
+                target: nonsecrets[i]
+            };
+            tasks.push(task);
+        }
+        
+        // second: 8 incongruent tasks
+        
+        task = {
+            action: 'check',
+            question: questions[0],
+            congruency: 'incongruent',
+            secrecy: 'secret',
+            target: secrets[1]
+        };
+        tasks.push(task);
+        
+        task = {
+            action: 'check',
+            question: questions[0],
+            congruency: 'incongruent',
+            secrecy: 'nonsecret',
+            target: nonsecrets[3]
+        };
+        tasks.push(task);
+        
+        task = {
+            action: 'check',
+            question: questions[1],
+            congruency: 'incongruent',
+            secrecy: 'nonsecret',
+            target: nonsecrets[0]
+        };
+        tasks.push(task);
+        
+        task = {
+            action: 'check',
+            question: questions[1],
+            congruency: 'incongruent',
+            secrecy: 'secret',
+            target: secrets[2]
+        };
+        tasks.push(task);
+        
+        task = {
+            action: 'check',
+            question: questions[2],
+            congruency: 'incongruent',
+            secrecy: 'secret',
+            target: secrets[3]
+        };
+        tasks.push(task);
+        
+        task = {
+            action: 'check',
+            question: questions[2],
+            congruency: 'incongruent',
+            secrecy: 'nonsecret',
+            target: nonsecrets[1]
+        };
+        tasks.push(task);
+
+        task = {
+            action: 'check',
+            question: questions[3],
+            congruency: 'incongruent',
+            secrecy: 'secret',
+            target: secrets[0]
+        };
+        tasks.push(task);
+        
+        task = {
+            action: 'check',
+            question: questions[3],
+            congruency: 'incongruent',
+            secrecy: 'nonsecret',
+            target: nonsecrets[2]
+        };
+        tasks.push(task);
+        
+
+        /*
+         * Show Welcome Screen
+         */
+
+        timeline.push({
+            type: 'html-button-response',
+            choices: ["Weiter"],
+            stimulus: '<div class="instruction"><div class="heading">Willkommen</div> <div class="smalltext">Vielen Dank, dass du an meiner Studie zum Thema Cyberkriminalität teilnehmen möchtest. Für die Teilnahme benötigst du eine Tastatur. Verwende deshalb bitte <strong>PC oder Notebook</strong>. Tablets und Smartphones sind leider nicht geeignet. Auf den nächsten Seiten folgen weitere Informationen zum Ablauf des Experiments. Bei Fragen oder Problemen erreichst du mich jederzeit per E-Mail.<div><div class="smalltext">Philipp Sprengholz<br>FSU Jena, Institut für Psychologie<br>philipp.sprengholz@uni-jena.de </div> </div>'
+        }); 
+        
+       
+        /*
+         * Show Information about Experiment
+         */
+
+        timeline.push({
+            type: 'html-button-response',
+            choices: ["Weiter"],
+            stimulus: '<div class="instruction"><div class="heading">Zum Ablauf</div> <div class="smalltext">Du wirst zunächst etwas über Cyberangriffe lernen. Ich möchte herausfinden, ob es dir mit einer einfachen Anleitung gelingt, einen Computer am Institut für Psychologie zu hacken und Fragen für die bevorstehenden Prüfungen zu stehlen. Sollte dir dies gelingen, folgen im zweiten Teil des Experiments einige Reaktionszeitaufgaben, in denen du besonders schnell auf bestimmte Wörter reagieren musst.</div><div class="smalltext">Deine Teilnahme ist <strong>freiwillig</strong> und du kannst das Experiment jederzeit abbrechen. Natürlich werden deine Daten <strong>anonymisiert</strong> und vertraulich behandelt. Für deine Teilnahme erhältst du nach Abschluss des Experiments eine Versuchspersonenstunde. </div> </div>'
+        }); 
+
+
+        /*
+         * Show Information about Experiment
+         */
+
+        timeline.push({
+            type: 'html-button-response',
+            choices: ["Los geht's"],
+            stimulus: '<div class="instruction"><div class="heading">Wichtig</div><div class="smalltext"> Bitte achte darauf, dass du während der Teilnahme nicht abgelenkt wirst. Suche dir einen <strong>ruhigen Raum</strong>, in dem du die nächsten <strong>45 Minuten</strong> nicht gestört wirst. Bitte lege dein Telefon außer Sichtweite. <div></div>'
+        }); 
+
+
+        /*
+         * Show Hacking Task
+         */
+
+        var hacking = {
+            type: 'external-html',
+            url: 'hacking.html',
+            cont_btn: 'next',
+            check_fn: function ()
+            {
+                var answersCorrect = true;
+
+                var protocol = $('#protocol').val();
+                if (protocol !== 'FTP'){
+                    answersCorrect = false;
+                    $('#protocol').css('border-color', '#FF5555');
+                } else {
+                    $('#protocol').css('border-color', '#000000');
+                }
+
+                var password = $('#password').val();
+                if (password !== 'kessler'){
+                    answersCorrect = false;
+                    $('#password').css('border-color', '#FF5555');
+                } else {
+                    $('#password').css('border-color', '#000000');
+                }
+
+                var folder = $('#folder').val();
+                if (folder !== 'Klausuren'){
+                    answersCorrect = false;
+                    $('#folder').css('border-color', '#FF5555');
+                } else {
+                    $('#folder').css('border-color', '#000000');
+                }
+
+                var area = $('#area').val();
+                if (area !== 'Statistik'){
+                    answersCorrect = false;
+                    $('#area').css('border-color', '#FF5555');
+                } else {
+                    $('#area').css('border-color', '#000000');
+                }
+
+                if (answersCorrect)
+                {
+                    return true;
+                } else
+                {
+                    showAlert('Das ist nicht ganz richtig. Bitte prüfe deine Eingaben in den rot umrandeten Feldern.');
+                    return false;
+                }
+            },
+            on_load: function(data){
+
+                var connected = false;
+
+                var getProtocol = function(){
+                    $.when($('#terminal').terminal().read("Protocol: ")).done(function(protocol){
+                        if (protocol.trim() === "FTP"){
+                            $('#terminal').terminal().echo("[[;#96C47D;black]✔ Protocol supported]");
+                            getPassword();
+                        } else {
+                            $('#terminal').terminal().echo("[[;#E45F5F;black]Protocol not supported!]");
+                            getProtocol();
+                        }
+                    });
+                };
+
+                var getPassword = function(){
+                    $.when($('#terminal').terminal().read("Password: ")).done(function(password){
+                        if (password.trim() === "kessler"){
+                            $('#terminal').terminal().echo("[[;#96C47D;black]✔ Password correct]");
+                            connect();
+                            connected = true;
+                        } else {
+                            $('#terminal').terminal().echo("[[;#E45F5F;black]Wrong password, authentication failed!]");
+                            getPassword();
+                        }
+                    });
+                };
+
+                var connect = function(){
+                    var terminal = $('#terminal').terminal();
+                    progressSign = ".";
+                    terminal.echo("Establishing connection "+progressSign);
+                    terminal.pause();
+                    var i = 0, 
+                    interval = setInterval(function() {
+                        terminal.update(-1, "Establishing connection, please wait "+progressSign.repeat(i+2));
+                        i++;
+                        if(i >= 15) {
+                            terminal.update(-1, "[[;#96C47D;black]✔ Connection established");
+                            clearInterval(interval);
+                            terminal.resume();
+                        }
+                    }, 300); 
+                };
+
+                jQuery(function ($, undefined) {
+                    $('#terminal').terminal({
+                        CONNECT: function(ip){
+                            if (connected){
+                                this.echo("[[;#E45F5F;black]Already connected to 141.35.104.86!");
+                            } else {
+                                if (ip === '141.35.104.86'){
+                                    getProtocol();
+                                } else {
+                                    this.echo("[[;#E45F5F;black]Target not found, check IP!]");
+                                }
+                            }
+                        },
+                        LIST: function(){
+                            if (connected){
+                                this.echo("----------------------------------------------");
+                                this.echo("Folder             Files         Last accessed");
+                                this.echo("----------------------------------------------");
+                                this.echo("🖿 Lehre               0           13 days ago");
+                                this.echo("🖿 Publikationen       0           18 days ago");
+                                this.echo("🖿 Ordnungen           2            5 days ago");
+                                this.echo("🖿 Klausuren           3                 today");
+                                this.echo("----------------------------------------------");
+                            }else{
+                                this.echo("[[;#E45F5F;black]Connect to a computer first!]");
+                            }
+                        },
+                        OPEN: function(folder){
+                            if (connected){
+                                if (folder.trim() === "Lehre"){
+                                    this.echo("Folder 'Lehre' contains no files.");
+                                }else if(folder === "Publikationen"){
+                                    this.echo("Folder 'Publikationen' contains no files");
+                                }else if(folder === "Ordnungen"){
+                                    this.echo("----------------------------------------------");
+                                    this.echo("Folder 'Ordnungen' contains 2 files");
+                                    this.echo("----------------------------------------------");
+                                    this.echo("(1) <a href='files/V31_Prüfungsordnung_09.pdf' style='color: #ffff8b;' target='_blank'>V31_Prüfungsordnung_09.pdf</a>", { "raw": true });
+                                    this.echo("(2) <a href='files/V36_Studienordnung_09.pdf' style='color: #ffff8b;' target='_blank'>V36_Studienordnung_09.pdf</a>", { "raw": true });
+                                    this.echo("----------------------------------------------");
+                                }else if(folder === "Klausuren"){
+                                    this.echo("----------------------------------------------");
+                                    this.echo("Folder 'Klausuren' contains 4 files");
+                                    this.echo("----------------------------------------------");
+                                    this.echo("(1) <a href='files/M1_Inferenzstatistik_WS1819.pdf' style='color: #ffff8b;' target='_blank'>M1_Inferenzstatistik_WS1819.pdf</a>", { "raw": true });
+                                    this.echo("(2) <a href='files/M2_Testtheorie_Teil1_WS1819.pdf' style='color: #ffff8b;' target='_blank'>M2_Testtheorie_Teil1_WS1819.pdf</a>", { "raw": true });
+                                    this.echo("(2) <a href='files/M2_Testtheorie_Teil2_WS1819.pdf' style='color: #ffff8b;' target='_blank'>M2_Testtheorie_Teil2_WS1819.pdf</a>", { "raw": true });
+                                    this.echo("(3) <a href='files/M3_Regressionsanalyse_WS1819.pdf' style='color: #ffff8b;' target='_blank'>M3_Regressionsanalyse_WS1819</a>", { "raw": true });
+                                    this.echo("----------------------------------------------");
+                                }else{
+                                    this.echo("[[;#E45F5F;black]There is no folder named '"+folder+"'!]");
+                                }
+                            }else{
+                                this.echo("[[;#E45F5F;black]Connect to a computer first!]");
+                            }
+                        }
+                    },{
+                        greetings: "[[b;#aaa;black]REMOTE ACCESS CONSOLE]",
+                        name: 'hacking',
+                        prompt: '> ',
+                        convertLinks: false
+                    });
+                });
+            },
+            on_finish: function (data)
+            {
+                $('#terminal').hide();
+                clearAlerts();
+            }
+        };
+        timeline.push(hacking);
+
+
+        /*
+         * Enter Fullscreen Mode
+         */
+
+        timeline.push({
+            type: 'fullscreen',
+            fullscreen_mode: true,
+            message: '<div class="instruction"><div class="heading">Wechsel in den Vollbildmodus</div><div class="smalltext"> Mit deinem erfolgreichen Hack hast du den ersten Teil des Experiments bereits abgeschlossen. Der nun folgende zweite Teil wird im Vollbildmodus ablaufen. Wenn du das Experiment vorzeitig abbrechen möchtest, kannst du den Vollbildmodus durch Drücken der Tasten <span class="keyButton">Esc</span> oder <span class="keyButton">F11</span> verlassen und das Browserfenster schließen. Bitte beachte, dass ich dir aus technischen Gründen nur dann eine Versuchspersonenstunde ausstellen kann, wenn du bis zum Ende des Experiments dabei bleibst.</div></div>',
+            button_label: 'Alles klar'
+        }); 
+
+
+        /*
+         * Show Information about Second Part
+         */
+
+        timeline.push({
+            type: 'html-button-response',
+            choices: ["Weiter"],
+            stimulus: '<div class="instruction"><div class="heading">Achtung!</div><div class="smalltext">Der unbefugte Zugriff auf die Prüfungsfragen wurde durch einen Mitarbeiter des Psychologischen Instituts bemerkt! Neben einigen anderen Studierenden wurdest du als möglicher Hacker identifiziert.</div><div class="smalltext">Alle Verdächtigen sollen nun einem Test unterzogen werden, der das Vorhandensein von Täterwissen überprüft und den Schuldigen oder die Schuldige der Tat überführt. Auch du wirst gebeten, im Folgenden daran teilzunehmen.</div></div>'
+        }); 
+
+
+        /*
+         * Flyin Decisions Briefing
+         */
+
+        timeline.push({
+            type: 'html-button-response',
+            choices: ["Weiter"],
+            stimulus: '<div class="instruction"><div class="heading">Teil 1: Entscheidung</div><div class="smalltext">Im ersten Teil des Tests werden dir von einem Ermittler verschiedene Fragen gestellt. Wenn du die auf eine Frage gezeigte Antwort nicht geben möchtest, drücke so schnell wie möglich die <span class="keyButton">Leertaste</span>. Reagierst du nicht, so wird die Antwort nach kurzer Zeit ausgesprochen. Dies erkennst du daran, dass die Antwort auf den Ermittler zufliegt und sich dessen Silhouette schließlich gelb färbt, sobald die Antwort angekommen ist.</div><img src="img/symbols/howto_flyin.jpg" style="padding: 15px;"><div class="smalltext">Ein guter Hacker wird solche Antworten zurückhalten, die seine Schuld beweisen und eher Antworten geben, die ihn unschuldig erscheinen lassen.</div></div>',
+            on_finish: function(){
+                $('#experiment').focus();
+                $('#experiment').css('cursor', 'none');
+            }
+        }); 
+
+        var flyin_instruction = {
+            type: 'html-keyboard-response',
+            stimulus: function () {
+                stim = '<div class="instruction"><div class="heading">Los gehts!</div>';
+                stim += '<div class="smalltext">Positioniere deinen Finger auf der Leertaste. Denke daran, immer dann die Taste zu drücken, wenn eine Antwort erscheint, mit der du nicht auf die gestellte Frage antworten möchtest.</div>';
+                stim += '<div class="smalltext">Drücke nun die <span class="keyButton">Leertaste</span> um zu beginnen.<div>';
+                return stim;
+            },
+            choices: [32]
+        };
+        timeline.push(flyin_instruction); 
+
+
+        /*
+         * Flyin Decisions
+         */
+
+        var flyins = {
+            timeline: [
+                {
+                    type: 'flyin',
+                    question: jsPsych.timelineVariable('question'),
+                    answer: jsPsych.timelineVariable('answer'),
+                    abortionExpected: jsPsych.timelineVariable('abortionExpected')
+
+                }
+            ],
+            timeline_variables: [
+                // 5 questions with 2 answer options, each combination is shown twice (thus resulting in 5*2*2s=20 trials)
+
+                {question: "Hast du die Prüfungsfragen gestohlen?",
+                    answer: "Ja",
+                    abortionExpected: true},
+                {question: "Hast du die Prüfungsfragen gestohlen?",
+                    answer: "Nein",
+                    abortionExpected: false},
+                {question: "Bist du unschuldig?",
+                    answer: "Nein",
+                    abortionExpected: true},
+                {question: "Bist du unschuldig?",
+                    answer: "Ja",
+                    abortionExpected: false},
+                {question: "Würdest du etwas Verbotenes tun, um an Prüfungsfragen zu gelangen?",
+                    answer: "Ja",
+                    abortionExpected: true},
+                {question: "Würdest du etwas Verbotenes tun, um an Prüfungsfragen zu gelangen?",
+                    answer: "Nein",
+                    abortionExpected: false},
+                {question: "Wer hat die Prüfungsfragen gestohlen?",
+                    answer: "Ich",
+                    abortionExpected: true},
+                {question: "Wer hat die Prüfungsfragen gestohlen?",
+                    answer: "Keine Ahnung",
+                    abortionExpected: false},
+                {question: "Was weißt du über den Hack?",
+                    answer: "Alles",
+                    abortionExpected: true},
+                {question: "Was weißt du über den Hack?",
+                    answer: "Nichts",
+                    abortionExpected: false},
+                {question: "Hast du die Prüfungsfragen gestohlen?",
+                    answer: "Ja",
+                    abortionExpected: true},
+                {question: "Hast du die Prüfungsfragen gestohlen?",
+                    answer: "Nein",
+                    abortionExpected: false},
+                {question: "Bist du unschuldig?",
+                    answer: "Nein",
+                    abortionExpected: true},
+                {question: "Bist du unschuldig?",
+                    answer: "Ja",
+                    abortionExpected: false},
+                {question: "Würdest du etwas Verbotenes tun, um an Prüfungsfragen zu gelangen?",
+                    answer: "Ja",
+                    abortionExpected: true},
+                {question: "Würdest du etwas Verbotenes tun, um an Prüfungsfragen zu gelangen?",
+                    answer: "Nein",
+                    abortionExpected: false},
+                {question: "Wer hat die Prüfungsfragen gestohlen?",
+                    answer: "Ich",
+                    abortionExpected: true},
+                {question: "Wer hat die Prüfungsfragen gestohlen?",
+                    answer: "Keine Ahnung",
+                    abortionExpected: false},
+                {question: "Was weißt du über den Hack?",
+                    answer: "Alles",
+                    abortionExpected: true},
+                {question: "Was weißt du über den Hack?",
+                    answer: "Nichts",
+                    abortionExpected: false}
+            ],
+            randomize_order: true
+        };
+        timeline.push(flyins);
+
+
+
+        /*
+         * Reaction Time Experiment Elements
+         */
+
+        var blank = {
+            type: 'html-keyboard-response',
+            stimulus: '',
+            choices: jsPsych.NO_KEYS,
+            trial_duration: 1000,
+            data: {rte_part: 'blank'}
+        };
+
+
+        var fixation = {
+            type: 'html-keyboard-response',
+            stimulus: '<div class="fixation">+</div>',
+            choices: jsPsych.NO_KEYS,
+            trial_duration: 400,
+            data: {rte_part: 'fixation'}
+        };
+
+
+        var image = {
+            type: 'html-keyboard-response',
+            stimulus: function () {
+                return '<div class="silhouette-male"></div>';
+            },
+            choices: jsPsych.NO_KEYS,
+            trial_duration: 400,
+            data: {rte_part: 'image'}
+        };
+
+
+        var question_introduction = {
+            type: 'html-keyboard-response',
+            stimulus: function () {
+                return '<div class="silhouette-male"> <div class="question-intro">Ermittler fragt</div> </div>';
+            },
+            choices: jsPsych.NO_KEYS,
+            trial_duration: 500,
+            data: {rte_part: 'fixation'}
+        };
+
+
+        var question = {
+            type: 'word-sequence',
+            stimulus: function () {
+                iteration = jsPsych.timelineVariable('iteration')();
+                question = tasks[iteration].question;
+                return question;
+            },
+            image: function () {
+                return 'male';
+            },
+            data: {rte_part: 'question'}
+        };
+
+
+        var target_introduction = {
+            type: "html-keyboard-response",
+            stimulus: function () {
+                iteration = jsPsych.timelineVariable('iteration')();
+                task = tasks[iteration];
+                targetWord = task.target;
+                stim = '<div class="silhouette-male"> <div class="target-intro">' + targetWord + '</div> </div>';
+                return stim;
+            },
+            trial_duration: 400,
+            choices: jsPsych.NO_KEYS,
+            data: {rte_part: 'target_introduction'},
+            on_finish: function (data)
+            {
+                iteration = jsPsych.timelineVariable('iteration')();
+                task = tasks[iteration];
+
+                data.trial_action = task.action;
+                data.trial_question = task.question;
+                data.trial_congruency = task.congruency;
+                data.trial_secrecy = task.secrecy;
+                data.trial_target = task.target;
+            }
+        };
+
+
+        var target_gonogo = {
+            type: "html-keyboard-response",
+            stimulus: function () {
+                iteration = jsPsych.timelineVariable('iteration')();
+                task = tasks[iteration];
+                targetWord = task.target;
+                stim = "";
+                if (task.action === "go")
+                {
+                    stim = '<div class="silhouette-male"> <div class="target-go">' + targetWord + '</div> </div>';
+                } else
+                {
+                    stim = '<div class="silhouette-male"> <div class="target-nogo">' + targetWord + '</div> </div>';
+                }
+
+                return stim;
+            },
+            trial_duration: 1000,
+            choices: [32],
+            data: {rte_part: 'target_gonogo'},
+            on_finish: function (data)
+            {
+                iteration = jsPsych.timelineVariable('iteration')();
+                task = tasks[iteration];
+
+                correct = undefined;
+                if (task.action === 'nogo')
+                {
+                    correct = (data.key_press === null);
+                } else
+                {
+                    correct = (data.key_press !== null);
+                }
+
+                // needed for tutorial
+                if (correct)
+                {
+                    continuousCorrects++;
+                } else
+                {
+                    continuousCorrects = 0;
+                }
+
+                data.trial_action = task.action;
+                data.trial_question = task.question;
+                data.trial_congruency = task.congruency;
+                data.trial_secrecy = task.secrecy;
+                data.trial_target = task.target;
+                data.trial_correct = correct;
+                data.trial_rt = data.rt;
+            }
+        };
+
+
+        var if_target_gonogo = {
+            timeline: [target_gonogo],
+            conditional_function: function () {
+
+
+                task = tasks[iteration];
+                if (task.action !== 'check')
+                {
+                    return true;
+                } else
+                {
+                    return false;
+                }
+            }
+        };
+
+
+        var lastTarget;
+        var shownTargets = [];
+
+        var target_check = {
+            type: 'html-keyboard-response',
+            stimulus: function () {
+
+                // create random list of 4 targets including the last shown target
+
+                task = tasks[iteration];
+                lastTarget = task.target;
+                var otherTargets = secrets.slice();
+                otherTargets = otherTargets.concat(nonsecrets);
+                
+                for (i=0; i<otherTargets.length; i++){
+                    if (otherTargets[i] === lastTarget){
+                        otherTargets.splice(i, 1);
+                        break;
+                    }
+                }
+              
+                shownTargets = [];
+                shownTargets.push(lastTarget);
+                otherTargets = otherTargets.sort(() => .5 - Math.random());
+                shownTargets = shownTargets.concat(otherTargets.slice(0,3));
+                shownTargets = shownTargets.sort(() => .5 - Math.random());
+
+                // ask participant about the last shown target
+
+                stim = '';
+                stim += '<div class="heading">Welches Wort wurde zuletzt von einem Rechteck umrandet gezeigt?</div>';
+                stim += '<div>Drücke eine der Tasten <span class="keyButton">1</span> bis <span class="keyButton">4</span> um das zuletzt gezeigte Wort auszuwählen.</div>';
+                stim += '<div class="rteAttentionCheckChoiceBlock">';
+                for (i = 0; i < questions.length; i++)
+                {
+                    stim += '<div class="rteAttentionCheckChoice"><span class="keyButton">' + (i + 1) + '</span><span class="rteAttentionCheckChoiceText">' + shownTargets[i] + '</span></div>';
+                }
+                stim += '<div>';
+                return stim;
+            },
+            choices: ['1', '2', '3', '4'],
+            data: {rte_part: 'target_check'},
+            on_load: function () {
+                //$('body').css('background-color', '#ccc');
+            },
+            on_finish: function (data) {
+                //$('body').css('background-color', '#fff');
+
+                var targetIdentified = false;
+                if (shownTargets[data.key_press - 49] === lastTarget){
+                    targetIdentified = true;
+                }
+                
+                // needed for tutorial
+                if (targetIdentified)
+                {
+                    continuousCorrects++;
+                }
+                else
+                {
+                    continuousCorrects = 0;
+                }
+
+                data.trial_action = "check";
+                data.trial_lastTarget = lastTarget;
+                data.trial_shownTargets = shownTargets.toString();
+                data.trial_chosenTarget = shownTargets[data.key_press - 49];
+                data.trial_correct = targetIdentified;
+            }
+        };
+
+
+        var if_target_check = {
+            timeline: [target_check],
+            conditional_function: function () {
+                task = tasks[iteration];
+                if (task.action === 'check')
+                {
+                    return true;
+                } else
+                {
+                    return false;
+                }
+            }
+        };
+
+
+        var target_error = {
+            type: 'html-keyboard-response',
+            stimulus: function () {
+                // show error message depending on last trial's action
+                data = jsPsych.data.get().last(1).values()[0];
+                if (data.trial_action === 'nogo') {
+                    errorHeading = 'Taste gedrückt!';
+                    errorMessage = 'Es war ein grünes Wort zu sehen. Du hättest keine Taste drücken dürfen.';
+                } else if (data.trial_action === 'go') {
+                    errorHeading = 'Zu langsam!';
+                    errorMessage = 'Es war ein rotes Wort zu sehen. Du hättest schnell die Leertaste drücken müssen.';
+                } else if (data.trial_action === 'check') {
+                    errorHeading = 'Falsch!';
+                    errorMessage = 'Bitte achte in Zukunft genauer auf das Wort im Rechteck.';
+                }
+                return '<div class="heading">' + errorHeading + '</div><div class="smalltext">' + errorMessage + '</div><div class="smalltext">Drücke die <span class="keyButton">Leertaste</span> um fortzufahren.</div>';
+            },
+            choices: [32],
+            data: {rte_part: 'target_error'},
+            on_load: function () {
+                //$('body').css('background-color', '#ff5555');
+            },
+            on_finish: function () {
+                //$('body').css('background-color', '#fff');
+            }
+        };
+
+
+        var if_target_error = {
+            timeline: [target_error],
+            conditional_function: function () {
+                // start error trial if subject's action in last trial was not correct
+                data = jsPsych.data.get().last(1).values()[0];
+                if (data.trial_correct) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        };
+
+
+        var prime_check = {
+            type: 'html-keyboard-response',
+            stimulus: function () {
+                // ask participant about the last shown question
+
+                stim = '';
+                stim += '<div class="heading">Welche Frage wurde zuletzt gezeigt?</div>';
+                stim += '<div>Drücke eine der Tasten <span class="keyButton">1</span> bis <span class="keyButton">4</span> um die zuletzt gezeigte Frage auszuwählen.</div>';
+                stim += '<div class="rteAttentionCheckChoiceBlock">';
+                for (i = 0; i < questions.length; i++)
+                {
+                    stim += '<div class="rteAttentionCheckChoice"><span class="keyButton">' + (i + 1) + '</span><span class="rteAttentionCheckChoiceText">' + questions[i] + '</span></div>';
+                }
+                stim += '<div>';
+                return stim;
+            },
+            choices: ['1', '2', '3', '4'],
+            data: {rte_part: 'prime_check'},
+            on_load: function () {
+                //$('body').css('background-color', '#ccc');
+            },
+            on_finish: function () {
+                //$('body').css('background-color', '#fff');
+            }
+        };
+
+
+        var if_prime_check = {
+            timeline: [prime_check],
+            conditional_function: function () {
+                // start attention check randomly with 10% chance (60% chance in tutorial) if last target was classified correctly and there was no target check
+                data = jsPsych.data.get().last(1).values()[0];
+                if (data.rte_part !== 'target_error' && data.rte_part !== 'target_check')
+                {
+                    chance = 0.1;
+                    if (tutorialRunning)
+                    {
+                        chance = 0.7;
+                    }
+
+                    if (Math.random() < chance)
+                    {
+                        return true;
+                    } else
+                    {
+                        return false;
+                    }
+                } else
+                {
+                    return false;
+                }
+            }
+        };
+
+
+        var prime_check_error = {
+            type: 'html-keyboard-response',
+            stimulus: function () {
+
+                errorHeading = 'Falsch!';
+                errorMessage = 'Die von dir ausgewählte Frage wurde nicht als letzte gezeigt. Achte in Zukunft besser auf die Fragen.';
+                return '<div class="heading">' + errorHeading + '</div><div class="smalltext">' + errorMessage + '</div><div class="smalltext">Drücke die <span class="keyButton">Leertaste</span> um fortzufahren.</div>';
+
+            },
+            choices: [32],
+            data: {rte_part: 'prime_check_error'},
+            on_finish: function () {
+                $('body').css('background-color', '#fff');
+            }
+        };
+
+
+        var if_prime_check_error = {
+            timeline: [prime_check_error],
+            conditional_function: function () {
+                // start error trial if subject's selection was wrong
+                data = jsPsych.data.get().last(1).values()[0];
+                if (data.rte_part === 'prime_check')
+                {
+                    shownQuestion = jsPsych.data.get().last(2).values()[0].trial_question;
+                    selectedQuestion = questions[jsPsych.data.get().last(1).values()[0].key_press - 49];
+                    if (shownQuestion !== selectedQuestion)
+                    {
+                        return true;
+                    } else
+                    {
+                        return false;
+                    }
+                } else
+                {
+                    return false;
+                }
+            }
+        };
+
+
+        /*
+         * Tutorial Reaction Time Experiment Briefing
+         */
+
+        var tutorial_instruction = {
+            type: 'html-keyboard-response',
+            stimulus: '<div class="instruction"><div class="heading">Aufgepasst!</div><div class="smalltext">Im zweiten Teil des Tests geht es wieder um schnelle Reaktionen. Es werden gleich hintereinander eine Frage und ein einzelnes Wort in einem Rechteck erscheinen. Lies beide aufmerksam. Färbt sich das Wort im Rechteck rot, drücke so schnell wie möglich die <span class="keyButton">Leertaste</span> . Färbt es sich dagegen grün, darfst du nicht reagieren. Das Ganze wird mehrfach wiederholt. Von Zeit zu Zeit wird zudem geprüft, ob du dich an die zuletzt gezeigte Frage sowie das Wort im Rechteck erinnern kannst.</div><div class="smalltext"> Drücke die <span class="keyButton">Leertaste</span> um einen Probelauf zu starten.<div>',
+            choices: [32],
+            data: {rte_part: 'tutorial_instruction'}
+        };
+        timeline.push(tutorial_instruction);
+
+
+        /*
+         * Tutorial Reaction Time Experiment
+         */
+
+        tutorialIterator = [
+            {iteration: 54},
+            {iteration: 104},
+            {iteration: 192},
+            {iteration: 27},
+            {iteration: 159}
+        ];
+
+        continuousCorrects = 0;
+        tutorialRunning = true;
+
+        var if_tutorial = {
+            timeline: [blank, fixation, image, question_introduction, question, target_introduction, if_target_check, if_target_gonogo, if_target_error, if_prime_check, if_prime_check_error],
+            timeline_variables: tutorialIterator,
+            randomize_order: false,
+            loop_function: function (data) {
+                // continue trial while not having completed 5 correct actions in a row
+                if (continuousCorrects < 5)
+                {
+                    return true;
+                } else
+                {
+                    return false;
+                }
+            },
+            on_finish: function () {
+                tutorialRunning = false;
+            }
+        };
+        timeline.push(if_tutorial);
+
+
+        /*
+         * Reaction Time Experiment Briefing
+         */
+
+        var rte_instruction = {
+            type: 'html-keyboard-response',
+            stimulus: '<div class="instruction"><div class="heading">Jetzt wird es ernst!</div><div class="smalltext">Nachdem du dich mit der Aufgabe vertraut gemacht hast, wiederholen wir das Ganze jetzt nochmal - nur wesentlich häufiger. Bitte stelle unbedingt sicher, dass du in den nächsten 20 Minuten durch nichts abgelenkt wirst. Denke daran, aufmerksam zu lesen und so schnell wie möglich die <span class="keyButton">Leertaste</span> zu drücken, wenn sich das von einem Rechteck umgebene Wort rot färbt.</div><div class="smalltext"> Drücke die <span class="keyButton">Leertaste</span> wenn es losgehen kann.<div>',
+            choices: [32],
+            data: {rte_part: 'tutorial_instruction'}
+        };
+        timeline.push(rte_instruction);
+
+
+        /*
+         * Reaction Time Experiment
+         */
+
+        rteIterator = [];
+        for (i = 0; i < 204; i++) //204 trials
+        {
+            rteIterator.push({iteration: i});
+        }
+
+        var rte = {
+            timeline: [blank, fixation, image, question_introduction, question, target_introduction, if_target_check, if_target_gonogo, if_target_error, if_prime_check, if_prime_check_error],
+            timeline_variables: rteIterator,
+            randomize_order: true
+        };
+        timeline.push(rte);
+
+
+        /*
+         * Debriefing
+         */
+
+        var debriefing = {
+            type: 'html-keyboard-response',
+            stimulus: '<div class="instruction"><div class="heading">Geschafft!</div><div class="smalltext">Vielen Dank für deine Teilnahme. Du hast mir sehr geholfen.</div><div class="smalltext" id="uploadinfo">Deine Eingaben werden nun anonymisiert und verschlüsselt übertragen. Dies kann bis zu einer Minute dauern. Bitte warte...</div><img id="uploadimage" src="img/symbols/spinner.gif" alt="Übertragung läuft"><div class="smalltext" id="particitext"></div><div class="smalltext" id="particicode"></div><button class="navbutton" type="button" id="downloadbutton" style="display: none;" onclick="triggerDataDownload();">Daten speichern</button><div class="smalltext" id="finishtext" style="display: none;">Du kannst den Vollbildmodus durch Drücken der Tasten <span class="keyButton">Esc</span> oder <span class="keyButton">F11</span> verlassen und das Browserfenster dann einfach schließen.</div></div>',
+            choices: jsPsych.NO_KEYS,
+            on_load: function () {
+                // wait 3s before upload for visualization purposes
+                setTimeout(function () {
+                    $('#experiment').css('cursor', 'default');
+                    save(jsPsych.data.get().csv());
+                }, 3000);
+            }
+        };
+        timeline.push(debriefing);
+
+
+        /*
+         * Save Data Routine
+         */
+
+        function save(data) {
+            // local url: http://localhost:8080/save
+            // heroku url: https://rtebackend.herokuapp.com/save
+            $.ajax({
+                type: "POST",
+                url: "https://rtebackend.herokuapp.com/save",
+                data: data,
+                contentType: 'text/plain',
+                timeout: 60000
+            }).done(function (response) {
+
+                $('#experiment').css('cursor', 'default');
+
+                var idcode = JSON.parse(response).result;
+                if (idcode !== 'error')
+                {
+                    saveSuccess(idcode);
+                } else
+                {
+                    saveFailure();
+                }
+            }).fail(function (response) {
+                saveFailure();
+            });
+        }
+
+        function saveSuccess(idcode)
+        {
+            $('#uploadinfo').text('Deine Daten wurden erfolgreich anonymisiert und verschlüsselt übertragen.');
+            $('#uploadinfo').css('color', '#ffffff');
+            $('#uploadinfo').css('background-color', '#51ca90');
+            $('#uploadinfo').css('border-radius', '10px');
+
+            $('#uploadimage').hide();
+
+            $('#particitext').text('Falls du eine Versuchspersonenstunde benötigst, notiere dir bitte folgenden Code und sende ihn an philipp.sprengholz@uni-jena.de.');
+            $('#particicode').text(idcode);
+
+            $('#finishtext').show();
+        }
+
+        function saveFailure()
+        {
+            $('#uploadinfo').text('Es trat ein Fehler beim Senden deiner Daten auf.');
+            $('#uploadinfo').css('color', '#ffffff');
+            $('#uploadinfo').css('background-color', '#ff6060');
+            $('#uploadinfo').css('border-radius', '10px');
+
+            $('#uploadimage').hide();
+
+            $('#particitext').html('Wegen des Fehlers benötige ich deine Hilfe. <strong>Bitte speichere deine Daten über den folgenden Button und sende sie anschließend als E-Mail-Anhang an philipp.sprengholz@uni-jena.de.</strong> Solltest du die Bestätigung einer Versuchspersonenstunde wünschen, teile mir dies bitte auch in der E-Mail mit. Deine E-Mail-Adresse und alle weiteren Daten werden natürlich vertraulich behandelt.');
+            $('#particicode').hide();
+
+            $('#downloadbutton').show();
+        }
+
+        function triggerDataDownload() {
+            download(jsPsych.data.get().csv(), "data.csv", "text/plain");
+            $('#finishtext').show();
+        }
+
+
+        /*
+         * Start Experiment
+         */
+
+        jsPsych.init({
+            display_element: 'experiment',
+            timeline: timeline,
+            on_finish: function () {
+                // never reached since last trial never finishes
+
+                // for testing purposes: show experiment data at the end
+                jsPsych.data.displayData();
+            }
+        });
+
+    </script>
+</html>
