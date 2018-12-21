@@ -31,10 +31,16 @@
         <div id="alertOverlay">
             <span id="alertText"></span>     
         </div>
-        <div id="terminal">
+        <div id="barOverlay">
+            <div id="barLeft">
+                <span class="barText">UNSCHULDIG</span>
+            </div>
+            <div id="barRight">
+                <span class="barText">SCHULDIG</span>
+            </div>
         </div>
-
-        <div id="experiment" ></div>
+        <div id="terminal"></div>
+        <div id="experiment"></div>
     </body>
     <script>
 
@@ -71,9 +77,32 @@
         }
 
 
+        
+
+        function showBar(value){
+            $('#barOverlay').show();
+
+            var width = 20 + (100-value)*0.6;
+            $('#barLeft').css("width",width+"%");
+        }
+
+        function hideBar(){
+            $('#barOverlay').hide();
+        }
+
+
+
         /*
          * Global Variables
          */
+
+
+        // demographics
+        var age;
+        var sex;
+
+        // critical information
+        var hackingHour;
 
         // questions
         var questions = ['Welches Protokoll wurde verwendet?',
@@ -172,111 +201,8 @@
                 }
             }
         }
+        
 
-
-        /*
-         * Setup Check Tasks
-         */
-
-        // first: 8 congruent tasks 
-
-        for (i = 0; i < questions.length; i++)
-        {
-            // secrect target
-            task = {
-                action: 'check',
-                question: questions[i],
-                congruency: 'congruent',
-                secrecy: 'secret',
-                target: secrets[i]
-            };
-            tasks.push(task);
-
-            // nonsecret target
-            task = {
-                action: 'check',
-                question: questions[i],
-                congruency: 'congruent',
-                secrecy: 'nonsecret',
-                target: nonsecrets[i]
-            };
-            tasks.push(task);
-        }
-        
-        // second: 8 incongruent tasks
-        
-        task = {
-            action: 'check',
-            question: questions[0],
-            congruency: 'incongruent',
-            secrecy: 'secret',
-            target: secrets[1]
-        };
-        tasks.push(task);
-        
-        task = {
-            action: 'check',
-            question: questions[0],
-            congruency: 'incongruent',
-            secrecy: 'nonsecret',
-            target: nonsecrets[3]
-        };
-        tasks.push(task);
-        
-        task = {
-            action: 'check',
-            question: questions[1],
-            congruency: 'incongruent',
-            secrecy: 'nonsecret',
-            target: nonsecrets[0]
-        };
-        tasks.push(task);
-        
-        task = {
-            action: 'check',
-            question: questions[1],
-            congruency: 'incongruent',
-            secrecy: 'secret',
-            target: secrets[2]
-        };
-        tasks.push(task);
-        
-        task = {
-            action: 'check',
-            question: questions[2],
-            congruency: 'incongruent',
-            secrecy: 'secret',
-            target: secrets[3]
-        };
-        tasks.push(task);
-        
-        task = {
-            action: 'check',
-            question: questions[2],
-            congruency: 'incongruent',
-            secrecy: 'nonsecret',
-            target: nonsecrets[1]
-        };
-        tasks.push(task);
-
-        task = {
-            action: 'check',
-            question: questions[3],
-            congruency: 'incongruent',
-            secrecy: 'secret',
-            target: secrets[0]
-        };
-        tasks.push(task);
-        
-        task = {
-            action: 'check',
-            question: questions[3],
-            congruency: 'incongruent',
-            secrecy: 'nonsecret',
-            target: nonsecrets[2]
-        };
-        tasks.push(task);
-        
 
         /*
          * Show Welcome Screen
@@ -306,9 +232,42 @@
 
         timeline.push({
             type: 'html-button-response',
-            choices: ["Los geht's"],
+            choices: ["Weiter"],
             stimulus: '<div class="instruction"><div class="heading">Wichtig</div><div class="smalltext"> Bitte achte darauf, dass du während der Teilnahme nicht abgelenkt wirst. Suche dir einen <strong>ruhigen Raum</strong>, in dem du die nächsten <strong>45 Minuten</strong> nicht gestört wirst. Bitte lege dein Telefon außer Sichtweite. <div></div>'
         }); 
+
+
+
+        /*
+         * Ask for Demographic Information
+         */
+
+        var start = {
+            type: 'external-html',
+            url: 'demographics.html',
+            cont_btn: 'next',
+            check_fn: function ()
+            {
+                age = $('#age').val();
+
+                if (/^([1-9][0-9])$/.test(age))
+                {
+                    sex = $('#sex').val();
+                    return true;
+                } else
+                {
+                    showAlert('Bitte gib dein korrektes Alter ein.');
+                    return false;
+                }
+            },
+            on_finish: function (data)
+            {
+                clearAlerts();
+                data.age = age;
+                data.sex = sex;
+            }
+        };
+        timeline.push(start);
 
 
         /*
@@ -365,6 +324,9 @@
                 }
             },
             on_load: function(data){
+
+                var now = new Date;
+                hackingHour = now.getHours() + Math.round(now.getMinutes()/60);
 
                 var connected = false;
 
@@ -502,7 +464,7 @@
         timeline.push({
             type: 'html-button-response',
             choices: ["Weiter"],
-            stimulus: '<div class="instruction"><div class="heading">Achtung!</div><div class="smalltext">Der unbefugte Zugriff auf die Prüfungsfragen wurde durch einen Mitarbeiter des Psychologischen Instituts bemerkt! Neben einigen anderen Studierenden wurdest du als möglicher Hacker identifiziert.</div><div class="smalltext">Alle Verdächtigen sollen nun einem Test unterzogen werden, der das Vorhandensein von Täterwissen überprüft und den Schuldigen oder die Schuldige der Tat überführt. Auch du wirst gebeten, im Folgenden daran teilzunehmen.</div></div>'
+            stimulus: '<div class="instruction"><div class="heading">Achtung!</div><div class="smalltext">Der unbefugte Zugriff auf die Prüfungsfragen wurde durch einen Mitarbeiter des Psychologischen Instituts bemerkt! Neben einigen anderen Studierenden wurdest du als möglicher Hacker identifiziert.</div><div class="smalltext">Alle Verdächtigen sollen nun einem Test durch einen digitalen Ermittler unterzogen werden, der das Vorhandensein von Täterwissen überprüft und den Schuldigen oder die Schuldige der Tat überführt. Auch du wirst gebeten, im Folgenden daran teilzunehmen.</div></div>'
         }); 
 
 
@@ -513,12 +475,13 @@
         timeline.push({
             type: 'html-button-response',
             choices: ["Weiter"],
-            stimulus: '<div class="instruction"><div class="heading">Teil 1: Entscheidung</div><div class="smalltext">Im ersten Teil des Tests werden dir von einem Ermittler verschiedene Fragen gestellt. Wenn du die auf eine Frage gezeigte Antwort nicht geben möchtest, drücke so schnell wie möglich die <span class="keyButton">Leertaste</span>. Reagierst du nicht, so wird die Antwort nach kurzer Zeit ausgesprochen. Dies erkennst du daran, dass die Antwort auf den Ermittler zufliegt und sich dessen Silhouette schließlich gelb färbt, sobald die Antwort angekommen ist.</div><img src="img/symbols/howto_flyin.jpg" style="padding: 15px;"><div class="smalltext">Ein guter Hacker wird solche Antworten zurückhalten, die seine Schuld beweisen und eher Antworten geben, die ihn unschuldig erscheinen lassen.</div></div>',
+            stimulus: '<div class="instruction"><div class="heading">Teil 1: Entscheidung</div><div class="smalltext">Im ersten Teil des Tests werden dir vom Ermittler verschiedene Fragen gestellt. Wenn du die auf eine Frage gezeigte Antwort nicht geben möchtest, drücke so schnell wie möglich die <span class="keyButton">Leertaste</span>. Reagierst du nicht, so wird die Antwort nach kurzer Zeit ausgesprochen. Dies erkennst du daran, dass die Antwort auf den Ermittler zufliegt und sich dessen Silhouette schließlich gelb färbt, sobald die Antwort angekommen ist.</div><img src="img/symbols/howto_flyin.jpg" style="padding: 15px;"><div class="smalltext">Ein guter Hacker wird solche Antworten zurückhalten, die seine Schuld beweisen und eher Antworten geben, die ihn unschuldig erscheinen lassen. Natürlich macht man sich auch verdächtig, wenn man offensichliche oder harmlose Informationen zurückhält.</div><div class="smalltext">Die Einschätzung des Ermittlers wird dir gleich am oberen Bildschirmrand angezeigt.</div></div>',
             on_finish: function(){
                 $('#experiment').focus();
                 $('#experiment').css('cursor', 'none');
             }
         }); 
+
 
         var flyin_instruction = {
             type: 'html-keyboard-response',
@@ -537,6 +500,8 @@
          * Flyin Decisions
          */
 
+        var guilt = 50;
+
         var flyins = {
             timeline: [
                 {
@@ -548,70 +513,50 @@
                 }
             ],
             timeline_variables: [
-                // 5 questions with 2 answer options, each combination is shown twice (thus resulting in 5*2*2s=20 trials)
-
-                {question: "Hast du die Prüfungsfragen gestohlen?",
-                    answer: "Ja",
-                    abortionExpected: true},
-                {question: "Hast du die Prüfungsfragen gestohlen?",
-                    answer: "Nein",
+                // 4 noncritical items
+                {question: "Wie alt bist du?",
+                    answer: function(){return age},
                     abortionExpected: false},
-                {question: "Bist du unschuldig?",
-                    answer: "Nein",
-                    abortionExpected: true},
-                {question: "Bist du unschuldig?",
-                    answer: "Ja",
+                {question: "Welches Geschlecht hast du?",
+                    answer: function(){return sex},
                     abortionExpected: false},
-                {question: "Würdest du etwas Verbotenes tun, um an Prüfungsfragen zu gelangen?",
-                    answer: "Ja",
-                    abortionExpected: true},
-                {question: "Würdest du etwas Verbotenes tun, um an Prüfungsfragen zu gelangen?",
-                    answer: "Nein",
+                {question: "Was studierst du?",
+                    answer: "Psychologie",
                     abortionExpected: false},
+                {question: "Wo studierst du?",
+                    answer: "Jena",
+                    abortionExpected: false},
+                // 4 critical items
+                {question: "Mit welchem Werkzeug wurde gehackt?",
+                    answer: "Konsole",
+                    abortionExpected: true},
+                {question: "Wo stand der Computer, in den eingebrochen wurde?",
+                    answer: "Institut für Psychologie",
+                    abortionExpected: true},
                 {question: "Wer hat die Prüfungsfragen gestohlen?",
                     answer: "Ich",
                     abortionExpected: true},
-                {question: "Wer hat die Prüfungsfragen gestohlen?",
-                    answer: "Keine Ahnung",
-                    abortionExpected: false},
-                {question: "Was weißt du über den Hack?",
-                    answer: "Alles",
-                    abortionExpected: true},
-                {question: "Was weißt du über den Hack?",
-                    answer: "Nichts",
-                    abortionExpected: false},
-                {question: "Hast du die Prüfungsfragen gestohlen?",
-                    answer: "Ja",
-                    abortionExpected: true},
-                {question: "Hast du die Prüfungsfragen gestohlen?",
-                    answer: "Nein",
-                    abortionExpected: false},
-                {question: "Bist du unschuldig?",
-                    answer: "Nein",
-                    abortionExpected: true},
-                {question: "Bist du unschuldig?",
-                    answer: "Ja",
-                    abortionExpected: false},
-                {question: "Würdest du etwas Verbotenes tun, um an Prüfungsfragen zu gelangen?",
-                    answer: "Ja",
-                    abortionExpected: true},
-                {question: "Würdest du etwas Verbotenes tun, um an Prüfungsfragen zu gelangen?",
-                    answer: "Nein",
-                    abortionExpected: false},
-                {question: "Wer hat die Prüfungsfragen gestohlen?",
-                    answer: "Ich",
-                    abortionExpected: true},
-                {question: "Wer hat die Prüfungsfragen gestohlen?",
-                    answer: "Keine Ahnung",
-                    abortionExpected: false},
-                {question: "Was weißt du über den Hack?",
-                    answer: "Alles",
-                    abortionExpected: true},
-                {question: "Was weißt du über den Hack?",
-                    answer: "Nichts",
-                    abortionExpected: false}
+                {question: "Wieviele Prüfungen wurden gehackt?",
+                    answer: "4",
+                    abortionExpected: true}
             ],
-            randomize_order: true
+            randomize_order: true,
+            repetitions: 5,
+            on_load: function(){
+                showBar(guilt);
+            },
+            on_finish: function(data){
+                if (data.aborted === data.abortion_expected){
+                    if (guilt >= 10) {
+                        guilt = guilt - 10;
+                    }
+                } else {
+                    if (guilt <= 80) {
+                        guilt = guilt + 20;
+                    }
+                }
+                
+            }
         };
         timeline.push(flyins);
 
@@ -647,17 +592,6 @@
             choices: jsPsych.NO_KEYS,
             trial_duration: 400,
             data: {rte_part: 'image'}
-        };
-
-
-        var question_introduction = {
-            type: 'html-keyboard-response',
-            stimulus: function () {
-                return '<div class="silhouette-male"> <div class="question-intro">Ermittler fragt</div> </div>';
-            },
-            choices: jsPsych.NO_KEYS,
-            trial_duration: 500,
-            data: {rte_part: 'fixation'}
         };
 
 
@@ -772,93 +706,6 @@
         };
 
 
-        var lastTarget;
-        var shownTargets = [];
-
-        var target_check = {
-            type: 'html-keyboard-response',
-            stimulus: function () {
-
-                // create random list of 4 targets including the last shown target
-
-                task = tasks[iteration];
-                lastTarget = task.target;
-                var otherTargets = secrets.slice();
-                otherTargets = otherTargets.concat(nonsecrets);
-                
-                for (i=0; i<otherTargets.length; i++){
-                    if (otherTargets[i] === lastTarget){
-                        otherTargets.splice(i, 1);
-                        break;
-                    }
-                }
-              
-                shownTargets = [];
-                shownTargets.push(lastTarget);
-                otherTargets = otherTargets.sort(() => .5 - Math.random());
-                shownTargets = shownTargets.concat(otherTargets.slice(0,3));
-                shownTargets = shownTargets.sort(() => .5 - Math.random());
-
-                // ask participant about the last shown target
-
-                stim = '';
-                stim += '<div class="heading">Welches Wort wurde zuletzt von einem Rechteck umrandet gezeigt?</div>';
-                stim += '<div>Drücke eine der Tasten <span class="keyButton">1</span> bis <span class="keyButton">4</span> um das zuletzt gezeigte Wort auszuwählen.</div>';
-                stim += '<div class="rteAttentionCheckChoiceBlock">';
-                for (i = 0; i < questions.length; i++)
-                {
-                    stim += '<div class="rteAttentionCheckChoice"><span class="keyButton">' + (i + 1) + '</span><span class="rteAttentionCheckChoiceText">' + shownTargets[i] + '</span></div>';
-                }
-                stim += '<div>';
-                return stim;
-            },
-            choices: ['1', '2', '3', '4'],
-            data: {rte_part: 'target_check'},
-            on_load: function () {
-                //$('body').css('background-color', '#ccc');
-            },
-            on_finish: function (data) {
-                //$('body').css('background-color', '#fff');
-
-                var targetIdentified = false;
-                if (shownTargets[data.key_press - 49] === lastTarget){
-                    targetIdentified = true;
-                }
-                
-                // needed for tutorial
-                if (targetIdentified)
-                {
-                    continuousCorrects++;
-                }
-                else
-                {
-                    continuousCorrects = 0;
-                }
-
-                data.trial_action = "check";
-                data.trial_lastTarget = lastTarget;
-                data.trial_shownTargets = shownTargets.toString();
-                data.trial_chosenTarget = shownTargets[data.key_press - 49];
-                data.trial_correct = targetIdentified;
-            }
-        };
-
-
-        var if_target_check = {
-            timeline: [target_check],
-            conditional_function: function () {
-                task = tasks[iteration];
-                if (task.action === 'check')
-                {
-                    return true;
-                } else
-                {
-                    return false;
-                }
-            }
-        };
-
-
         var target_error = {
             type: 'html-keyboard-response',
             stimulus: function () {
@@ -870,9 +717,6 @@
                 } else if (data.trial_action === 'go') {
                     errorHeading = 'Zu langsam!';
                     errorMessage = 'Es war ein rotes Wort zu sehen. Du hättest schnell die Leertaste drücken müssen.';
-                } else if (data.trial_action === 'check') {
-                    errorHeading = 'Falsch!';
-                    errorMessage = 'Bitte achte in Zukunft genauer auf das Wort im Rechteck.';
                 }
                 return '<div class="heading">' + errorHeading + '</div><div class="smalltext">' + errorMessage + '</div><div class="smalltext">Drücke die <span class="keyButton">Leertaste</span> um fortzufahren.</div>';
             },
@@ -901,52 +745,122 @@
         };
 
 
-        var prime_check = {
+        var attention_check_type;
+        var shownTargets;
+
+        var attention_check = {
             type: 'html-keyboard-response',
             stimulus: function () {
-                // ask participant about the last shown question
+                // case 1: check question prime
+                if (attention_check_type === 'prime') {
 
-                stim = '';
-                stim += '<div class="heading">Welche Frage wurde zuletzt gezeigt?</div>';
-                stim += '<div>Drücke eine der Tasten <span class="keyButton">1</span> bis <span class="keyButton">4</span> um die zuletzt gezeigte Frage auszuwählen.</div>';
-                stim += '<div class="rteAttentionCheckChoiceBlock">';
-                for (i = 0; i < questions.length; i++)
-                {
-                    stim += '<div class="rteAttentionCheckChoice"><span class="keyButton">' + (i + 1) + '</span><span class="rteAttentionCheckChoiceText">' + questions[i] + '</span></div>';
+                    stim = '';
+                    stim += '<div class="heading">Welche Frage wurde zuletzt gezeigt?</div>';
+                    stim += '<div>Drücke eine der Tasten <span class="keyButton">1</span> bis <span class="keyButton">4</span> um die zuletzt gezeigte Frage auszuwählen.</div>';
+                    stim += '<div class="rteAttentionCheckChoiceBlock">';
+                    for (i = 0; i < questions.length; i++)
+                    {
+                        stim += '<div class="rteAttentionCheckChoice"><span class="keyButton">' + (i + 1) + '</span><span class="rteAttentionCheckChoiceText">' + questions[i] + '</span></div>';
+                    }
+                    stim += '<div>';
+                    return stim;
+                } 
+                // case 2: check target word
+                if (attention_check_type === 'target') {
+
+                    var task = tasks[iteration];
+                    lastTarget = task.target;
+                    var otherTargets = secrets.slice();
+                    otherTargets = otherTargets.concat(nonsecrets);
+                    
+                    for (i=0; i<otherTargets.length; i++){
+                        if (otherTargets[i] === lastTarget){
+                            otherTargets.splice(i, 1);
+                            break;
+                        }
+                    }
+                
+                    shownTargets = [];
+                    shownTargets.push(lastTarget);
+                    otherTargets = otherTargets.sort(() => .5 - Math.random());
+                    shownTargets = shownTargets.concat(otherTargets.slice(0,3));
+                    shownTargets = shownTargets.sort(() => .5 - Math.random());
+
+                    stim = '';
+                    stim += '<div class="heading">Welches Wort wurde zuletzt von einem Rechteck umrandet gezeigt?</div>';
+                    stim += '<div>Drücke eine der Tasten <span class="keyButton">1</span> bis <span class="keyButton">4</span> um das zuletzt gezeigte Wort auszuwählen.</div>';
+                    stim += '<div class="rteAttentionCheckChoiceBlock">';
+                    for (i = 0; i < shownTargets.length; i++)
+                    {
+                        stim += '<div class="rteAttentionCheckChoice"><span class="keyButton">' + (i + 1) + '</span><span class="rteAttentionCheckChoiceText">' + shownTargets[i] + '</span></div>';
+                    }
+                    stim += '<div>';
+                    return stim;
                 }
-                stim += '<div>';
-                return stim;
             },
             choices: ['1', '2', '3', '4'],
-            data: {rte_part: 'prime_check'},
-            on_load: function () {
-                //$('body').css('background-color', '#ccc');
-            },
-            on_finish: function () {
-                //$('body').css('background-color', '#fff');
+            data: {rte_part: 'attention_check'},
+            on_load: function () {},
+            on_finish: function (data) {
+                if (attention_check_type === 'target') {
+
+                    var targetIdentified = false;
+                    var task = tasks[iteration];
+                    lastTarget = task.target;
+                    if (shownTargets[data.key_press - 49] === lastTarget){
+                        targetIdentified = true;
+                    }
+
+                    data.check_against = attention_check_type;
+                    data.check_targetToIdentify = lastTarget;
+                    data.check_shownTargets = shownTargets.toString();
+                    data.check_chosenTarget = shownTargets[data.key_press - 49];
+                    data.check_correct = targetIdentified;
+                }
+                if (attention_check_type === 'prime') {
+
+                    questionIdentified = false;
+                    var task = tasks[iteration];
+                    lastQuestion = task.question;
+                    if (questions[data.key_press - 49] === lastQuestion){
+                        questionIdentified = true;
+                    }
+
+                    data.check_against = attention_check_type;
+                    data.check_questionToIdentify = lastQuestion;
+                    data.check_shownQuestions = questions.toString();
+                    data.check_chosenQuestion = questions[data.key_press - 49];
+                    data.check_correct = questionIdentified;
+                }
             }
         };
 
 
-        var if_prime_check = {
-            timeline: [prime_check],
+        var if_attention_check = {
+            timeline: [attention_check],
             conditional_function: function () {
-                // start attention check randomly with 10% chance (60% chance in tutorial) if last target was classified correctly and there was no target check
+                // start attention check randomly with 15% chance (65% chance in tutorial) if target was classified correctly
                 data = jsPsych.data.get().last(1).values()[0];
-                if (data.rte_part !== 'target_error' && data.rte_part !== 'target_check')
+                if (data.rte_part !== 'target_error')
                 {
-                    chance = 0.1;
+                    chance = 0.15;
                     if (tutorialRunning)
                     {
-                        chance = 0.7;
+                        chance = 0.65;
                     }
 
                     if (Math.random() < chance)
                     {
+                        // 50/50 chance to check question prime or target word
+                        if (Math.random() < 0.5){
+                            attention_check_type = 'prime';
+                        } else {
+                            attention_check_type = 'target';
+                        }
                         return true;
                     } else
                     {
-                        return false;
+                        return false; 
                     }
                 } else
                 {
@@ -956,14 +870,19 @@
         };
 
 
-        var prime_check_error = {
+        var attention_check_error = {
             type: 'html-keyboard-response',
             stimulus: function () {
 
-                errorHeading = 'Falsch!';
-                errorMessage = 'Die von dir ausgewählte Frage wurde nicht als letzte gezeigt. Achte in Zukunft besser auf die Fragen.';
+                var errorHeading = 'Falsch!';
+                var errorMessage;
+                if (attention_check_type === 'prime'){
+                    errorMessage = 'Die von dir ausgewählte Frage wurde nicht als letzte gezeigt. Achte in Zukunft besser auf die Fragen.';
+                }
+                if (attention_check_type === 'target'){
+                    errorMessage = 'Bitte achte in Zukunft genauer auf das Wort im Rechteck.';
+                }
                 return '<div class="heading">' + errorHeading + '</div><div class="smalltext">' + errorMessage + '</div><div class="smalltext">Drücke die <span class="keyButton">Leertaste</span> um fortzufahren.</div>';
-
             },
             choices: [32],
             data: {rte_part: 'prime_check_error'},
@@ -973,21 +892,17 @@
         };
 
 
-        var if_prime_check_error = {
-            timeline: [prime_check_error],
+        var if_attention_check_error = {
+            timeline: [attention_check_error],
             conditional_function: function () {
                 // start error trial if subject's selection was wrong
                 data = jsPsych.data.get().last(1).values()[0];
-                if (data.rte_part === 'prime_check')
+                if (data.rte_part === 'attention_check')
                 {
-                    shownQuestion = jsPsych.data.get().last(2).values()[0].trial_question;
-                    selectedQuestion = questions[jsPsych.data.get().last(1).values()[0].key_press - 49];
-                    if (shownQuestion !== selectedQuestion)
-                    {
-                        return true;
-                    } else
-                    {
+                    if (data.check_correct){
                         return false;
+                    } else {
+                        return true;
                     }
                 } else
                 {
@@ -1003,9 +918,12 @@
 
         var tutorial_instruction = {
             type: 'html-keyboard-response',
-            stimulus: '<div class="instruction"><div class="heading">Aufgepasst!</div><div class="smalltext">Im zweiten Teil des Tests geht es wieder um schnelle Reaktionen. Es werden gleich hintereinander eine Frage und ein einzelnes Wort in einem Rechteck erscheinen. Lies beide aufmerksam. Färbt sich das Wort im Rechteck rot, drücke so schnell wie möglich die <span class="keyButton">Leertaste</span> . Färbt es sich dagegen grün, darfst du nicht reagieren. Das Ganze wird mehrfach wiederholt. Von Zeit zu Zeit wird zudem geprüft, ob du dich an die zuletzt gezeigte Frage sowie das Wort im Rechteck erinnern kannst.</div><div class="smalltext"> Drücke die <span class="keyButton">Leertaste</span> um einen Probelauf zu starten.<div>',
+            stimulus: '<div class="instruction"><div class="heading">Aufgepasst!</div><div class="smalltext">Im zweiten Teil des Tests geht es wieder um schnelle Reaktionen. Es werden gleich hintereinander eine vom Ermittler gestellte Frage und ein einzelnes Wort in einem Rechteck erscheinen. Lies beide aufmerksam. Färbt sich das Wort im Rechteck rot, drücke so schnell wie möglich die <span class="keyButton">Leertaste</span> . Färbt es sich dagegen grün, darfst du nicht reagieren. Das Ganze wird mehrfach wiederholt. Von Zeit zu Zeit wird zudem geprüft, ob du dich an die zuletzt gezeigte Frage sowie das Wort im Rechteck erinnern kannst.</div><div class="smalltext"> Drücke die <span class="keyButton">Leertaste</span> um einen Probelauf zu starten.<div>',
             choices: [32],
-            data: {rte_part: 'tutorial_instruction'}
+            data: {rte_part: 'tutorial_instruction'},
+            on_load: function(){
+                hideBar();
+            }
         };
         timeline.push(tutorial_instruction);
 
@@ -1017,31 +935,34 @@
         tutorialIterator = [
             {iteration: 54},
             {iteration: 104},
-            {iteration: 192},
-            {iteration: 27},
-            {iteration: 159}
+            {iteration: 145},
+            {iteration: 40},
+            {iteration: 17},
+            {iteration: 187},
         ];
 
-        continuousCorrects = 0;
-        tutorialRunning = true;
+
+        var continuousCorrects = 0;
+        var tutorialRunning = true;
 
         var if_tutorial = {
-            timeline: [blank, fixation, image, question_introduction, question, target_introduction, if_target_check, if_target_gonogo, if_target_error, if_prime_check, if_prime_check_error],
+            timeline: [blank, fixation, image, question, target_introduction, if_target_gonogo, if_target_error, if_attention_check, if_attention_check_error],
             timeline_variables: tutorialIterator,
             randomize_order: false,
             loop_function: function (data) {
                 // continue trial while not having completed 5 correct actions in a row
-                if (continuousCorrects < 5)
+                if (continuousCorrects < tutorialIterator.length)
                 {
+                    tutorialRunning = true;
                     return true;
+    
                 } else
                 {
+                    tutorialRunning = false;
                     return false;
                 }
             },
-            on_finish: function () {
-                tutorialRunning = false;
-            }
+            on_finish: function () {}
         };
         timeline.push(if_tutorial);
 
@@ -1070,11 +991,129 @@
         }
 
         var rte = {
-            timeline: [blank, fixation, image, question_introduction, question, target_introduction, if_target_check, if_target_gonogo, if_target_error, if_prime_check, if_prime_check_error],
+            timeline: [blank, fixation, image, question, target_introduction, if_target_gonogo, if_target_error, if_attention_check, if_attention_check_error],
             timeline_variables: rteIterator,
             randomize_order: true
         };
         timeline.push(rte);
+
+
+        /*
+         * Flyin Instructions 2
+         */
+
+        var flyin_instruction_2 = {
+            type: 'html-keyboard-response',
+            stimulus: function () {
+                stim = '<div class="instruction"><div class="heading">Fast geschafft!</div>';
+                stim += '<div class="smalltext">Du hast es in wenigen Minuten geschafft. Es werden nun noch einmal Fragen und daraufhin Antworten gezeigt, die du durch Drücken der Leertaste unterbinden kannst. Auch hier sollte ein guter Hacker wieder solche Informationen zurückhalten, die ihn mit der Tat in Verbindung bringen und schuldig erscheinen lassen.</div>';
+                stim += '<div class="smalltext">Drücke nun die <span class="keyButton">Leertaste</span> um zu beginnen.<div>';
+                return stim;
+            },
+            choices: [32]
+        };
+        timeline.push(flyin_instruction_2); 
+
+
+        /*
+         * Flyin Decisions 2
+         */
+
+        var guilt_2 = 50;
+
+        var flyins_2 = {
+            timeline: [
+                {
+                    type: 'flyin',
+                    question: jsPsych.timelineVariable('question'),
+                    answer: jsPsych.timelineVariable('answer'),
+                    abortionExpected: jsPsych.timelineVariable('abortionExpected')
+
+                }
+            ],
+            timeline_variables: [
+                // 4 noncritical items
+                {question: "Wie alt bist du?",
+                    answer: function(){return age},
+                    abortionExpected: false},
+                {question: "Welches Geschlecht hast du?",
+                    answer: function(){return sex},
+                    abortionExpected: false},
+                {question: "Was studierst du?",
+                    answer: "Psychologie",
+                    abortionExpected: false},
+                {question: "Wo studierst du?",
+                    answer: "Jena",
+                    abortionExpected: false},
+                // 4 critical items
+                {question: questions[0],
+                    answer: secrets[0],
+                    abortionExpected: true},
+                {question: questions[1],
+                    answer: secrets[1],
+                    abortionExpected: true},
+                {question: questions[2],
+                    answer: secrets[2],
+                    abortionExpected: true},
+                {question: questions[3],
+                    answer: secrets[3],
+                    abortionExpected: true},
+            ],
+            randomize_order: true,
+            repetitions: 2,
+            on_load: function(){
+                showBar(guilt_2);
+            },
+            on_finish: function(data){
+                if (data.aborted === data.abortion_expected){
+                    if (guilt_2 >= 10) {
+                        guilt_2 = guilt_2 - 10;
+                    }
+                } else {
+                    if (guilt_2 <= 80) {
+                        guilt_2 = guilt_2 + 20;
+                    }
+                }
+                
+            }
+        };
+        timeline.push(flyins_2);
+
+
+        /*
+         * Likert
+         */
+
+        var likertAnswers = [];
+
+        var likert = {
+            type: 'external-html',
+            url: "likert.html",
+            cont_btn: "next",
+            check_fn: function(){
+                likertAnswers = $("input:checked").map(function () {
+                return $(this).val();
+                }).toArray();
+                
+                if (likertAnswers.length === 8)
+                {
+                    return true;
+                } 
+                else
+                {
+                    showAlert('Bitte beantworte alle Items.', true);
+                    return false;
+                }
+            },
+            on_load: function(){
+                hideBar();
+            },
+            on_finish: function (data) {
+                data.answers = likertAnswers;
+                clearAlerts();
+            }
+        };
+        timeline.push(likert);
 
 
         /*
@@ -1083,7 +1122,7 @@
 
         var debriefing = {
             type: 'html-keyboard-response',
-            stimulus: '<div class="instruction"><div class="heading">Geschafft!</div><div class="smalltext">Vielen Dank für deine Teilnahme. Du hast mir sehr geholfen.</div><div class="smalltext" id="uploadinfo">Deine Eingaben werden nun anonymisiert und verschlüsselt übertragen. Dies kann bis zu einer Minute dauern. Bitte warte...</div><img id="uploadimage" src="img/symbols/spinner.gif" alt="Übertragung läuft"><div class="smalltext" id="particitext"></div><div class="smalltext" id="particicode"></div><button class="navbutton" type="button" id="downloadbutton" style="display: none;" onclick="triggerDataDownload();">Daten speichern</button><div class="smalltext" id="finishtext" style="display: none;">Du kannst den Vollbildmodus durch Drücken der Tasten <span class="keyButton">Esc</span> oder <span class="keyButton">F11</span> verlassen und das Browserfenster dann einfach schließen.</div></div>',
+            stimulus: '<div class="instruction"><div class="heading">Geschafft!</div><div class="smalltext">Vielen Dank für deine Teilnahme. Du hast mir sehr geholfen.</div><div class="smalltext" id="uploadinfo">Deine Eingaben werden nun anonymisiert und verschlüsselt übertragen. Dies kann bis zu einer Minute dauern. Bitte warte...</div><img id="uploadimage" src="img/symbols/spinner.gif" alt="Übertragung läuft"><div class="smalltext" id="particitext"></div><div class="smalltext" id="particicode"></div><button class="navbutton" type="button" id="downloadbutton" style="display: none;" onclick="triggerDataDownload();">Daten speichern</button><div class="smalltext" id="finishtext" style="display: none;">Du kannst den Vollbildmodus durch Drücken der Tasten <span class="keyButton">Esc</span> oder <span class="keyButton">F11</span> verlassen und das Browserfenster dann einfach schließen.<br><b>Bitte beachte, dass dein Hacking-Angriff nur simuliert wurde und die in zukünftigen Klausuren gestellten Prüfungsfragen von den heruntergeladenen Dokumenten abweichen.</b></div></div>',
             choices: jsPsych.NO_KEYS,
             on_load: function () {
                 // wait 3s before upload for visualization purposes

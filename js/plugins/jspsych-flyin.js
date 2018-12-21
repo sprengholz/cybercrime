@@ -30,6 +30,8 @@ jsPsych.plugins["flyin"] = (function () {
 
     plugin.trial = function (display_element, trial) {
 
+        var aborted = false;
+        var abortionDefault = 'Keine Ahnung';
         var answerArrived = false; 
         
         // store response
@@ -46,34 +48,29 @@ jsPsych.plugins["flyin"] = (function () {
                 answerArrived = true;
                 
                 setTimeout(function () {
-                    
                     end_trial(false);
                 }, 1000);
-
             }
         });
 
 
-        var end_trial = function (aborted) {
+        var end_trial = function () {
 
             // kill keyboard listeners
             if (typeof keyboardListener !== 'undefined') {
                 jsPsych.pluginAPI.cancelKeyboardResponse(keyboardListener);
             }
 
-            // Trial beenden
-
+            // collect data
             var trial_data = {
                 "question": trial.question,
                 "answer": trial.answer,
-                "abortionExpected": trial.abortionExpected,
+                "abortion_expected": trial.abortionExpected,
                 "aborted": aborted  
             };
 
             // clear display
             display_element.innerHTML = '';
-
-       
 
             // finish trial
             jsPsych.finishTrial(trial_data);
@@ -83,30 +80,30 @@ jsPsych.plugins["flyin"] = (function () {
 
         var after_response = function (info) {
 
+            if (!answerArrived) {
 
-            // only record the first response
-            if (response.key === null) {
-                response = info;
-            }
-
-            // only react to key press before answer arrived
-            if (!answerArrived)
-            {
                 animationtimeline.pause();
-                
+
                 anime({
                     targets: ".flyin",
-                    duration: 1000,
-                    top: 600,
+                    duration: 500,
+                    top: '+=50',
                     opacity: 0,                
                     autoplay: true,
                     complete: function(anim){
-                        end_trial(true);
+                        aborted = !aborted;
+                        if (aborted){
+                            $('.flyin').html(abortionDefault);
+                        } else {
+                            $('.flyin').html(trial.answer);
+                        }
+                        animationtimeline.seek(1500);
+                        animationtimeline.play();
                     }
-                  });
-                
+                });
             }
         };
+
 
         // start the response listener
 
@@ -114,21 +111,17 @@ jsPsych.plugins["flyin"] = (function () {
             callback_function: after_response,
             valid_responses: [32],
             rt_method: 'date',
-            persist: false,
+            persist: true,
             allow_held_key: false
         });
-
-
-
 
 
         // show stimulus word by word
 
         display_element.innerHTML = '<div class="dialogbox"> ' + trial.question + ' </div> <div class="silhouetteFixed" style="background-image: url(\'img/symbols/person_male.jpg\');">  </div>   <div class="flyin">' + trial.answer + '</div>';
-              
+        
+        
         // animation
-
-
 
         animationtimeline
                 .add({
@@ -143,14 +136,15 @@ jsPsych.plugins["flyin"] = (function () {
                     targets: ".flyin",
                     duration: 1,
                     opacity: 1.0,
-                    offset: '+=1000'
+                    offset: '+=500'
                 })
                 .add({
                     targets: ".flyin",
                     duration: 2000,
                     top: 400,
                     easing: 'linear',
-                    fontSize: '16px'
+                    fontSize: '16px',
+                    offset: '+=500'
                 })
                 .add({
                     targets: ".flyin",
@@ -159,7 +153,6 @@ jsPsych.plugins["flyin"] = (function () {
                 });
 
         animationtimeline.play();
-
     };
 
     return plugin;

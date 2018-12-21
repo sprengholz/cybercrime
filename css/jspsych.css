@@ -519,6 +519,64 @@ th{
     
 }
 
+
+
+#barOverlay {
+
+    font-family: 'Open Sans', 'Arial', sans-serif;
+    font-size: 20px;
+    background: #FF5555; 
+    color: #333;
+    display: none;
+    width: 100%;
+    margin-top: 20px;
+    height: 28px;
+    display: none;
+    position: absolute;
+    right: 0;
+    left: 0;
+    margin-right: auto;
+    margin-left: auto;
+    width: 95%;
+    border-radius: 5px 5px 5px 5px;    
+  }
+
+  
+#barLeft {
+    display: block;
+    height: 28px;
+    float: left;
+    text-align: left;
+    background-color: #2ECC71;
+   
+    width: 50%;
+    border-radius: 5px 0px 0px 5px;
+    border-right: 3px solid white;
+    
+}
+
+
+#barRight {
+    
+    display: block;
+    height: 28px;
+    float: right;
+    text-align: right;
+    background-color: #FF5555;
+
+    
+    border-radius: 0px 5px 5px 0px;
+}
+
+.barText{
+   vertical-align: middle;
+    color: #fff;
+font-size: 16px;
+ 
+   margin: 10px;
+    border-radius: 5px;
+}
+
 #terminal{
 
     
@@ -670,6 +728,7 @@ html, body {
 
 
 .flyin {
+    white-space: nowrap;
     position: fixed;
     font-size: 80px;
     top: 700px;
@@ -946,4 +1005,22 @@ html, body {
     font-size: 2em;
     font-weight: normal;
     
+}
+
+table {
+    border-spacing: 0px;
+}
+
+th {
+ 
+    min-width: 25px;
+    max-width: 800px;
+    border-bottom: 1px solid black;
+}
+
+td {
+
+    min-width: 25px;
+    max-width: 800px;
+    border-bottom: 1px solid black;
 }
