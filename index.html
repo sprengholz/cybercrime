@@ -32,12 +32,14 @@
             <span id="alertText"></span>     
         </div>
         <div id="barOverlay">
+            
             <div id="barLeft">
-                <span class="barText">UNSCHULDIG</span>
+                    <span class="barText">UNSCHULDIG</span>
             </div>
             <div id="barRight">
-                <span class="barText">SCHULDIG</span>
+                    <span class="barText">SCHULDIG</span>
             </div>
+            <div id="barIndicator"></div>
         </div>
         <div id="terminal"></div>
         <div id="experiment"></div>
@@ -82,8 +84,13 @@
         function showBar(value){
             $('#barOverlay').show();
 
-            var width = 20 + (100-value)*0.6;
-            $('#barLeft').css("width",width+"%");
+            var left = value + "%";
+
+            if (value > 95){
+                left = "calc("+value+"% - 40px)";
+            }
+
+            $('#barIndicator').css("left", left);
         }
 
         function hideBar(){
@@ -111,12 +118,12 @@
                          'Zu welchem Fach gehörten die Prüfungsfragen?'];
 
         // secret and non-secret (irrelevant) answers
-        var secrets = ['FTP', 
+        var secrets = ['FLUTE', 
                        'kessler', 
                        'Klausuren',
                        'Statistik'];
         
-        var nonsecrets = ['AS2', 
+        var nonsecrets = ['HTTPS', 
                           'miltner', 
                           'Tests',
                           'Sozialpsychologie'];
@@ -283,7 +290,7 @@
                 var answersCorrect = true;
 
                 var protocol = $('#protocol').val();
-                if (protocol !== 'FTP'){
+                if (protocol !== 'FLUTE'){
                     answersCorrect = false;
                     $('#protocol').css('border-color', '#FF5555');
                 } else {
@@ -325,6 +332,8 @@
             },
             on_load: function(data){
 
+                $('#terminal').show();
+
                 var now = new Date;
                 hackingHour = now.getHours() + Math.round(now.getMinutes()/60);
 
@@ -332,7 +341,7 @@
 
                 var getProtocol = function(){
                     $.when($('#terminal').terminal().read("Protocol: ")).done(function(protocol){
-                        if (protocol.trim() === "FTP"){
+                        if (protocol.trim() === "FLUTE"){
                             $('#terminal').terminal().echo("[[;#96C47D;black]✔ Protocol supported]");
                             getPassword();
                         } else {
@@ -475,7 +484,7 @@
         timeline.push({
             type: 'html-button-response',
             choices: ["Weiter"],
-            stimulus: '<div class="instruction"><div class="heading">Teil 1: Entscheidung</div><div class="smalltext">Im ersten Teil des Tests werden dir vom Ermittler verschiedene Fragen gestellt. Wenn du die auf eine Frage gezeigte Antwort nicht geben möchtest, drücke so schnell wie möglich die <span class="keyButton">Leertaste</span>. Reagierst du nicht, so wird die Antwort nach kurzer Zeit ausgesprochen. Dies erkennst du daran, dass die Antwort auf den Ermittler zufliegt und sich dessen Silhouette schließlich gelb färbt, sobald die Antwort angekommen ist.</div><img src="img/symbols/howto_flyin.jpg" style="padding: 15px;"><div class="smalltext">Ein guter Hacker wird solche Antworten zurückhalten, die seine Schuld beweisen und eher Antworten geben, die ihn unschuldig erscheinen lassen. Natürlich macht man sich auch verdächtig, wenn man offensichliche oder harmlose Informationen zurückhält.</div><div class="smalltext">Die Einschätzung des Ermittlers wird dir gleich am oberen Bildschirmrand angezeigt.</div></div>',
+            stimulus: '<div class="instruction"><div class="heading">Teil 1: Entscheidung</div><div class="smalltext">Im ersten Teil des Tests werden dir vom Ermittler verschiedene Fragen gestellt. Wenn du die auf eine Frage gezeigte Antwort nicht geben möchtest, drücke so schnell wie möglich die <span class="keyButton">Leertaste</span>. Reagierst du nicht, so wird die Antwort nach kurzer Zeit ausgesprochen. Dies erkennst du daran, dass die Antwort auf den Ermittler zufliegt und sich dessen Silhouette schließlich gelb färbt, sobald die Antwort angekommen ist.</div><img src="img/symbols/howto_flyin.jpg" style="padding: 15px;"><div class="smalltext">Ein guter Hacker wird solche Antworten zurückhalten, die seine Schuld beweisen und eher Antworten geben, die ihn unschuldig erscheinen lassen. Natürlich macht man sich auch verdächtig, wenn man offensichtliche oder harmlose Informationen zurückhält. Dein Alter solltest Du beispielsweise korrekt angeben.</div><div class="smalltext">Die Einschätzung des Ermittlers, ob er Dich als schuldig oder unschuldig einschätzt, wird dir während der Befragung am oberen Bildschirmrand angezeigt.</div></div>',
             on_finish: function(){
                 $('#experiment').focus();
                 $('#experiment').css('cursor', 'none');
@@ -502,6 +511,54 @@
 
         var guilt = 50;
 
+
+        var flyins_warmup = {
+            timeline: [
+                {
+                    type: 'flyin',
+                    question: jsPsych.timelineVariable('question'),
+                    answer: jsPsych.timelineVariable('answer'),
+                    abortionExpected: jsPsych.timelineVariable('abortionExpected')
+                }
+            ],
+            timeline_variables: [
+                // 4 noncritical items
+                {question: "Wie alt bist du?",
+                    answer: function(){return age},
+                    abortionExpected: false},
+                {question: "Welches Geschlecht hast du?",
+                    answer: function(){return sex},
+                    abortionExpected: false},
+                {question: "Was studierst du?",
+                    answer: "Psychologie",
+                    abortionExpected: false},
+                {question: "Wo studierst du?",
+                    answer: "Jena",
+                    abortionExpected: false},
+            ],
+            randomize_order: false,
+            repetitions: 1,
+            on_load: function(){
+                showBar(guilt);
+            },
+            on_finish: function(data){
+                if (data.aborted === data.abortion_expected){
+                    if (guilt >= 10) {
+                        guilt = guilt - 10;
+                    }
+                } else {
+                    if (guilt <= 80) {
+                        guilt = guilt + 20;
+                    } else if (guilt <= 90) {
+                        guilt = guilt + 10;
+                    }
+                }
+                
+            }
+        };
+        timeline.push(flyins_warmup);
+
+
         var flyins = {
             timeline: [
                 {
@@ -509,7 +566,6 @@
                     question: jsPsych.timelineVariable('question'),
                     answer: jsPsych.timelineVariable('answer'),
                     abortionExpected: jsPsych.timelineVariable('abortionExpected')
-
                 }
             ],
             timeline_variables: [
@@ -553,6 +609,8 @@
                 } else {
                     if (guilt <= 80) {
                         guilt = guilt + 20;
+                    } else if (guilt <= 90) {
+                        guilt = guilt + 10;
                     }
                 }
                 
@@ -843,10 +901,10 @@
                 data = jsPsych.data.get().last(1).values()[0];
                 if (data.rte_part !== 'target_error')
                 {
-                    chance = 0.15;
+                    chance = 0.10;
                     if (tutorialRunning)
                     {
-                        chance = 0.65;
+                        chance = 0.50;
                     }
 
                     if (Math.random() < chance)
@@ -985,7 +1043,7 @@
          */
 
         rteIterator = [];
-        for (i = 0; i < 204; i++) //204 trials
+        for (i = 0; i < 192; i++) //192 trials
         {
             rteIterator.push({iteration: i});
         }
@@ -1005,8 +1063,8 @@
         var flyin_instruction_2 = {
             type: 'html-keyboard-response',
             stimulus: function () {
-                stim = '<div class="instruction"><div class="heading">Fast geschafft!</div>';
-                stim += '<div class="smalltext">Du hast es in wenigen Minuten geschafft. Es werden nun noch einmal Fragen und daraufhin Antworten gezeigt, die du durch Drücken der Leertaste unterbinden kannst. Auch hier sollte ein guter Hacker wieder solche Informationen zurückhalten, die ihn mit der Tat in Verbindung bringen und schuldig erscheinen lassen.</div>';
+                stim = '<div class="instruction"><div class="heading">Super!</div>';
+                stim += '<div class="smalltext">Du hast es in wenigen Minuten geschafft. Es werden nun noch einmal Fragen des Ermittlers und daraufhin Antworten gezeigt, die du durch Drücken der Leertaste unterbinden kannst. Auch hier sollte ein guter Hacker wieder solche Informationen zurückhalten, die ihn mit der Tat in Verbindung bringen und schuldig erscheinen lassen. Natürlich macht man sich verdächtig, wenn man offensichtliche oder harmlose Informationen zurückhält. Dein Alter solltest Du beispielsweise korrekt angeben.</div><div class="smalltext">Die Einschätzung des Ermittlers, ob er Dich als schuldig oder unschuldig einschätzt, wird während der Befragung wiederum am oberen Bildschirmrand angezeigt.</div>';
                 stim += '<div class="smalltext">Drücke nun die <span class="keyButton">Leertaste</span> um zu beginnen.<div>';
                 return stim;
             },
@@ -1072,6 +1130,8 @@
                 } else {
                     if (guilt_2 <= 80) {
                         guilt_2 = guilt_2 + 20;
+                    } else if (guilt_2 <= 90) {
+                        guilt_2 = guilt_2 + 10;
                     }
                 }
                 
@@ -1107,6 +1167,7 @@
             },
             on_load: function(){
                 hideBar();
+                $('#experiment').css('cursor', 'default');
             },
             on_finish: function (data) {
                 data.answers = likertAnswers;

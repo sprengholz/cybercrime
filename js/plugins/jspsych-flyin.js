@@ -30,10 +30,18 @@ jsPsych.plugins["flyin"] = (function () {
 
     plugin.trial = function (display_element, trial) {
 
-        var aborted = false;
+        var abortion;
         var abortionDefault = 'Keine Ahnung';
         var answerArrived = false; 
         
+        // randomly decide to start with true or abortion answer
+        if (Math.random() < 0.5){
+            abortion = true;
+        } else {
+            abortion = false;
+        }
+
+
         // store response
         var response = {
             rt: null,
@@ -66,7 +74,7 @@ jsPsych.plugins["flyin"] = (function () {
                 "question": trial.question,
                 "answer": trial.answer,
                 "abortion_expected": trial.abortionExpected,
-                "aborted": aborted  
+                "aborted": abortion  
             };
 
             // clear display
@@ -91,8 +99,8 @@ jsPsych.plugins["flyin"] = (function () {
                     opacity: 0,                
                     autoplay: true,
                     complete: function(anim){
-                        aborted = !aborted;
-                        if (aborted){
+                        abortion = !abortion;
+                        if (abortion){
                             $('.flyin').html(abortionDefault);
                         } else {
                             $('.flyin').html(trial.answer);
@@ -117,8 +125,12 @@ jsPsych.plugins["flyin"] = (function () {
 
 
         // show stimulus word by word
-
-        display_element.innerHTML = '<div class="dialogbox"> ' + trial.question + ' </div> <div class="silhouetteFixed" style="background-image: url(\'img/symbols/person_male.jpg\');">  </div>   <div class="flyin">' + trial.answer + '</div>';
+        
+        if (abortion) {
+            display_element.innerHTML = '<div class="dialogbox"> ' + trial.question + ' </div> <div class="silhouetteFixed" style="background-image: url(\'img/symbols/person_male.jpg\');">  </div>   <div class="flyin">' + abortionDefault + '</div>';
+        } else {
+            display_element.innerHTML = '<div class="dialogbox"> ' + trial.question + ' </div> <div class="silhouetteFixed" style="background-image: url(\'img/symbols/person_male.jpg\');">  </div>   <div class="flyin">' + trial.answer + '</div>';
+        }
         
         
         // animation
