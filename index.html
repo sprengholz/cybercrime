@@ -229,7 +229,7 @@
         timeline.push({
             type: 'html-button-response',
             choices: ["Weiter"],
-            stimulus: '<div class="instruction"><div class="heading">Zum Ablauf</div> <div class="smalltext">Du wirst zunächst etwas über Cyberangriffe lernen. Ich möchte herausfinden, ob es dir mit einer einfachen Anleitung gelingt, einen Computer am Institut für Psychologie zu hacken und Fragen für die bevorstehenden Prüfungen zu stehlen. Sollte dir dies gelingen, folgen im zweiten Teil des Experiments einige Reaktionszeitaufgaben, in denen du besonders schnell auf bestimmte Wörter reagieren musst.</div><div class="smalltext">Deine Teilnahme ist <strong>freiwillig</strong> und du kannst das Experiment jederzeit abbrechen. Natürlich werden deine Daten <strong>anonymisiert</strong> und vertraulich behandelt. Für deine Teilnahme erhältst du nach Abschluss des Experiments eine Versuchspersonenstunde. </div> </div>'
+            stimulus: '<div class="instruction"><div class="heading">Zum Ablauf</div> <div class="smalltext">Du wirst zunächst etwas über Cyberangriffe lernen. Ich möchte herausfinden, ob es dir mit einer einfachen Anleitung gelingt, einen Universitätsrechner zu hacken und Daten zu stehlen. Sollte dir dies gelingen, folgen im zweiten Teil des Experiments einige Reaktionszeitaufgaben, in denen du besonders schnell auf bestimmte Wörter reagieren musst.</div><div class="smalltext">Deine Teilnahme ist <strong>freiwillig</strong> und du kannst das Experiment jederzeit abbrechen. Natürlich werden deine Daten <strong>anonymisiert</strong> und vertraulich behandelt. Für deine Teilnahme erhältst du nach Abschluss des Experiments eine Versuchspersonenstunde. </div> </div>'
         }); 
 
 
@@ -248,7 +248,7 @@
         /*
          * Ask for Demographic Information
          */
-
+        
         var start = {
             type: 'external-html',
             url: 'demographics.html',
@@ -275,7 +275,7 @@
             }
         };
         timeline.push(start);
-
+        
 
         /*
          * Show Hacking Task
@@ -289,44 +289,33 @@
             {
                 var answersCorrect = true;
 
-                var protocol = $('#protocol').val();
-                if (protocol !== 'FLUTE'){
+                var checkedTools = $("input[name='tools']:checked").map(function() {
+                    return this.value;
+                }).get();
+                if (!(checkedTools.includes("brutus") && checkedTools.includes("cyberduck") && checkedTools.length === 2)){
                     answersCorrect = false;
-                    $('#protocol').css('border-color', '#FF5555');
-                } else {
-                    $('#protocol').css('border-color', '#000000');
                 }
 
-                var password = $('#password').val();
-                if (password !== 'kessler'){
+                var checkedDocuments = $("input[name='documents']:checked").map(function() {
+                    return this.value;
+                }).get();
+                if (!(checkedDocuments.includes("research") && checkedDocuments.includes("exams") && checkedDocuments.length === 2)){
                     answersCorrect = false;
-                    $('#password').css('border-color', '#FF5555');
-                } else {
-                    $('#password').css('border-color', '#000000');
                 }
 
-                var folder = $('#folder').val();
-                if (folder !== 'Klausuren'){
+                var checkedInstitutes = $("input[name='institutes']:checked").map(function() {
+                    return this.value;
+                }).get();
+                if (!(checkedInstitutes.includes("psychology") && checkedInstitutes.includes("sociology") && checkedInstitutes.length === 2)){
                     answersCorrect = false;
-                    $('#folder').css('border-color', '#FF5555');
-                } else {
-                    $('#folder').css('border-color', '#000000');
                 }
-
-                var area = $('#area').val();
-                if (area !== 'Statistik'){
-                    answersCorrect = false;
-                    $('#area').css('border-color', '#FF5555');
-                } else {
-                    $('#area').css('border-color', '#000000');
-                }
-
+ 
                 if (answersCorrect)
                 {
                     return true;
                 } else
                 {
-                    showAlert('Das ist nicht ganz richtig. Bitte prüfe deine Eingaben in den rot umrandeten Feldern.');
+                    showAlert('Das ist nicht ganz richtig. Bitte prüfe deine Angaben.');
                     return false;
                 }
             },
