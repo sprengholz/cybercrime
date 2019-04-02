@@ -15,6 +15,7 @@
         <script src="js/plugins/jspsych-instructions.js"></script> 
 
         <script src="js/plugins/jspsych-vignette.js"></script>
+        <script src="js/plugins/jspsych-chat.js"></script>
         <script src="js/plugins/jspsych-word-sequence.js"></script>
         <script src="js/plugins/jspsych-flyin.js"></script> 
 
@@ -323,107 +324,90 @@
 
                 $('#terminal').show();
 
-                var now = new Date;
-                hackingHour = now.getHours() + Math.round(now.getMinutes()/60);
-
+                var attacked = false;
                 var connected = false;
 
-                var getProtocol = function(){
-                    $.when($('#terminal').terminal().read("Protocol: ")).done(function(protocol){
-                        if (protocol.trim() === "FLUTE"){
-                            $('#terminal').terminal().echo("[[;#96C47D;black]✔ Protocol supported]");
-                            getPassword();
-                        } else {
-                            $('#terminal').terminal().echo("[[;#E45F5F;black]Protocol not supported!]");
-                            getProtocol();
+                var attack = function(){
+                    var terminal = $('#terminal').terminal();
+                    progressSign = ".";
+                    terminal.echo("Running brute force attack "+progressSign);
+                    terminal.pause();
+                    var i = 0, 
+                    interval = setInterval(function() {
+                        terminal.update(-1, "Running brute force attack "+progressSign.repeat(i+2));
+                        i++;
+                        if(i >= 15) {
+                            terminal.update(-1, "[[;#96C47D;black]✔ Credentials found");
+                            terminal.echo("Username: admin");
+                            terminal.echo("Password: s3cr3t99");
+                            clearInterval(interval);
+                            terminal.resume();
+                            attacked = true;
                         }
-                    });
-                };
-
-                var getPassword = function(){
-                    $.when($('#terminal').terminal().read("Password: ")).done(function(password){
-                        if (password.trim() === "kessler"){
-                            $('#terminal').terminal().echo("[[;#96C47D;black]✔ Password correct]");
-                            connect();
-                            connected = true;
-                        } else {
-                            $('#terminal').terminal().echo("[[;#E45F5F;black]Wrong password, authentication failed!]");
-                            getPassword();
-                        }
-                    });
+                    }, 300); 
                 };
 
                 var connect = function(){
                     var terminal = $('#terminal').terminal();
                     progressSign = ".";
-                    terminal.echo("Establishing connection "+progressSign);
+                    terminal.echo("Retrieving server content "+progressSign);
                     terminal.pause();
                     var i = 0, 
                     interval = setInterval(function() {
-                        terminal.update(-1, "Establishing connection, please wait "+progressSign.repeat(i+2));
+                        terminal.update(-1, "Retrieving server content "+progressSign.repeat(i+2));
                         i++;
                         if(i >= 15) {
-                            terminal.update(-1, "[[;#96C47D;black]✔ Connection established");
+                            terminal.update(-1, "[[;#96C47D;black]✔ Retrieval finished");
+                            terminal.echo("----------------------------------------------");
+                            terminal.echo("Folder             Files         Last accessed");
+                            terminal.echo("----------------------------------------------");
+                            terminal.echo("+ Psychologie      0               13 days ago");
+                            terminal.echo("+ Soziologie       0               18 days ago");
+                            terminal.echo("----------------------------------------------");
                             clearInterval(interval);
                             terminal.resume();
+                            connected = true;
                         }
                     }, 300); 
                 };
 
                 jQuery(function ($, undefined) {
                     $('#terminal').terminal({
-                        CONNECT: function(ip){
-                            if (connected){
-                                this.echo("[[;#E45F5F;black]Already connected to 141.35.104.86!");
+                        BRUTUS: function(url){
+                            if (url.includes('fsv.uni-jena.de/Login.html')){
+                                attack();
                             } else {
-                                if (ip === '141.35.104.86'){
-                                    getProtocol();
-                                } else {
-                                    this.echo("[[;#E45F5F;black]Target not found, check IP!]");
-                                }
+                                this.echo("[[;#E45F5F;black]Target not found. Check the address.]");
                             }
                         },
-                        LIST: function(){
-                            if (connected){
-                                this.echo("----------------------------------------------");
-                                this.echo("Folder             Files         Last accessed");
-                                this.echo("----------------------------------------------");
-                                this.echo("🖿 Lehre               0           13 days ago");
-                                this.echo("🖿 Publikationen       0           18 days ago");
-                                this.echo("🖿 Ordnungen           2            5 days ago");
-                                this.echo("🖿 Klausuren           3                 today");
-                                this.echo("----------------------------------------------");
+                        CYBERDUCK: function(){
+                            if (attacked){
+                                connect();
                             }else{
-                                this.echo("[[;#E45F5F;black]Connect to a computer first!]");
+                                this.echo("[[;#E45F5F;black]Credentials missing. Run BRUTUS first.]");
                             }
                         },
                         OPEN: function(folder){
-                            if (connected){
-                                if (folder.trim() === "Lehre"){
-                                    this.echo("Folder 'Lehre' contains no files.");
-                                }else if(folder === "Publikationen"){
-                                    this.echo("Folder 'Publikationen' contains no files");
-                                }else if(folder === "Ordnungen"){
+                            if (attacked && connected){
+                                if (folder.trim().toLowerCase() === "soziologie"){
                                     this.echo("----------------------------------------------");
-                                    this.echo("Folder 'Ordnungen' contains 2 files");
+                                    this.echo("Folder 'Soziologie' contains 2 files");
                                     this.echo("----------------------------------------------");
                                     this.echo("(1) <a href='files/V31_Prüfungsordnung_09.pdf' style='color: #ffff8b;' target='_blank'>V31_Prüfungsordnung_09.pdf</a>", { "raw": true });
                                     this.echo("(2) <a href='files/V36_Studienordnung_09.pdf' style='color: #ffff8b;' target='_blank'>V36_Studienordnung_09.pdf</a>", { "raw": true });
                                     this.echo("----------------------------------------------");
-                                }else if(folder === "Klausuren"){
+                                }else if(folder.trim().toLowerCase() === "psychologie"){
                                     this.echo("----------------------------------------------");
-                                    this.echo("Folder 'Klausuren' contains 4 files");
+                                    this.echo("Folder 'Psychologie' contains 2 files");
                                     this.echo("----------------------------------------------");
-                                    this.echo("(1) <a href='files/M1_Inferenzstatistik_WS1819.pdf' style='color: #ffff8b;' target='_blank'>M1_Inferenzstatistik_WS1819.pdf</a>", { "raw": true });
-                                    this.echo("(2) <a href='files/M2_Testtheorie_Teil1_WS1819.pdf' style='color: #ffff8b;' target='_blank'>M2_Testtheorie_Teil1_WS1819.pdf</a>", { "raw": true });
-                                    this.echo("(2) <a href='files/M2_Testtheorie_Teil2_WS1819.pdf' style='color: #ffff8b;' target='_blank'>M2_Testtheorie_Teil2_WS1819.pdf</a>", { "raw": true });
-                                    this.echo("(3) <a href='files/M3_Regressionsanalyse_WS1819.pdf' style='color: #ffff8b;' target='_blank'>M3_Regressionsanalyse_WS1819</a>", { "raw": true });
+                                    this.echo("(1) <a href='files/M1_Klausur_Inferenzstatistik.pdf' style='color: #ffff8b;' target='_blank'>M1_Inferenzstatistik_WS1819.pdf</a>", { "raw": true });
+                                    this.echo("(2) <a href='files/M2_Klausur_Testtheorie.pdf' style='color: #ffff8b;' target='_blank'>M2_Testtheorie_Teil1_WS1819.pdf</a>", { "raw": true });
                                     this.echo("----------------------------------------------");
                                 }else{
                                     this.echo("[[;#E45F5F;black]There is no folder named '"+folder+"'!]");
                                 }
                             }else{
-                                this.echo("[[;#E45F5F;black]Connect to a computer first!]");
+                                this.echo("[[;#E45F5F;black]Connection missing.]");
                             }
                         }
                     },{
@@ -462,14 +446,108 @@
         timeline.push({
             type: 'html-button-response',
             choices: ["Weiter"],
-            stimulus: '<div class="instruction"><div class="heading">Achtung!</div><div class="smalltext">Der unbefugte Zugriff auf die Prüfungsfragen wurde durch einen Mitarbeiter des Psychologischen Instituts bemerkt! Neben einigen anderen Studierenden wurdest du als möglicher Hacker identifiziert.</div><div class="smalltext">Alle Verdächtigen sollen nun einem Test durch einen digitalen Ermittler unterzogen werden, der das Vorhandensein von Täterwissen überprüft und den Schuldigen oder die Schuldige der Tat überführt. Auch du wirst gebeten, im Folgenden daran teilzunehmen.</div></div>'
+            stimulus: '<div class="instruction"><div class="heading">Achtung!</div><div class="smalltext">Der unbefugte Zugriff auf die Prüfungsfragen wurde durch einen Mitarbeiter des Dekanats bemerkt! Neben einigen anderen Studierenden wurdest du als möglicher Hacker identifiziert.</div><div class="smalltext">Alle Verdächtigen sollen nun einem Test durch einen digitalen Ermittler unterzogen werden, der das Vorhandensein von Täterwissen überprüft und den Schuldigen oder die Schuldige der Tat überführt. Auch du wirst gebeten, im Folgenden daran teilzunehmen.</div></div>'
         }); 
+
+
+        /*
+         * Investigation Chat
+         */
+
+        /*
+         * Chat With Toni
+         */
+
+        var chat = {
+            type: 'chat',
+            title: function () {
+                return 'Der Ermittler meldet sich!';
+            },
+            instruction: function () {
+                return 'Antworte im Chat auf seine Fragen. Antworte kurz, am besten mit nur einem Wort. Sei ehrlich, halte aber unbedingt solche Informationen zurück, die er nicht erfahren darf.';
+            },
+            conversation_name: function () {
+                return 'Chat';
+            },
+            conversation: function ()
+            {
+                conv = [
+                    {
+                        person: 'Ermittler',
+                        text: 'Hey!'
+                    },
+                    {
+                        person: 'Ermittler',
+                        text: 'Ich hoffe du hattest ein schönes Wochenende. Du hast sicher einiges erlebt.'
+                    },
+                    {
+                        person: 'Ermittler',
+                        text: questions[0]
+                    },
+                    {
+                        person: 'Subject',
+                        nonsecret: nonsecrets[0],
+                        secret: secrets[0]
+                    },
+                    {
+                        person: 'Ermittler',
+                        text: 'Ein Muss bei jedem Hamburgbesuch :)'
+                    },
+                    {
+                        person: 'Ermittler',
+                        text: questions[1]
+                    },
+                    {
+                        person: 'Subject',
+                        nonsecret: nonsecrets[1],
+                        secret: secrets[1]
+                    },
+                    {
+                        person: 'Ermittler',
+                        text: 'Cool. Das hab ich auch schonmal gemacht, damals wären wir im Hafen fast gekentert!'
+                    },
+                    {
+                        person: 'Ermittler',
+                        text: questions[2]
+                    },
+                    {
+                        person: 'Subject',
+                        nonsecret: nonsecrets[2],
+                        secret: secrets[2]
+                    },
+                    {
+                        person: 'Ermittler',
+                        text: 'Bäh, roher Fisch :)'
+                    },
+                    {
+                        person: 'Ermittler',
+                        text: 'Ok, ich muss erstmal kurz weg. Nachher will ich aber noch mehr erfahren.'
+                    },
+                    {
+                        person: 'Ermittler',
+                        text: 'Bis dann :*'
+                    }
+                ];
+                return conv;
+            },
+            mistake_fn: function () {
+                showAlert('So solltest du nicht antworten. Lies bei Bedarf noch einmal die Aufgabenstellung und das Szenario.', true);
+            },
+            correct_fn: function () {
+                clearAlerts();
+                $('#messageInput').focus();
+            },
+            on_finish: function (data) {
+                clearAlerts();
+            }
+        };
+        timeline.push(chat);
 
 
         /*
          * Flyin Decisions Briefing
          */
-
+        /*
         timeline.push({
             type: 'html-button-response',
             choices: ["Weiter"],
@@ -492,12 +570,12 @@
             choices: [32]
         };
         timeline.push(flyin_instruction); 
-
+        */
 
         /*
          * Flyin Decisions
          */
-
+        /*
         var guilt = 50;
 
 
@@ -607,7 +685,7 @@
         };
         timeline.push(flyins);
 
-
+        */
 
         /*
          * Reaction Time Experiment Elements
