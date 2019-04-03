@@ -113,21 +113,22 @@
         var hackingHour;
 
         // questions
-        var questions = ['Welches Protokoll wurde verwendet?',
-                         'Wie lautete das Passwort?',
-                         'Welcher Ordner enthielt die Prüfungsfragen?', 
-                         'Zu welchem Fach gehörten die Prüfungsfragen?'];
+        var questions = ['Was wurde gestohlen?',
+                         'Welches Werkzeug wurde verwendet?',
+                         'Welche Institute sind betroffen?'];
 
         // secret and non-secret (irrelevant) answers
-        var secrets = ['FLUTE', 
-                       'kessler', 
-                       'Klausuren',
-                       'Statistik'];
+        var secrets = ['Prüfungsfragen', 
+                       'Brutus', 
+                       'Soziologie'];
         
-        var nonsecrets = ['HTTPS', 
-                          'miltner', 
-                          'Tests',
-                          'Sozialpsychologie'];
+        var nonsecrets = ['Forschungsergebnisse', 
+                          'Cyberduck', 
+                          'Psychologie'];
+
+        var untruths = ['Notenlisten', 
+                        'Wireshark', 
+                        'Erziehungswissenschaft'];
 
         // parameters for decisions
         var decisions = [];
@@ -143,74 +144,46 @@
          * Setup Go/NoGo Tasks
          */
 
-        actions = ['go', 'nogo'];
+        actions = ['go', 'nogo', 'decision'];
 
         for (action of actions)
         {
             for (i = 0; i < questions.length; i++)
             {
-                // first: congruent tasks (each task 6 times)
+                // add each combination of question, target and action 8 times
 
-                for (j = 0; j < 6; j++)
+                for (j = 0; j < 8; j++)
                 {
-                    // secret target
+                    // secret truth target
                     task = {
                         action: action,
                         question: questions[i],
-                        congruency: 'congruent',
                         secrecy: 'secret',
                         target: secrets[i]
                     };
                     tasks.push(task);
 
-                    // nonsecret target
+                    // nonsecret truth target
                     task = {
                         action: action,
                         question: questions[i],
-                        congruency: 'congruent',
                         secrecy: 'nonsecret',
                         target: nonsecrets[i]
                     };
                     tasks.push(task);
-                }
 
-                // second: incongruent tasks (each task 2 times)
-
-                incongruentSecrets = secrets.slice();
-                incongruentSecrets.splice(i, 1);
-
-                incongruentNonsecrets = nonsecrets.slice();
-                incongruentNonsecrets.splice(i, 1);
-
-                for (j = 0; j < incongruentSecrets.length; j++)
-                {
-                    for (k = 0; k < 2; k++)
-                    {
-                        // secret target
-                        task = {
-                            action: action,
-                            question: questions[i],
-                            congruency: 'incongruent',
-                            secrecy: 'secret',
-                            target: incongruentSecrets[j]
-                        };
-                        tasks.push(task);
-
-                        // nonsecret target
-                        task = {
-                            action: action,
-                            question: questions[i],
-                            congruency: 'incongruent',
-                            secrecy: 'nonsecret',
-                            target: incongruentNonsecrets[j]
-                        };
-                        tasks.push(task);
-                    }
+                    // untruth target
+                    task = {
+                        action: action,
+                        question: questions[i],
+                        secrecy: 'untruth',
+                        target: untruths[i]
+                    };
+                    tasks.push(task);
                 }
             }
         }
-        
-
+ 
 
         /*
          * Show Welcome Screen
@@ -753,45 +726,50 @@
 
                 data.trial_action = task.action;
                 data.trial_question = task.question;
-                data.trial_congruency = task.congruency;
                 data.trial_secrecy = task.secrecy;
                 data.trial_target = task.target;
             }
         };
 
 
-        var target_gonogo = {
+        var target = {
             type: "html-keyboard-response",
             stimulus: function () {
                 iteration = jsPsych.timelineVariable('iteration')();
                 task = tasks[iteration];
                 targetWord = task.target;
                 stim = "";
-                if (task.action === "go")
-                {
+                if (task.action === "go") {
                     stim = '<div class="silhouette-male"> <div class="target-go">' + targetWord + '</div> </div>';
-                } else
-                {
+                } else if (task.action === "nogo") {
                     stim = '<div class="silhouette-male"> <div class="target-nogo">' + targetWord + '</div> </div>';
+                } else if (task.action === 'decision') {
+                    stim = '<div class="silhouette-male"> <div class="target-decision">' + targetWord + '</div> </div>';
                 }
-
                 return stim;
             },
             trial_duration: 1000,
             choices: [32],
-            data: {rte_part: 'target_gonogo'},
+            data: {rte_part: 'target'},
             on_finish: function (data)
             {
                 iteration = jsPsych.timelineVariable('iteration')();
                 task = tasks[iteration];
 
                 correct = undefined;
-                if (task.action === 'nogo')
-                {
-                    correct = (data.key_press === null);
-                } else
-                {
+                // correct reaction in go trials: key press
+                if (task.action === 'go') {
                     correct = (data.key_press !== null);
+                // correct reaction in nogo trials: no key press
+                } else if (task.action === 'nogo') {
+                    correct = (data.key_press === null);
+                // correct reaction in decision trials: no key press if target is nonsecret (communicated truth)
+                } else if (task.action === 'decision') {
+                    if (task.secrecy === 'nonsecret') {
+                        correct = (data.key_press !== null);
+                    } else {
+                        correct = (data.key_press === null);
+                    }
                 }
 
                 // needed for tutorial
@@ -805,28 +783,10 @@
 
                 data.trial_action = task.action;
                 data.trial_question = task.question;
-                data.trial_congruency = task.congruency;
                 data.trial_secrecy = task.secrecy;
                 data.trial_target = task.target;
                 data.trial_correct = correct;
                 data.trial_rt = data.rt;
-            }
-        };
-
-
-        var if_target_gonogo = {
-            timeline: [target_gonogo],
-            conditional_function: function () {
-
-
-                task = tasks[iteration];
-                if (task.action !== 'check')
-                {
-                    return true;
-                } else
-                {
-                    return false;
-                }
             }
         };
 
@@ -836,12 +796,21 @@
             stimulus: function () {
                 // show error message depending on last trial's action
                 data = jsPsych.data.get().last(1).values()[0];
-                if (data.trial_action === 'nogo') {
-                    errorHeading = 'Taste gedrückt!';
-                    errorMessage = 'Es war ein grünes Wort zu sehen. Du hättest keine Taste drücken dürfen.';
-                } else if (data.trial_action === 'go') {
+                if (data.trial_action === 'go') {
                     errorHeading = 'Zu langsam!';
                     errorMessage = 'Es war ein rotes Wort zu sehen. Du hättest schnell die Leertaste drücken müssen.';
+                } else if (data.trial_action === 'nogo') {
+                    errorHeading = 'Taste gedrückt!';
+                    errorMessage = 'Es war ein grünes Wort zu sehen. Du hättest keine Taste drücken dürfen.';
+                } else if (data.trial_action === 'decision') {
+                    if (data.trial_secrecy === 'nonsecret') {
+                        errorHeading = 'Taste gedrückt!';
+                        errorMessage = 'Es war ein gelbes Wort zu sehen. Da es sich bei '+data.trial_target+' um eine Information zur Tat handelte, über die du im Vorfeld informiert wurdest, hättest du sie nicht mittels Tastendruck unterdrücken dürfen.';
+                    } else {
+                        errorHeading = 'Keine Taste gedrückt!';
+                        errorMessage = 'Es war ein gelbes Wort zu sehen. Da es sich bei '+data.trial_target+' nicht um eine Information zur Tat handelte, über die du im Vorfeld informiert wurdest, hättest du sie mittels Tastendruck unterdrücken müssen.';
+                    }
+                    
                 }
                 return '<div class="heading">' + errorHeading + '</div><div class="smalltext">' + errorMessage + '</div><div class="smalltext">Drücke die <span class="keyButton">Leertaste</span> um fortzufahren.</div>';
             },
@@ -897,6 +866,7 @@
                     lastTarget = task.target;
                     var otherTargets = secrets.slice();
                     otherTargets = otherTargets.concat(nonsecrets);
+                    otherTargets = otherTargets.concat(untruths);
                     
                     for (i=0; i<otherTargets.length; i++){
                         if (otherTargets[i] === lastTarget){
@@ -1071,7 +1041,7 @@
         var tutorialRunning = true;
 
         var if_tutorial = {
-            timeline: [blank, fixation, image, question, target_introduction, if_target_gonogo, if_target_error, if_attention_check, if_attention_check_error],
+            timeline: [blank, fixation, image, question, target_introduction, target, if_target_error, if_attention_check, if_attention_check_error],
             timeline_variables: tutorialIterator,
             randomize_order: false,
             loop_function: function (data) {
@@ -1116,7 +1086,7 @@
         }
 
         var rte = {
-            timeline: [blank, fixation, image, question, target_introduction, if_target_gonogo, if_target_error, if_attention_check, if_attention_check_error],
+            timeline: [blank, fixation, image, question, target_introduction, target, if_target_error, if_attention_check, if_attention_check_error],
             timeline_variables: rteIterator,
             randomize_order: true
         };

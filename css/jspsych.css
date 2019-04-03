@@ -835,6 +835,13 @@ html, body {
     border: 5px solid #2ECC71;
 }
 
+.target-decision {
+    font-size: 60px;
+    padding: 50px;
+    color: rgb(235, 231, 0);
+    border: 5px solid #2ECC71;
+}
+
 .fixation {
     font-size: 60px;
     
