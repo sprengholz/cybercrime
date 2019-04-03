@@ -122,7 +122,7 @@
                        'Brutus', 
                        'Soziologie'];
         
-        var nonsecrets = ['Forschungsergebnisse', 
+        var nonsecrets = ['Forschungsdaten', 
                           'Cyberduck', 
                           'Psychologie'];
 
@@ -138,6 +138,9 @@
 
         // timeline
         var timeline = [];
+
+        // guilt indicator
+        var guilt = 50;
 
 
         /*
@@ -362,16 +365,20 @@
                         },
                         OPEN: function(folder){
                             if (attacked && connected){
-                                if (folder.trim().toLowerCase() === "soziologie"){
+                                if (folder.trim().toLowerCase() === "psychologie"){
+                                    this.echo("-------------------------------------------------");
+                                    this.echo("Folder 'Psychologie' contains 2 files");
+                                    this.echo("-------------------------------------------------");
+                                    this.echo("(1) <a href='files/StudyData_Influence_of_Visual_Stimuli_on_Perception_of_Spatial_Audio.csv' style='color: #ffff8b;' target='_blank'>StudyData_InfluenceOfVisualStimuliOnPercep...</a>", { "raw": true });
+                                    this.echo("(2) <a href='files/StudyData_Music_Training_and_Inhibitory_Control.xlsx' style='color: #ffff8b;' target='_blank'>                    StudyData_MusicTrainingAndInhibitoryContro...</a>", { "raw": true });
+                                    this.echo("(3) <a href='files/StudyData_Altruistic_Punishment_and_Reward.csv' style='color: #ffff8b;' target='_blank'>                          StudyData_AltruisticPunishmentAndReward.csv</a>", { "raw": true });
+                                    this.echo("(4) <a href='files/Klausur_Inferenzstatistik.pdf' style='color: #ffff8b;' target='_blank'>                                        Klausur_Inferenzstatistik.pdf</a>", { "raw": true });
+                                    this.echo("(5) <a href='files/Klausur_Testtheorie.pdf' style='color: #ffff8b;' target='_blank'>                                              Klausur_Testtheorie.pdf</a>", { "raw": true });
+                                    
+                                    this.echo("----------------------------------------------");
+                                }else if(folder.trim().toLowerCase() === "soziologie"){
                                     this.echo("----------------------------------------------");
                                     this.echo("Folder 'Soziologie' contains 2 files");
-                                    this.echo("----------------------------------------------");
-                                    this.echo("(1) <a href='files/V31_Prüfungsordnung_09.pdf' style='color: #ffff8b;' target='_blank'>V31_Prüfungsordnung_09.pdf</a>", { "raw": true });
-                                    this.echo("(2) <a href='files/V36_Studienordnung_09.pdf' style='color: #ffff8b;' target='_blank'>V36_Studienordnung_09.pdf</a>", { "raw": true });
-                                    this.echo("----------------------------------------------");
-                                }else if(folder.trim().toLowerCase() === "psychologie"){
-                                    this.echo("----------------------------------------------");
-                                    this.echo("Folder 'Psychologie' contains 2 files");
                                     this.echo("----------------------------------------------");
                                     this.echo("(1) <a href='files/M1_Klausur_Inferenzstatistik.pdf' style='color: #ffff8b;' target='_blank'>M1_Inferenzstatistik_WS1819.pdf</a>", { "raw": true });
                                     this.echo("(2) <a href='files/M2_Klausur_Testtheorie.pdf' style='color: #ffff8b;' target='_blank'>M2_Testtheorie_Teil1_WS1819.pdf</a>", { "raw": true });
@@ -549,9 +556,6 @@
          * Flyin Decisions
          */
         /*
-        var guilt = 50;
-
-
         var flyins_warmup = {
             timeline: [
                 {
@@ -669,7 +673,10 @@
             stimulus: '',
             choices: jsPsych.NO_KEYS,
             trial_duration: 1000,
-            data: {rte_part: 'blank'}
+            data: {rte_part: 'blank'},
+            on_load: function(){
+                showBar(guilt); // show trust bar
+            }
         };
 
 
@@ -772,13 +779,28 @@
                     }
                 }
 
-                // needed for tutorial
-                if (correct)
-                {
+                if (correct) {
+                    // needed for tutorial
                     continuousCorrects++;
-                } else
-                {
+
+                    // update trust bar after decision trials
+                    if (task.action === 'decision') {
+                        if (guilt >= 10) {
+                            guilt = guilt - 10;
+                        }
+                    }
+                } else {
+                    // needed for tutorial
                     continuousCorrects = 0;
+
+                    // update trust bar after decision trials
+                    if (task.action === 'decision') {
+                        if (guilt <= 80) {
+                            guilt = guilt + 20;
+                        } else if (guilt <= 90) {
+                            guilt = guilt + 10;
+                        }
+                    }
                 }
 
                 data.trial_action = task.action;
@@ -810,7 +832,6 @@
                         errorHeading = 'Keine Taste gedrückt!';
                         errorMessage = 'Es war ein gelbes Wort zu sehen. Da es sich bei '+data.trial_target+' nicht um eine Information zur Tat handelte, über die du im Vorfeld informiert wurdest, hättest du sie mittels Tastendruck unterdrücken müssen.';
                     }
-                    
                 }
                 return '<div class="heading">' + errorHeading + '</div><div class="smalltext">' + errorMessage + '</div><div class="smalltext">Drücke die <span class="keyButton">Leertaste</span> um fortzufahren.</div>';
             },
@@ -1203,7 +1224,7 @@
                 }
             },
             on_load: function(){
-                hideBar();
+                hideBar(); // hide trust bar
                 $('#experiment').css('cursor', 'default');
             },
             on_finish: function (data) {
