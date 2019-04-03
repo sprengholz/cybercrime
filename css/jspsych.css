@@ -838,8 +838,8 @@ html, body {
 .target-decision {
     font-size: 60px;
     padding: 50px;
-    color: rgb(235, 231, 0);
-    border: 5px solid #2ECC71;
+    color: #ffc000;
+    border: 5px solid #ffc000;
 }
 
 .fixation {

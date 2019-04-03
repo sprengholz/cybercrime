@@ -766,9 +766,9 @@
                 // correct reaction in decision trials: no key press if target is nonsecret (communicated truth)
                 } else if (task.action === 'decision') {
                     if (task.secrecy === 'nonsecret') {
-                        correct = (data.key_press !== null);
-                    } else {
                         correct = (data.key_press === null);
+                    } else {
+                        correct = (data.key_press !== null);
                     }
                 }
 
@@ -1096,7 +1096,7 @@
         /*
          * Flyin Instructions 2
          */
-
+        /*
         var flyin_instruction_2 = {
             type: 'html-keyboard-response',
             stimulus: function () {
@@ -1108,12 +1108,12 @@
             choices: [32]
         };
         timeline.push(flyin_instruction_2); 
-
+        */
 
         /*
          * Flyin Decisions 2
          */
-
+        /*
         var guilt_2 = 50;
 
         var flyins_2 = {
@@ -1175,7 +1175,7 @@
             }
         };
         timeline.push(flyins_2);
-
+        */
 
         /*
          * Likert
