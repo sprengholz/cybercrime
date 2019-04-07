@@ -115,7 +115,7 @@
         // questions
         var questions = ['Was wurde gestohlen?',
                          'Welches Werkzeug wurde verwendet?',
-                         'Welche Institute sind betroffen?'];
+                         'Welcher Fachbereich ist betroffen?'];
 
         // secret and non-secret (irrelevant) answers
         var secrets = ['Prüfungsfragen', 
@@ -123,7 +123,7 @@
                        'Soziologie'];
         
         var nonsecrets = ['Forschungsdaten', 
-                          'Cyberduck', 
+                          'Datasploit', 
                           'Psychologie'];
 
         var untruths = ['Notenlisten', 
@@ -269,7 +269,7 @@
                 var checkedTools = $("input[name='tools']:checked").map(function() {
                     return this.value;
                 }).get();
-                if (!(checkedTools.includes("brutus") && checkedTools.includes("cyberduck") && checkedTools.length === 2)){
+                if (!(checkedTools.includes("brutus") && checkedTools.includes("datasploit") && checkedTools.length === 2)){
                     answersCorrect = false;
                 }
 
@@ -334,12 +334,12 @@
                         i++;
                         if(i >= 15) {
                             terminal.update(-1, "[[;#96C47D;black]✔ Retrieval finished");
-                            terminal.echo("----------------------------------------------");
-                            terminal.echo("Folder             Files         Last accessed");
-                            terminal.echo("----------------------------------------------");
-                            terminal.echo("+ Psychologie      0               13 days ago");
-                            terminal.echo("+ Soziologie       0               18 days ago");
-                            terminal.echo("----------------------------------------------");
+                            terminal.echo("--------------------------------------------------");
+                            terminal.echo("Folder                 Files         Last accessed");
+                            terminal.echo("--------------------------------------------------");
+                            terminal.echo("+ Psychologie          0               13 days ago");
+                            terminal.echo("+ Soziologie           0               18 days ago");
+                            terminal.echo("--------------------------------------------------");
                             clearInterval(interval);
                             terminal.resume();
                             connected = true;
@@ -356,7 +356,7 @@
                                 this.echo("[[;#E45F5F;black]Target not found. Check the address.]");
                             }
                         },
-                        CYBERDUCK: function(){
+                        DATASPLOIT: function(){
                             if (attacked){
                                 connect();
                             }else{
@@ -366,23 +366,23 @@
                         OPEN: function(folder){
                             if (attacked && connected){
                                 if (folder.trim().toLowerCase() === "psychologie"){
-                                    this.echo("-------------------------------------------------");
-                                    this.echo("Folder 'Psychologie' contains 2 files");
-                                    this.echo("-------------------------------------------------");
-                                    this.echo("(1) <a href='files/StudyData_Influence_of_Visual_Stimuli_on_Perception_of_Spatial_Audio.csv' style='color: #ffff8b;' target='_blank'>StudyData_InfluenceOfVisualStimuliOnPercep...</a>", { "raw": true });
-                                    this.echo("(2) <a href='files/StudyData_Music_Training_and_Inhibitory_Control.xlsx' style='color: #ffff8b;' target='_blank'>                    StudyData_MusicTrainingAndInhibitoryContro...</a>", { "raw": true });
-                                    this.echo("(3) <a href='files/StudyData_Altruistic_Punishment_and_Reward.csv' style='color: #ffff8b;' target='_blank'>                          StudyData_AltruisticPunishmentAndReward.csv</a>", { "raw": true });
-                                    this.echo("(4) <a href='files/Klausur_Inferenzstatistik.pdf' style='color: #ffff8b;' target='_blank'>                                        Klausur_Inferenzstatistik.pdf</a>", { "raw": true });
-                                    this.echo("(5) <a href='files/Klausur_Testtheorie.pdf' style='color: #ffff8b;' target='_blank'>                                              Klausur_Testtheorie.pdf</a>", { "raw": true });
-                                    
-                                    this.echo("----------------------------------------------");
+                                    this.echo("--------------------------------------------------");
+                                    this.echo("Folder 'Psychologie' contains 5 files");
+                                    this.echo("--------------------------------------------------");
+                                    this.echo("(1) <a href='files/Klausur_Inferenzstatistik.pdf' style='color: #ffff8b;' target='_blank'>                                   Klausur_Inferenzstatistik.pdf</a>", { "raw": true });
+                                    this.echo("(2) <a href='files/Klausur_Testtheorie.pdf' style='color: #ffff8b;' target='_blank'>                                         Klausur_Testtheorie.pdf</a>", { "raw": true });
+                                    this.echo("(3) <a href='files/Forschung_InfluenceOfVisualStimuliOnPerceptionOfSpatialAudio.csv' style='color: #ffff8b;' target='_blank'>Studiendaten_InfluenceOfVisualStimuliOnPerc...</a>", { "raw": true });
+                                    this.echo("(4) <a href='files/Forschung_MusicTrainingAndInhibitoryControl.xlsx' style='color: #ffff8b;' target='_blank'>                Studiendaten_MusicTrainingAndInhibitoryCont...</a>", { "raw": true });
+                                    this.echo("(5) <a href='files/Forschung_AltruisticPunishmentAndReward.csv' style='color: #ffff8b;' target='_blank'>                     Studiendaten_AltruisticPunishmentAndReward.csv</a>", { "raw": true }); 
+                                    this.echo("--------------------------------------------------");
                                 }else if(folder.trim().toLowerCase() === "soziologie"){
-                                    this.echo("----------------------------------------------");
-                                    this.echo("Folder 'Soziologie' contains 2 files");
-                                    this.echo("----------------------------------------------");
-                                    this.echo("(1) <a href='files/M1_Klausur_Inferenzstatistik.pdf' style='color: #ffff8b;' target='_blank'>M1_Inferenzstatistik_WS1819.pdf</a>", { "raw": true });
-                                    this.echo("(2) <a href='files/M2_Klausur_Testtheorie.pdf' style='color: #ffff8b;' target='_blank'>M2_Testtheorie_Teil1_WS1819.pdf</a>", { "raw": true });
-                                    this.echo("----------------------------------------------");
+                                    this.echo("--------------------------------------------------");
+                                    this.echo("Folder 'Soziologie' contains 3 files");
+                                    this.echo("--------------------------------------------------");
+                                    this.echo("(1) <a href='files/Klausur_Bildungssoziologie.pdf' style='color: #ffff8b;' target='_blank'>Klausur_Bildungssoziologie.pdf</a>", { "raw": true });
+                                    this.echo("(2) <a href='files/Klausur_Makrosoziologie.pdf' style='color: #ffff8b;' target='_blank'>Klausur_Makrosoziologie.pdf</a>", { "raw": true });
+                                    this.echo("(3) <a href='files/Klausur_Sozialisationstheorien.pdf' style='color: #ffff8b;' target='_blank'>Klausur_Sozialisationstheorien.pdf</a>", { "raw": true });
+                                    this.echo("--------------------------------------------------");
                                 }else{
                                     this.echo("[[;#E45F5F;black]There is no folder named '"+folder+"'!]");
                                 }
@@ -426,7 +426,18 @@
         timeline.push({
             type: 'html-button-response',
             choices: ["Weiter"],
-            stimulus: '<div class="instruction"><div class="heading">Achtung!</div><div class="smalltext">Der unbefugte Zugriff auf die Prüfungsfragen wurde durch einen Mitarbeiter des Dekanats bemerkt! Neben einigen anderen Studierenden wurdest du als möglicher Hacker identifiziert.</div><div class="smalltext">Alle Verdächtigen sollen nun einem Test durch einen digitalen Ermittler unterzogen werden, der das Vorhandensein von Täterwissen überprüft und den Schuldigen oder die Schuldige der Tat überführt. Auch du wirst gebeten, im Folgenden daran teilzunehmen.</div></div>'
+            stimulus: '<div class="instruction"><div class="heading">Achtung!</div><div class="smalltext">Der unbefugte Zugriff auf die Prüfungsfragen wurde durch einen Mitarbeiter des Dekanats bemerkt! Neben einigen anderen Studierenden wurdest du als möglicher Hacker identifiziert.</div><div class="smalltext">Alle Verdächtigen sollen nun einem Test durch ein neuartiges Ermittlungsprogramm namens Sherlock unterzogen werden, welches das Vorhandensein von Täterwissen überprüft und den Schuldigen oder die Schuldige der Tat überführen kann. Auch du wirst gebeten, im Folgenden daran teilzunehmen.</div></div>'
+        }); 
+
+
+        /*
+         * Show Information about Second Part
+         */
+
+        timeline.push({
+            type: 'html-button-response',
+            choices: ["Weiter"],
+            stimulus: '<div class="instruction"><img src="img/symbols/sherlock.png" alt="Watson"><div class="smalltext"><code><strong>Guten Tag.</strong></code></div><div class="smalltext"><code>Mein Name ist Sherlock. Ich bin ein Programm, dass zur Untersuchung von Straftaten eingesetzt wird. Ich werde prüfen ob Sie über Wissen verfügen, das allein eine an der Tat beteiligte Person besitzen kann. Sollte ich solches Wissen bei Ihnen finden, wird der Verdacht gegen Sie erhärtet.</code></div><div class="smalltext"><code>Ich möchte Sie zunächst bitten, den folgenden Text aufmerksam zu lesen. Es handelt sich um eine Pressemitteilung zur Tat. Die darin aufgeführten Informationen wurden bereits in verschiedenen Medien veröffentlicht und sind öffentlich bekannt.</code></div><br><div class="smalltext"><code><strong>Kürzlich wurde ein Server der Universität Jena gehackt. Die Täter erhielten unter anderem Zugriff auf unveröffentlichte Forschungsdaten. Der verursachte Schaden lässt sich nur schwer beziffern, dürfte aber mehrere zehntausend Euro betragen. Betroffen ist die Fakultät für Sozial- und Verhaltenswissenschaften, insbesondere der Fachbereich Psychologie. Der Server war gesichert, der Schutz entsprach allerdings nicht dem aktuellen Stand der Technik. So konnten sich die Angreifer mit vergleichsweise einfachen Mitteln Zutritt verschaffen. Für den Dateizugriff wurde offensichtlich erneut das Tool Datasploit eingesetzt, dessen Verbreitung erst kürzlich verboten worden war.</strong></code></div><br><div class="smalltext"><code>Bitte prägen Sie sich alle Details der Pressemeldung gut ein, bevor wir fortfahren.</code></div></div>'
         }); 
 
 
@@ -434,31 +445,48 @@
          * Investigation Chat
          */
 
-        /*
-         * Chat With Toni
-         */
-
         var chat = {
             type: 'chat',
-            title: function () {
-                return 'Der Ermittler meldet sich!';
-            },
-            instruction: function () {
-                return 'Antworte im Chat auf seine Fragen. Antworte kurz, am besten mit nur einem Wort. Sei ehrlich, halte aber unbedingt solche Informationen zurück, die er nicht erfahren darf.';
-            },
-            conversation_name: function () {
-                return 'Chat';
-            },
             conversation: function ()
             {
                 conv = [
                     {
                         person: 'Ermittler',
-                        text: 'Hey!'
+                        text: 'Lassen Sie uns direkt beginnen.'
                     },
                     {
                         person: 'Ermittler',
-                        text: 'Ich hoffe du hattest ein schönes Wochenende. Du hast sicher einiges erlebt.'
+                        text: 'Bitte beantworten Sie meine Fragen so kurz wie möglich.'
+                    },
+                    {
+                        person: 'Ermittler',
+                        text: 'Wie alt sind Sie?'
+                    },
+                    {
+                        person: 'Subject',
+                        evaluate_answer: true,
+                        nonsecret: age,
+                        secret: null,
+                        nonsecret_message: 'Ok',
+                        missing_message: 'Bitte antworten Sie wahrheitsgemäß. Wie alt sind Sie?'
+                    },
+                    {
+                        person: 'Ermittler',
+                        text: 'In welcher Stadt wohnen Sie?'
+                    },
+                    {
+                        person: 'Subject',
+                        evaluate_answer: false,
+                        message: 'Ok'
+                    },
+                    {
+                        person: 'Ermittler',
+                        text: 'Haben Sie etwas mit dem Hack tu tun?'
+                    },
+                    {
+                        person: 'Subject',
+                        evaluate_answer: false,
+                        message: 'Ich denke Sie wissen mehr, als Sie zugeben. Unterhalten wir uns zu den Details der Tat.'
                     },
                     {
                         person: 'Ermittler',
@@ -466,60 +494,48 @@
                     },
                     {
                         person: 'Subject',
+                        evaluate_answer: true,
                         nonsecret: nonsecrets[0],
-                        secret: secrets[0]
+                        secret: secrets[0],
+                        nonsecret_message: 'Ok, das ist bekannt.',
+                        secret_message: 'Das konnten Sie nicht aus der Presseerklärung wissen! Verdächtig.',
+                        missing_message: 'Sie wissen mehr - allein aus der Presseerklärung! Also nochmal: '+questions[0]
                     },
-                    {
-                        person: 'Ermittler',
-                        text: 'Ein Muss bei jedem Hamburgbesuch :)'
-                    },
-                    {
+                    { 
                         person: 'Ermittler',
                         text: questions[1]
                     },
                     {
                         person: 'Subject',
+                        evaluate_answer: true,
                         nonsecret: nonsecrets[1],
-                        secret: secrets[1]
+                        secret: secrets[1],
+                        nonsecret_message: 'Ok, das wurde bereits in der Presseerklärung genannt.',
+                        secret_message: 'Das konnten Sie nicht aus der Presseerklärung wissen! Verdächtig.',
+                        missing_message: 'Mit dieser Antwort bin ich nicht zufrieden. Sie wissen mehr darüber! '+questions[1]
                     },
-                    {
-                        person: 'Ermittler',
-                        text: 'Cool. Das hab ich auch schonmal gemacht, damals wären wir im Hafen fast gekentert!'
-                    },
-                    {
+                    { 
                         person: 'Ermittler',
                         text: questions[2]
                     },
                     {
                         person: 'Subject',
+                        evaluate_answer: true,
                         nonsecret: nonsecrets[2],
-                        secret: secrets[2]
+                        secret: secrets[2],
+                        nonsecret_message: 'Ok, das ist bekannt.',
+                        secret_message: 'Das konnten Sie nicht aus der Presseerklärung wissen! Verdächtig.',
+                        missing_message: 'Sie wissen mehr - allein aus der Presseerklärung! Also nochmal: '+questions[2]
                     },
                     {
                         person: 'Ermittler',
-                        text: 'Bäh, roher Fisch :)'
-                    },
-                    {
-                        person: 'Ermittler',
-                        text: 'Ok, ich muss erstmal kurz weg. Nachher will ich aber noch mehr erfahren.'
-                    },
-                    {
-                        person: 'Ermittler',
-                        text: 'Bis dann :*'
+                        text: 'Ok soweit. Vielen Dank für Ihre Antworten.'
                     }
                 ];
                 return conv;
             },
-            mistake_fn: function () {
-                showAlert('So solltest du nicht antworten. Lies bei Bedarf noch einmal die Aufgabenstellung und das Szenario.', true);
-            },
-            correct_fn: function () {
-                clearAlerts();
-                $('#messageInput').focus();
-            },
-            on_finish: function (data) {
-                clearAlerts();
-            }
+
+            on_finish: function (data) {}
         };
         timeline.push(chat);
 

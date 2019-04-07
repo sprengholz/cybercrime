@@ -1,16 +1,23 @@
 <div class="topmargincontainer">
-    
+
+    <img src="img/symbols/sherlock.png" alt="Watson">
+
     <div class="instruction">
-        <div id="instructionTitle" class="heading"></div>
-        <div id="instructionText" class="smalltext"></div>
+        <div id="instructionTitle" class="smalltext"><code><strong>Ich möchte Ihnen ein paar Fragen stellen.</strong></code></div>
+        <div id="instructionText" class="smalltext"><code>Bitte nutzen Sie zur Beantwortung das unten eingeblendete Chatfenster. Sie müssen alle Fragen auf Basis der zuvor gelesenen Pressemitteilung beantworten können. Wenn Sie diese noch einmal lesen möchten, klicken Sie bitte <a id="openPressTextButton" href="#">hier</a>.</code></div>
+    
+        <div id="pressText" style="display: none">
+            <br>
+            <div class="smalltext"><code><strong>Kürzlich wurde ein Server der Universität Jena gehackt. Die Täter erhielten unter anderem Zugriff auf unveröffentlichte Forschungsdaten. Der verursachte Schaden lässt sich nur schwer beziffern, dürfte aber mehrere zehntausend Euro betragen. Betroffen ist die Fakultät für Sozial- und Verhaltenswissenschaften, insbesondere der Fachbereich Psychologie. Der Server war gesichert, der Schutz entsprach allerdings nicht dem aktuellen Stand der Technik. So konnten sich die Angreifer mit vergleichsweise einfachen Mitteln Zutritt verschaffen. Für den Dateizugriff wurde offensichtlich erneut das Tool Datasploit eingesetzt, dessen Verbreitung erst kürzlich verboten worden war.</strong></code></div>
+            <br>
+        </div>
+
     </div>
 
     <div id="chat">
         <div id="chatContent">
             
-            <div id="chatHeader">
-                <b><span id="conversation_name"></span></b>
-            </div>
+
 
             <div id="messageArea"></div>
 
@@ -31,6 +38,8 @@
         
     </div>
 </div>   
+
+
 
 
 

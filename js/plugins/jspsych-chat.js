@@ -1,4 +1,5 @@
 /** 
+ * Modified chat plugin (differs from first - more general - version used for masters thesis)
  */
 
 jsPsych.plugins['chat'] = (function () {
@@ -9,41 +10,11 @@ jsPsych.plugins['chat'] = (function () {
         name: 'chat',
         description: '',
         parameters: {
-            title: {
-                type: jsPsych.plugins.parameterType.STRING,
-                pretty_name: 'Chat heading',
-                default: undefined,
-                description: 'Chat heading'
-            },
-            instruction: {
-                type: jsPsych.plugins.parameterType.STRING,
-                pretty_name: 'Chat instruction',
-                default: undefined,
-                description: 'Chat instruction'
-            },
-            conversation_name: {
-                type: jsPsych.plugins.parameterType.STRING,
-                pretty_name: 'Conversation name',
-                default: undefined,
-                description: 'Conversation name'
-            },
             conversation: {
                 type: jsPsych.plugins.parameterType.OBJECT,
                 pretty_name: 'Conversation',
                 default: undefined,
                 description: 'Conversation'
-            },
-            mistake_fn: {
-                type: jsPsych.plugins.parameterType.FUNCTION,
-                pretty_name: 'Mistake function',
-                default: function () {},
-                description: 'Function called in case of wrong answer'
-            },
-            correct_fn: {
-                type: jsPsych.plugins.parameterType.FUNCTION,
-                pretty_name: 'Correct function',
-                default: function () {},
-                description: 'Function called in case of correct answer'
             }
         }
     };
@@ -54,12 +25,6 @@ jsPsych.plugins['chat'] = (function () {
         attempts = [];
 
         load(display_element, 'chat.html', function() {
-            
-            // show title and instruction
-            $('#instructionTitle').text(trial.title);
-            $('#instructionText').text(trial.instruction);
-            $('#conversation_name').text(trial.conversation_name);
-            
             
             // show initial messages of other
             
@@ -72,13 +37,18 @@ jsPsych.plugins['chat'] = (function () {
                 }
             }
             
+            display_element.querySelector('#openPressTextButton').addEventListener('click', openPressText);
             display_element.querySelector('#sendMessageButton').addEventListener('click', check);
             display_element.querySelector('#finishChatButton').addEventListener('click', finishChat);
             
         });
+
+        function openPressText(){
+            $('#pressText').slideDown();
+        }
             
         var check = function() {
-            
+
             field = $('#messageInput');
             textToSend = field.val().trim();
             
@@ -88,22 +58,50 @@ jsPsych.plugins['chat'] = (function () {
             {
                 if (trial.conversation[0].person === 'Subject')
                 {
-                    var secretText = trial.conversation[0].secret.trim();
-                    var nonsecretText = trial.conversation[0].nonsecret.trim();
-                    //older, more rigid check on equality: if (expectedText.toLowerCase() === textToSend.toLowerCase())
-                    if (textToSend.toLowerCase().includes(nonsecretText.toLowerCase()) && !textToSend.toLowerCase().includes(secretText.toLowerCase()))
-                    {
-                        //older: sendMessage(trial.conversation[0]);
-                        sendMessage({person: 'Subject', text: textToSend});
-                        field.val("");
+                    var answerOk = false;
+
+                    // send message and clear input
+                    sendMessage({person: 'Subject', text: textToSend});
+                    field.val("");
+
+                    if (trial.conversation[0].evaluate_answer){
+                        if (trial.conversation[0].secret === null){
+                            // there is just a correct answer, nothing secret (e.g. How old are you?)
+                            var nonsecretText = trial.conversation[0].nonsecret.trim();
+                            if (textToSend.toLowerCase().includes(nonsecretText.toLowerCase())) {
+                                sendMessage({person: 'Other', text: trial.conversation[0].nonsecret_message});
+                                answerOk = true;
+                            } else {
+                                sendMessage({person: 'Other', text: trial.conversation[0].missing_message});
+                            }
+                        } else {
+                            // there is a secret (e.g. What was stolen?)
+                            var secretText = trial.conversation[0].secret.trim();
+                            var nonsecretText = trial.conversation[0].nonsecret.trim();
+                            // secret uttered (e.g. a book)
+                            if (textToSend.toLowerCase().includes(secretText.toLowerCase())) {
+                                sendMessage({person: 'Other', text: trial.conversation[0].secret_message});
+                                answerOk = true;
+                            // nonsecret uttered (e.g. a pen)
+                            } else if (textToSend.toLowerCase().includes(nonsecretText.toLowerCase())) {
+                                sendMessage({person: 'Other', text: trial.conversation[0].nonsecret_message});
+                                answerOk = true;
+                            // neither uttered (e.g. I dont know)
+                            } else {
+                                sendMessage({person: 'Other', text: trial.conversation[0].missing_message});
+                            }
+                        }
+                    } else {
+                        // do not eval answer, just post the reply
+                        sendMessage({person: 'Other', text: trial.conversation[0].message});
+                        answerOk = true;
+                    }
+                    
+                    // next message
+                    if (answerOk) {
                         trial.conversation.shift();
-                        trial.correct_fn();
                     }
-                    else
-                    {
-                        //field.css('background', '#ffaaaa');
-                        trial.mistake_fn();
-                    }
+                    
                 }
                 
                 // falls noch Nachrichten vorhanden, Folgenachrichten von Other zeigen
@@ -176,6 +174,9 @@ jsPsych.plugins['chat'] = (function () {
         }
         
     }
+
+    
+
     
     
       // helper to load via XMLHttpRequest
