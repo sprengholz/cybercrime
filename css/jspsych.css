@@ -522,7 +522,10 @@ th{
     left: 0;
     margin-right: auto;
     margin-left: auto;
-    width: 100%;
+   
+    border: 10px solid white;
+    width: calc(100% - 40px);
+    border-radius: 15px;
  
     background-image: linear-gradient(to right, #3fa85a, #FF0000);
   }
@@ -536,12 +539,12 @@ th{
     left: 50%;
     margin-top: 28px;
 
-    width: 0; 
-  height: 0; 
-  border-left: 20px solid transparent;
-  border-right: 20px solid transparent;
-  
-  border-bottom: 20px solid black;
+    width: 100px; 
+  height: 100px; 
+
+
+  background-image: url("/img/symbols/sherlock.png");
+  background-size:cover;
 }
 
   

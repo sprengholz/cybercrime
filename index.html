@@ -89,10 +89,13 @@
             var left = value + "%";
 
             if (value > 95){
-                left = "calc("+value+"% - 40px)";
+                left = "calc("+value+"% - "+value+"px)";
             }
 
             $('#barIndicator').css("left", left);
+
+
+            
         }
 
         function hideBar(){
@@ -116,7 +119,7 @@
         // questions
         var questions = ['Was wurde gestohlen?',
                          'Welches Werkzeug wurde verwendet?',
-                         'Welcher Fachbereich ist betroffen?'];
+                         'Welcher Bereich ist betroffen?'];
 
         // secret and non-secret (irrelevant) answers
         var secrets = ['Prüfungsfragen', 
@@ -124,7 +127,7 @@
                        'Soziologie'];
         
         var nonsecrets = ['Forschungsdaten', 
-                          'Datasploit', 
+                          'Copycat', 
                           'Psychologie'];
 
         var untruths = ['Notenlisten', 
@@ -196,7 +199,17 @@
         timeline.push({
             type: 'html-button-response',
             choices: ["Weiter"],
-            stimulus: '<div class="instruction"><div class="heading">Willkommen</div> <div class="smalltext">Vielen Dank, dass du an meiner Studie zum Thema Cyberkriminalität teilnehmen möchtest. Für die Teilnahme benötigst du eine Tastatur. Verwende deshalb bitte <strong>PC oder Notebook</strong>. Tablets und Smartphones sind leider nicht geeignet. Auf den nächsten Seiten folgen weitere Informationen zum Ablauf des Experiments. Bei Fragen oder Problemen erreichst du mich jederzeit per E-Mail.<div><div class="smalltext">Philipp Sprengholz<br>FSU Jena, Institut für Psychologie<br>philipp.sprengholz@uni-jena.de </div> </div>'
+            stimulus: '<div class="instruction"><div class="heading">Willkommen</div> <div class="smalltext">Vielen Dank,dass du an meiner Studie zum Thema Cyberkriminalität teilnehmen möchtest. Für die Teilnahme benötigst du eine Tastatur. Verwende deshalb bitte <strong>PC oder Notebook</strong>. Tablets und Smartphones sind leider nicht geeignet. Auf den nächsten Seiten folgen weitere Informationen zum Ablauf des Experiments. Bei Fragen oder Problemen erreichst du mich jederzeit per E-Mail.<div><div class="smalltext">Philipp Sprengholz<br>FSU Jena, Institut für Psychologie<br>philipp.sprengholz@uni-jena.de </div> </div>'
+        }); 
+
+
+        /*
+         * Show Eligibility Check
+         */
+        timeline.push({
+            type: 'html-button-response',
+            choices: ["Ich habe nicht an der Studie im Januar teilgenommen"],
+            stimulus: '<div class="instruction"><div class="heading">Wichtig</div> <div class="smalltext">Solltest du bereits im Januar an einer ähnlichen Studie teilgenommen haben, bei der es darum ging Prüfungsfragen von einem Computer zu stehlen, kannst du leider nicht am Experiment teilnehmen. Bitte schließe das Fenster in diesem Fall.</div> </div>'
         }); 
         
        
@@ -207,7 +220,7 @@
         timeline.push({
             type: 'html-button-response',
             choices: ["Weiter"],
-            stimulus: '<div class="instruction"><div class="heading">Zum Ablauf</div> <div class="smalltext">Du wirst zunächst etwas über Cyberangriffe lernen. Ich möchte herausfinden, ob es dir mit einer einfachen Anleitung gelingt, einen Universitätsrechner zu hacken und Daten zu stehlen. Sollte dir dies gelingen, folgen im zweiten Teil des Experiments einige Reaktionszeitaufgaben, in denen du besonders schnell auf bestimmte Wörter reagieren musst.</div><div class="smalltext">Deine Teilnahme ist <strong>freiwillig</strong> und du kannst das Experiment jederzeit abbrechen. Natürlich werden deine Daten <strong>anonymisiert</strong> und vertraulich behandelt. Für deine Teilnahme erhältst du nach Abschluss des Experiments eine Versuchspersonenstunde. </div> </div>'
+            stimulus: '<div class="instruction"><div class="heading">Zum Ablauf</div> <div class="smalltext">Du wirst zunächst etwas über Cyberangriffe lernen. Ich möchte zunächst herausfinden, ob es dir mit einer einfachen Anleitung gelingt, einen Universitätsrechner zu hacken und Daten zu stehlen. Anschließend folgen einige Reaktionszeitaufgaben, in denen du besonders schnell auf bestimmte Wörter reagieren musst.</div><div class="smalltext">Deine Teilnahme ist <strong>freiwillig</strong> und du kannst das Experiment jederzeit abbrechen. Natürlich werden deine Daten <strong>anonymisiert</strong> und vertraulich behandelt. Für deine Teilnahme erhältst du nach Abschluss des Experiments eine Versuchspersonenstunde. </div> </div>'
         }); 
 
 
@@ -218,7 +231,7 @@
         timeline.push({
             type: 'html-button-response',
             choices: ["Weiter"],
-            stimulus: '<div class="instruction"><div class="heading">Wichtig</div><div class="smalltext"> Bitte achte darauf, dass du während der Teilnahme nicht abgelenkt wirst. Suche dir einen <strong>ruhigen Raum</strong>, in dem du die nächsten <strong>45 Minuten</strong> nicht gestört wirst. Bitte lege dein Telefon außer Sichtweite. <div></div>'
+            stimulus: '<div class="instruction"><div class="heading">Ruhe bitte</div><div class="smalltext"> Bitte achte darauf, dass du während der Teilnahme nicht abgelenkt wirst. Suche dir einen <strong>ruhigen Raum</strong>, in dem du die nächsten <strong>45 Minuten</strong> nicht gestört wirst. Bitte lege dein Telefon außer Sichtweite. <div></div>'
         }); 
 
 
@@ -270,7 +283,7 @@
                 var checkedTools = $("input[name='tools']:checked").map(function() {
                     return this.value;
                 }).get();
-                if (!(checkedTools.includes("brutus") && checkedTools.includes("datasploit") && checkedTools.length === 2)){
+                if (!(checkedTools.includes("brutus") && checkedTools.includes("copycat") && checkedTools.length === 2)){
                     answersCorrect = false;
                 }
 
@@ -293,7 +306,7 @@
                     return true;
                 } else
                 {
-                    showAlert('Das ist nicht ganz richtig. Bitte prüfe deine Angaben.');
+                    showAlert('Bei einem erfolgreichen Hack sollten die Antworten anders ausfallen. Bitte prüfe deine Angaben.');
                     return false;
                 }
             },
@@ -303,6 +316,17 @@
 
                 var attacked = false;
                 var connected = false;
+
+                var getAdress = function(){
+                    $.when($('#terminal').terminal().read("Address: ")).done(function(address){
+                        if (address.includes("fsv.uni-jena.de/Login")){
+                            attack();
+                        } else {
+                            $('#terminal').terminal().echo("[[;#E45F5F;black]Target not found. Check address.]");
+                            getAdress();
+                        }
+                    });
+                };
 
                 var attack = function(){
                     var terminal = $('#terminal').terminal();
@@ -335,12 +359,12 @@
                         i++;
                         if(i >= 15) {
                             terminal.update(-1, "[[;#96C47D;black]✔ Retrieval finished");
-                            terminal.echo("--------------------------------------------------");
-                            terminal.echo("Folder                 Files         Last accessed");
-                            terminal.echo("--------------------------------------------------");
-                            terminal.echo("+ Psychologie          0               13 days ago");
-                            terminal.echo("+ Soziologie           0               18 days ago");
-                            terminal.echo("--------------------------------------------------");
+                            terminal.echo("----------------------------------------------");
+                            terminal.echo("Folder               Files       Last accessed");
+                            terminal.echo("----------------------------------------------");
+                            terminal.echo("+ Psychologie        0             13 days ago");
+                            terminal.echo("+ Soziologie         0             18 days ago");
+                            terminal.echo("----------------------------------------------");
                             clearInterval(interval);
                             terminal.resume();
                             connected = true;
@@ -350,14 +374,10 @@
 
                 jQuery(function ($, undefined) {
                     $('#terminal').terminal({
-                        BRUTUS: function(url){
-                            if (url.includes('fsv.uni-jena.de/Login.html')){
-                                attack();
-                            } else {
-                                this.echo("[[;#E45F5F;black]Target not found. Check the address.]");
-                            }
+                        BRUTUS: function(){
+                            getAdress();
                         },
-                        DATASPLOIT: function(){
+                        COPYCAT: function(){
                             if (attacked){
                                 connect();
                             }else{
@@ -367,23 +387,23 @@
                         OPEN: function(folder){
                             if (attacked && connected){
                                 if (folder.trim().toLowerCase() === "psychologie"){
-                                    this.echo("--------------------------------------------------");
+                                    this.echo("----------------------------------------------");
                                     this.echo("Folder 'Psychologie' contains 5 files");
-                                    this.echo("--------------------------------------------------");
-                                    this.echo("(1) <a href='files/Klausur_Inferenzstatistik.pdf' style='color: #ffff8b;' target='_blank'>                                   Klausur_Inferenzstatistik.pdf</a>", { "raw": true });
-                                    this.echo("(2) <a href='files/Klausur_Testtheorie.pdf' style='color: #ffff8b;' target='_blank'>                                         Klausur_Testtheorie.pdf</a>", { "raw": true });
-                                    this.echo("(3) <a href='files/Forschung_InfluenceOfVisualStimuliOnPerceptionOfSpatialAudio.csv' style='color: #ffff8b;' target='_blank'>Studiendaten_InfluenceOfVisualStimuliOnPerc...</a>", { "raw": true });
-                                    this.echo("(4) <a href='files/Forschung_MusicTrainingAndInhibitoryControl.xlsx' style='color: #ffff8b;' target='_blank'>                Studiendaten_MusicTrainingAndInhibitoryCont...</a>", { "raw": true });
-                                    this.echo("(5) <a href='files/Forschung_AltruisticPunishmentAndReward.csv' style='color: #ffff8b;' target='_blank'>                     Studiendaten_AltruisticPunishmentAndReward.csv</a>", { "raw": true }); 
-                                    this.echo("--------------------------------------------------");
+                                    this.echo("----------------------------------------------");
+                                    this.echo("<a href='files/Klausur_Inferenzstatistik.pdf' style='color: #ffff8b;' target='_blank'>                                   Klausur_Inferenzstatistik.pdf</a>", { "raw": true });
+                                    this.echo("<a href='files/Klausur_Testtheorie.pdf' style='color: #ffff8b;' target='_blank'>                                         Klausur_Testtheorie.pdf</a>", { "raw": true });
+                                    this.echo("<a href='files/Forschung_InfluenceOfVisualStimuliOnPerceptionOfSpatialAudio.csv' style='color: #ffff8b;' target='_blank'>Studiendaten_InfluenceOfVisualStimuliOnPerc...</a>", { "raw": true });
+                                    this.echo("<a href='files/Forschung_MusicTrainingAndInhibitoryControl.xlsx' style='color: #ffff8b;' target='_blank'>                Studiendaten_MusicTrainingAndInhibitoryCont...</a>", { "raw": true });
+                                    this.echo("<a href='files/Forschung_AltruisticPunishmentAndReward.csv' style='color: #ffff8b;' target='_blank'>                     Studiendaten_AltruisticPunishmentAndReward.csv</a>", { "raw": true }); 
+                                    this.echo("----------------------------------------------");
                                 }else if(folder.trim().toLowerCase() === "soziologie"){
-                                    this.echo("--------------------------------------------------");
+                                    this.echo("----------------------------------------------");
                                     this.echo("Folder 'Soziologie' contains 3 files");
-                                    this.echo("--------------------------------------------------");
-                                    this.echo("(1) <a href='files/Klausur_Bildungssoziologie.pdf' style='color: #ffff8b;' target='_blank'>Klausur_Bildungssoziologie.pdf</a>", { "raw": true });
-                                    this.echo("(2) <a href='files/Klausur_Makrosoziologie.pdf' style='color: #ffff8b;' target='_blank'>Klausur_Makrosoziologie.pdf</a>", { "raw": true });
-                                    this.echo("(3) <a href='files/Klausur_Sozialisationstheorien.pdf' style='color: #ffff8b;' target='_blank'>Klausur_Sozialisationstheorien.pdf</a>", { "raw": true });
-                                    this.echo("--------------------------------------------------");
+                                    this.echo("----------------------------------------------");
+                                    this.echo("<a href='files/Klausur_Bildungssoziologie.pdf' style='color: #ffff8b;' target='_blank'>Klausur_Bildungssoziologie.pdf</a>", { "raw": true });
+                                    this.echo("<a href='files/Klausur_Makrosoziologie.pdf' style='color: #ffff8b;' target='_blank'>Klausur_Makrosoziologie.pdf</a>", { "raw": true });
+                                    this.echo("<a href='files/Klausur_Sozialisationstheorien.pdf' style='color: #ffff8b;' target='_blank'>Klausur_Sozialisationstheorien.pdf</a>", { "raw": true });
+                                    this.echo("----------------------------------------------");
                                 }else{
                                     this.echo("[[;#E45F5F;black]There is no folder named '"+folder+"'!]");
                                 }
@@ -426,8 +446,8 @@
 
         timeline.push({
             type: 'html-button-response',
-            choices: ["Weiter"],
-            stimulus: '<div class="instruction"><div class="heading">Achtung!</div><div class="smalltext">Der unbefugte Zugriff auf die Prüfungsfragen wurde durch einen Mitarbeiter des Dekanats bemerkt! Neben einigen anderen Studierenden wurdest du als möglicher Hacker identifiziert.</div><div class="smalltext">Alle Verdächtigen sollen nun einem Test durch ein neuartiges Ermittlungsprogramm namens Sherlock unterzogen werden, welches das Vorhandensein von Täterwissen überprüft und den Schuldigen oder die Schuldige der Tat überführen kann. Auch du wirst gebeten, im Folgenden daran teilzunehmen.</div></div>'
+            choices: ["Sherlock starten"],
+            stimulus: '<div class="instruction"><div class="heading">Achtung!</div><div class="smalltext">Der unbefugte Zugriff auf die Prüfungsfragen wurde durch einen Mitarbeiter des Dekanats bemerkt! Neben einigen anderen Studierenden wurdest du als möglicher Hacker identifiziert.</div><div class="smalltext">Alle Verdächtigen sollen nun einem Test durch ein neuartiges Ermittlungsprogramm namens <strong>Sherlock</strong> unterzogen werden, welches das Vorhandensein von Täterwissen überprüft und eine schuldige Person der Tat überführen kann. Auch du wirst gebeten, im Folgenden daran teilzunehmen.</div></div>'
         }); 
 
 
@@ -438,7 +458,7 @@
         timeline.push({
             type: 'html-button-response',
             choices: ["Weiter"],
-            stimulus: '<div class="instruction"><img src="img/symbols/sherlock.png" alt="Watson"><div class="smalltext"><code><strong>Guten Tag.</strong></code></div><div class="smalltext"><code>Mein Name ist Sherlock. Ich bin ein Programm, dass zur Untersuchung von Straftaten eingesetzt wird. Ich werde prüfen ob Sie über Wissen verfügen, das allein eine an der Tat beteiligte Person besitzen kann. Sollte ich solches Wissen bei Ihnen finden, wird der Verdacht gegen Sie erhärtet.</code></div><div class="smalltext"><code>Ich möchte Sie zunächst bitten, den folgenden Text aufmerksam zu lesen. Es handelt sich um eine Pressemitteilung zur Tat. Die darin aufgeführten Informationen wurden bereits in verschiedenen Medien veröffentlicht und sind öffentlich bekannt.</code></div><br><div class="smalltext"><code><strong>Kürzlich wurde ein Server der Universität Jena gehackt. Die Täter erhielten unter anderem Zugriff auf unveröffentlichte Forschungsdaten. Der verursachte Schaden lässt sich nur schwer beziffern, dürfte aber mehrere zehntausend Euro betragen. Betroffen ist die Fakultät für Sozial- und Verhaltenswissenschaften, insbesondere der Fachbereich Psychologie. Der Server war gesichert, der Schutz entsprach allerdings nicht dem aktuellen Stand der Technik. So konnten sich die Angreifer mit vergleichsweise einfachen Mitteln Zutritt verschaffen. Für den Dateizugriff wurde offensichtlich erneut das Tool Datasploit eingesetzt, dessen Verbreitung erst kürzlich verboten worden war.</strong></code></div><br><div class="smalltext"><code>Bitte prägen Sie sich alle Details der Pressemeldung gut ein, bevor wir fortfahren.</code></div></div>'
+            stimulus: '<div class="topmargincontainer"><div class="instruction"><img src="img/symbols/sherlock.png" alt="Sherlock"><div class="smalltext"><code><strong>Guten Tag.</strong></code></div><div class="smalltext"><code>Mein Name ist Sherlock. Ich bin ein Programm, das zur Untersuchung von Straftaten eingesetzt wird. Ich werde prüfen ob Sie über Wissen verfügen, das allein eine an der Tat beteiligte Person besitzen kann.</code></div><div class="smalltext"><code>Ich möchte Sie zunächst bitten, den folgenden Text aufmerksam zu lesen. Es handelt sich um eine Pressemitteilung zur Tat. Die darin aufgeführten Informationen wurden bereits in verschiedenen Medien veröffentlicht und sind öffentlich bekannt.</code></div><br><div class="smalltext"><code><strong>Kürzlich wurde ein Server der Universität Jena gehackt. Die Täter erhielten unter anderem Zugriff auf unveröffentlichte <u>Forschungsdaten</u>. Der verursachte Schaden lässt sich nur schwer beziffern, dürfte aber mehrere zehntausend Euro betragen. Betroffen ist die Fakultät für Sozial- und Verhaltenswissenschaften, insbesondere der Bereich <u>Psychologie</u>. Der Server war gesichert, der Schutz entsprach allerdings nicht dem aktuellen Stand der Technik. So konnten sich die Angreifer mit vergleichsweise einfachen Mitteln Zutritt verschaffen. Für den Dateizugriff wurde offenbar das Programm <u>Copycat</u> eingesetzt, ein unter Hackern weit verbreitetes Werkzeug.</strong></code></div><br><div class="smalltext"><code>Bitte prägen Sie sich alle Details der Pressemeldung gut ein - insbesondere die unterstrichenen Informationen zur Tat. Klicken Sie anschließend auf Weiter.</code></div></div></div>'
         }); 
 
 
@@ -511,7 +531,7 @@
                         evaluate_answer: true,
                         nonsecret: nonsecrets[1],
                         secret: secrets[1],
-                        nonsecret_message: 'Ok, das wurde bereits in der Presseerklärung genannt.',
+                        nonsecret_message: 'Richtig, das wurde bereits in der Presseerklärung genannt.',
                         secret_message: 'Das konnten Sie nicht aus der Presseerklärung wissen! Verdächtig.',
                         missing_message: 'Mit dieser Antwort bin ich nicht zufrieden. Sie wissen mehr darüber! '+questions[1]
                     },
@@ -524,13 +544,13 @@
                         evaluate_answer: true,
                         nonsecret: nonsecrets[2],
                         secret: secrets[2],
-                        nonsecret_message: 'Ok, das ist bekannt.',
+                        nonsecret_message: 'Ok.',
                         secret_message: 'Das konnten Sie nicht aus der Presseerklärung wissen! Verdächtig.',
                         missing_message: 'Sie wissen mehr - allein aus der Presseerklärung! Also nochmal: '+questions[2]
                     },
                     {
                         person: 'Ermittler',
-                        text: 'Ok soweit. Vielen Dank für Ihre Antworten.'
+                        text: 'Vielen Dank für Ihre Antworten'
                     }
                 ];
                 return conv;
@@ -563,17 +583,6 @@
         };
 
 
-        var image = {
-            type: 'html-keyboard-response',
-            stimulus: function () {
-                return '<div class="silhouette-male"></div>';
-            },
-            choices: jsPsych.NO_KEYS,
-            trial_duration: 400,
-            data: {rte_part: 'image'}
-        };
-
-
         var question = {
             type: 'word-sequence',
             stimulus: function () {
@@ -591,7 +600,7 @@
             type: "html-keyboard-response",
             stimulus: function () {
                 target = jsPsych.timelineVariable('target')();
-                stim = '<div class="silhouette-male"> <div class="target-intro">' + target + '</div> </div>';
+                stim = '<div class="target-intro">' + target + '</div>';
                 return stim;
             },
             trial_duration: 400,
@@ -614,11 +623,11 @@
                 action = jsPsych.timelineVariable('action')();
                 stim = "";
                 if (action === "go") {
-                    stim = '<div class="silhouette-male"> <div class="target-go">' + target + '</div> </div>';
+                    stim = '<div class="target-go">' + target + '</div>';
                 } else if (action === "nogo") {
-                    stim = '<div class="silhouette-male"> <div class="target-nogo">' + target + '</div> </div>';
+                    stim = '<div class="target-nogo">' + target + '</div>';
                 } else if (action === 'decision') {
-                    stim = '<div class="silhouette-male"> <div class="target-decision">' + target + '</div> </div>';
+                    stim = '<div class="target-decision">' + target + '</div>';
                 }
                 return stim;
             },
@@ -667,6 +676,7 @@
                         } else if (guilt <= 90) {
                             guilt = guilt + 10;
                         }
+                        showBar(guilt);
                     }
                 }
 
@@ -687,20 +697,20 @@
                 data = jsPsych.data.get().last(1).values()[0];
                 if (data.trial_action === 'go') {
                     errorHeading = 'Zu langsam!';
-                    errorMessage = 'Es war ein rotes Wort zu sehen. Du hättest schnell die Leertaste drücken müssen.';
+                    errorMessage = 'Es war ein rotes Wort zu sehen. Sie hätten schnell die Leertaste drücken müssen.';
                 } else if (data.trial_action === 'nogo') {
                     errorHeading = 'Taste gedrückt!';
-                    errorMessage = 'Es war ein grünes Wort zu sehen. Du hättest keine Taste drücken dürfen.';
+                    errorMessage = 'Es war ein grünes Wort zu sehen. Sie hätten keine Taste drücken dürfen.';
                 } else if (data.trial_action === 'decision') {
                     if (data.trial_secrecy === 'nonsecret') {
                         errorHeading = 'Taste gedrückt!';
-                        errorMessage = 'Es war ein gelbes Wort zu sehen. Da es sich bei '+data.trial_target+' um eine Information zur Tat handelte, über die du im Vorfeld informiert wurdest, hättest du sie nicht mittels Tastendruck unterdrücken dürfen.';
+                        errorMessage = 'Es war ein gelbes Wort zu sehen. Da es sich bei <strong>'+data.trial_target+'</strong> um eine Information zur Tat handelte, über die Sie im Vorfeld informiert wurden, hätten Sie diese nicht mittels Tastendruck unterdrücken dürfen.';
                     } else {
                         errorHeading = 'Keine Taste gedrückt!';
-                        errorMessage = 'Es war ein gelbes Wort zu sehen. Da es sich bei '+data.trial_target+' nicht um eine Information zur Tat handelte, über die du im Vorfeld informiert wurdest, hättest du sie mittels Tastendruck unterdrücken müssen.';
+                        errorMessage = 'Es war ein gelbes Wort zu sehen. Da es sich bei <strong>'+data.trial_target+'</strong> nicht um eine Information zur Tat handelte, über die Sie im Vorfeld informiert wurden, hätten Sie diese mittels Tastendruck unterdrücken müssen.';
                     }
                 }
-                return '<div class="heading">' + errorHeading + '</div><div class="smalltext">' + errorMessage + '</div><div class="smalltext">Drücke die <span class="keyButton">Leertaste</span> um fortzufahren.</div>';
+                return '<div class="smalltext"><code><strong>' + errorHeading + '</strong></code></div><div class="smalltext"><code>' + errorMessage + '</code></div><div class="smalltext"><code>Drücken Sie die</code> <span class="keyButton">Leertaste</span> <code>um fortzufahren.</code></div>';
             },
             choices: [32],
             data: {rte_part: 'target_error'},
@@ -737,7 +747,7 @@
                 if (attention_check_type === 'prime') {
 
                     stim = '';
-                    stim += '<div class="heading">Welche Frage wurde zuletzt gezeigt?</div>';
+                    stim += '<div class="smalltext"><code><strong>Welche Frage wurde zuletzt gezeigt?<strong></code></div>';
                     stim += '<div>Drücke eine der Tasten <span class="keyButton">1</span> bis <span class="keyButton">4</span> um die zuletzt gezeigte Frage auszuwählen.</div>';
                     stim += '<div class="rteAttentionCheckChoiceBlock">';
                     for (i = 0; i < questions.length; i++)
@@ -769,14 +779,14 @@
                     shownTargets = shownTargets.sort(() => .5 - Math.random());
 
                     stim = '';
-                    stim += '<div class="heading">Welches Wort wurde zuletzt von einem Rechteck umrandet gezeigt?</div>';
-                    stim += '<div>Drücke eine der Tasten <span class="keyButton">1</span> bis <span class="keyButton">4</span> um das zuletzt gezeigte Wort auszuwählen.</div>';
-                    stim += '<div class="rteAttentionCheckChoiceBlock">';
+                    stim += '<div class="smalltext"><code><strong>Welches Wort wurde zuletzt von einem Rechteck umrandet gezeigt?</strong></code></div>';
+                    stim += '<div><code>Drücke eine der Tasten <span class="keyButton">1</span> bis <span class="keyButton">4</span> um das zuletzt gezeigte Wort auszuwählen.</code></div>';
+                    stim += '<div class="rteAttentionCheckChoiceBlock"><code>';
                     for (i = 0; i < shownTargets.length; i++)
                     {
                         stim += '<div class="rteAttentionCheckChoice"><span class="keyButton">' + (i + 1) + '</span><span class="rteAttentionCheckChoiceText">' + shownTargets[i] + '</span></div>';
                     }
-                    stim += '<div>';
+                    stim += '</code><div>';
                     return stim;
                 }
             },
@@ -824,9 +834,9 @@
                 if (data.rte_part !== 'target_error')
                 {
                     chance = 0.10;
-                    if (tutorialPt1Running)
+                    if (tutorialRunning)
                     {
-                        chance = 0.50;
+                        chance = 0.30;
                     }
 
                     if (Math.random() < chance)
@@ -893,57 +903,99 @@
 
 
         /*
-         * RTE Tutorial Part 1 - Decision trials
+         * RTE Setup
+         */
+        var continuousCorrects = 0;
+        var tutorialRunning = true;
+
+
+        /*
+         * RTE Part 1 - Tutorial 1 - Decision Trials Only
          */
 
-        // Show Instructions
+        // Briefing
         timeline.push({
             type: 'html-keyboard-response',   
-            stimulus: '<div class="instruction"><img src="img/symbols/sherlock.png" alt="Watson"><div class="smalltext"><code><strong>Weiter gehts.</strong></code></div><div class="smalltext"><code>Ich möchte Sie im folgenden bitten, eine Reihe von Aufgaben zu bearbeiten, bei denen Sie besonders schnell reagieren müssen. Wir beginnen zunächst einfach. Ich werde Ihnen verschiedene Fragen stellen. Nach jeder Frage erscheint eine mögliche Antwort umgeben von einem Rechteck. Färbt sich das Wort nach kurzer Zeit gelb, so müssen Sie entscheiden, ob diese Antwort auf die zuvor gestellte Frage gegeben werden soll. Handelt es sich bei der Antwort um eine wahre Information zur Tat, die bereits in der Presseerklärung veröffentlicht wurde, müssen Sie nichts unternehmen. Die Antwort wird in diesem Fall innerhalb einer Sekunde automatisch ausgesprochen. Handelt es sich jedoch bei der gezeigten Antwort nicht um eine bekannte Information zur Tat, müssen Sie diese durch Drücken der <span class="keyButton">Leertaste</span> sofort unterdrücken. </code></div><br><div class="smalltext"><code>Anhand Ihres Antwortverhaltens wird sich meine Einschätzung Ihrer Schuld bzw. Unschuld ändern. Eine Anzeige meiner Einschätzung sehen Sie am oberen Bildschirmrand.</code></div></div>',
+            stimulus: '<div class="topmargincontainer"><div class="instruction"><div class="smalltext"><code>Ich möchte Sie nun bitten, eine Reihe von Aufgaben zu bearbeiten,bei denen Sie besonders schnell reagieren müssen. Wir beginnen zunächst einfach. Ich werde Ihnen verschiedene Fragen stellen. Nach jeder Frage erscheint eine mögliche Antwort umgeben von einem Rechteck. Nach kurzer Zeit ändert sich deren Farbe - und Sie müssen eine Entscheidung treffen. <strong>Entspricht die gezeigte Antwort einer bekannten Information aus der Presseerklärung, unternehmen Sie nichts.</strong> Die Antwort wird dann automatisch ausgesprochen. <strong>Wenn die Antwort allerdings nicht mit der Presseerklärung übereinstimmt, sollen Sie diese durch Drücken der Leertaste unterdrücken.</strong></code></div><br><div class="smalltext"><code>Fehler lassen sie schuldig wirken, während korrekte Antworten Unschuld indizieren. Den aktuellen Stand meiner Einschätzung finden Sie jeweils am oberen Bildschirmrand.</code></div><br><div class="smalltext"><code>Drücken Sie die</code> <span class="keyButton">Leertaste</span> <code>um zu beginnen.</code></div></div></div>',
             choices: [32],
-            data: {rte_part: 'tutorial_pt1_instruction'},
+            data: {rte_part: 'rte_pt1_instruction'},
             on_load: function(){
                 showBar(guilt); // show trust bar
+                continuousCorrects = 0;
+                tutorialRunning = true;
             }
         });
 
         // Create Random Subset of 30 Decision Trials
         decisionTasks = tasks.slice(144);
-        decisionTasks = _.sampleSize(decisionTasks, 30);
+        decisionTaskSubset = _.sampleSize(decisionTasks, 30);
 
         // Run Tutorial Part 1
-        var continuousCorrects = 0;
-        var tutorialPt1Running = true;
-
-        var if_tutorial = {
-            timeline: [blank, fixation, image, question, target_introduction, target, if_target_error, if_attention_check, if_attention_check_error],
-            timeline_variables: decisionTasks,
+        var if_tutorial_pt1 = {
+            timeline: [blank, fixation, question, target_introduction, target, if_target_error, if_attention_check, if_attention_check_error],
+            timeline_variables: decisionTaskSubset,
             randomize_order: false,
             loop_function: function (data) {
-                // continue trial while not having completed 5 correct actions in a row
-                if (continuousCorrects < tutorialIterator.length * 0.75)
-                {
-                    tutorialPt1Running = true;
+                // continue trial while not having completed 10 correct actions in a row
+                if (continuousCorrects < 10) {
+                    tutorialRunning = true;
                     return true;
-    
-                } else
-                {
-                    tutorialPt1Running = false;
+                } else {
+                    tutorialRunning = false;
                     return false;
                 }
             },
             on_finish: function () {}
         };
-        timeline.push(if_tutorial);
+        timeline.push(if_tutorial_pt1);
 
 
         /*
-         * Reaction Time Experiment Briefing (HIER GEHTS WEITER!!!!!!!!!)
+         * RTE Part 2 - Tutorial 2 - Go/Nogo/Decision Trials Mixed
+         */
+
+        // Briefing
+        timeline.push({
+            type: 'html-keyboard-response',   
+            stimulus: '<div class="instruction"><img src="img/symbols/sherlock.png" alt="Sherlock"><div class="smalltext"><code><strong>Jetzt wird es schwieriger</strong></code></div><div class="smalltext"><code>Im folgenden werden wieder Fragen und Antworten präsentiert. Färben sich die Antworten gelb, verhalten Sie sich wie zuvor und unterdrücken diese durch Drücken der <span class="keyButton">Leertaste</span> falls es sich nicht um bekannte und in der Presseerklärung veröffentlichte Informationen handelt. Färbt sich die Antwort jedoch rot, drücken Sie in jedem Fall die Leertaste. Färbt sie sich grün, reagieren Sie nicht.</code></div><br><div class="smalltext"><code>Bereit? Dann drücken Sie nun die <span class="keyButton">Leertaste</span> um sich mit der Aufgabe in einigen Probedurchgängen vertraut zu machen.</code></div></div>',
+            choices: [32],
+            data: {rte_part: 'rte_pt1_instruction'},
+            on_load: function(){
+                continuousCorrects = 0;
+                tutorialRunning = true;
+            }
+        });
+
+        // Create Random Subset of 20 Trials
+        taskSubset = _.sampleSize(tasks, 20);
+
+        // Run Tutorial Part 2
+        var if_tutorial_pt2 = {
+            timeline: [blank, fixation, question, target_introduction, target, if_target_error, if_attention_check, if_attention_check_error],
+            timeline_variables: taskSubset,
+            randomize_order: false,
+            loop_function: function (data) {
+                // continue trial while not having completed 10 correct actions in a row
+                if (continuousCorrects < 10) {
+                    tutorialRunning = true;
+                    return true;
+                } else {
+                    tutorialRunning = false;
+                    return false;
+                }
+            },
+            on_finish: function () {}
+        };
+        timeline.push(if_tutorial_pt2);
+
+
+        /*
+         * RTE Part 3 - Go/Nogo/Decision Trials Mixed
          */
 
         var rte_instruction = {
             type: 'html-keyboard-response',
-            stimulus: '<div class="instruction"><div class="heading">Jetzt wird es ernst!</div><div class="smalltext">Nachdem du dich mit der Aufgabe vertraut gemacht hast, wiederholen wir das Ganze jetzt nochmal - nur wesentlich häufiger. Bitte stelle unbedingt sicher, dass du in den nächsten 20 Minuten durch nichts abgelenkt wirst. Denke daran, aufmerksam zu lesen und so schnell wie möglich die <span class="keyButton">Leertaste</span> zu drücken, wenn sich das von einem Rechteck umgebene Wort rot färbt.</div><div class="smalltext"> Drücke die <span class="keyButton">Leertaste</span> wenn es losgehen kann.<div>',
+            stimulus: '<div class="instruction"><div class="heading">Jetzt wird es ernst.</div><div class="smalltext">Nachdem Sie sich mit der Aufgabe vertraut gemacht haben, wiederholen wir das Ganze nochmal - nur wesentlich häufiger. Bitte stellen Sie unbedingt sicher, dass Sie in den nächsten 20 Minuten durch nichts abgelenkt werden. Denken Sie daran, aufmerksam zu lesen und so schnell wie möglich die <span class="keyButton">Leertaste</span> zu drücken, wenn sich das von einem Rechteck umgebene Wort rot färbt - oder gelb und es sich um eine unbekannte Information handelt, die unterdrückt werden sollte.</div><div class="smalltext"> Drücken Sie die <span class="keyButton">Leertaste</span> um zu beginnen.<div>',
             choices: [32],
             data: {rte_part: 'tutorial_instruction'}
         };
@@ -954,103 +1006,13 @@
          * Reaction Time Experiment
          */
 
-        rteIterator = [];
-        for (i = 0; i < 192; i++) //192 trials
-        {
-            rteIterator.push({iteration: i});
-        }
-
         var rte = {
-            timeline: [blank, fixation, image, question, target_introduction, target, if_target_error, if_attention_check, if_attention_check_error],
-            timeline_variables: rteIterator,
+            timeline: [blank, fixation, question, target_introduction, target, if_target_error, if_attention_check, if_attention_check_error],
+            timeline_variables: tasks,
             randomize_order: true
         };
         timeline.push(rte);
 
-
-        /*
-         * Flyin Instructions 2
-         */
-        /*
-        var flyin_instruction_2 = {
-            type: 'html-keyboard-response',
-            stimulus: function () {
-                stim = '<div class="instruction"><div class="heading">Super!</div>';
-                stim += '<div class="smalltext">Du hast es in wenigen Minuten geschafft. Es werden nun noch einmal Fragen des Ermittlers und daraufhin Antworten gezeigt, die du durch Drücken der Leertaste unterbinden kannst. Auch hier sollte ein guter Hacker wieder solche Informationen zurückhalten, die ihn mit der Tat in Verbindung bringen und schuldig erscheinen lassen. Natürlich macht man sich verdächtig, wenn man offensichtliche oder harmlose Informationen zurückhält. Dein Alter solltest Du beispielsweise korrekt angeben.</div><div class="smalltext">Die Einschätzung des Ermittlers, ob er Dich als schuldig oder unschuldig einschätzt, wird während der Befragung wiederum am oberen Bildschirmrand angezeigt.</div>';
-                stim += '<div class="smalltext">Drücke nun die <span class="keyButton">Leertaste</span> um zu beginnen.<div>';
-                return stim;
-            },
-            choices: [32]
-        };
-        timeline.push(flyin_instruction_2); 
-        */
-
-        /*
-         * Flyin Decisions 2
-         */
-        /*
-        var guilt_2 = 50;
-
-        var flyins_2 = {
-            timeline: [
-                {
-                    type: 'flyin',
-                    question: jsPsych.timelineVariable('question'),
-                    answer: jsPsych.timelineVariable('answer'),
-                    abortionExpected: jsPsych.timelineVariable('abortionExpected')
-
-                }
-            ],
-            timeline_variables: [
-                // 4 noncritical items
-                {question: "Wie alt bist du?",
-                    answer: function(){return age},
-                    abortionExpected: false},
-                {question: "Welches Geschlecht hast du?",
-                    answer: function(){return sex},
-                    abortionExpected: false},
-                {question: "Was studierst du?",
-                    answer: "Psychologie",
-                    abortionExpected: false},
-                {question: "Wo studierst du?",
-                    answer: "Jena",
-                    abortionExpected: false},
-                // 4 critical items
-                {question: questions[0],
-                    answer: secrets[0],
-                    abortionExpected: true},
-                {question: questions[1],
-                    answer: secrets[1],
-                    abortionExpected: true},
-                {question: questions[2],
-                    answer: secrets[2],
-                    abortionExpected: true},
-                {question: questions[3],
-                    answer: secrets[3],
-                    abortionExpected: true},
-            ],
-            randomize_order: true,
-            repetitions: 2,
-            on_load: function(){
-                showBar(guilt_2);
-            },
-            on_finish: function(data){
-                if (data.aborted === data.abortion_expected){
-                    if (guilt_2 >= 10) {
-                        guilt_2 = guilt_2 - 10;
-                    }
-                } else {
-                    if (guilt_2 <= 80) {
-                        guilt_2 = guilt_2 + 20;
-                    } else if (guilt_2 <= 90) {
-                        guilt_2 = guilt_2 + 10;
-                    }
-                }
-                
-            }
-        };
-        timeline.push(flyins_2);
-        */
 
         /*
          * Likert

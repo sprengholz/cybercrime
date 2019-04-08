@@ -39,7 +39,6 @@ jsPsych.plugins['chat'] = (function () {
             
             display_element.querySelector('#openPressTextButton').addEventListener('click', openPressText);
             display_element.querySelector('#sendMessageButton').addEventListener('click', check);
-            display_element.querySelector('#finishChatButton').addEventListener('click', finishChat);
             
         });
 
@@ -125,9 +124,7 @@ jsPsych.plugins['chat'] = (function () {
                 // Sendebutton ausgrauen
                 // Weiter Button sichtbar machen
                 setTimeout(function(){
-                  
-                    $('#chatOverlay').css("display", "flex").hide().fadeIn("slow");
-                    //$('#chatOverlay').css('visibility', 'visible');    
+                    finishChat();   
                 },7000);
             }
         };
@@ -166,7 +163,7 @@ jsPsych.plugins['chat'] = (function () {
         else
         {
             setTimeout(function(){
-                $('#messageArea').append('<div class="message"><div class="messageOther" style="display: none;">'+message.text+'</div></div>').slideDown("fast");
+                $('#messageArea').append('<div class="message"><div class="messageOther" style="display: none;"><code>'+message.text+'</code></div></div>').slideDown("fast");
                 $('div.messageOther').fadeIn();
                 $('#messageArea').scrollTop(1E10);
             },1000);

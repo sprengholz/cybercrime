@@ -3,37 +3,34 @@
         <div class="heading">Dokumente hacken</div>
         <div class="smalltext">
             <p>
-                Es soll der Server der Fakultät für Sozial- und Verhaltenswissenschaften gehackt werden. Du wirst die unten eingeblendete Konsole verwenden, um dich mit dem Computer zu verbinden und diesen nach interessanten Informationen durchsuchen.
-            </p>
-            <p>
-                Es soll der Server der Fakultät für Sozial- und Verhaltenswissenschaften gehackt werden. Du wirst die unten eingeblendete Konsole verwenden, um dich mit dem Computer zu verbinden und diesen nach interessanten Informationen durchsuchen.
+                Es soll der Server der Fakultät für Sozial- und Verhaltenswissenschaften gehackt werden. Du wirst die unten eingeblendete Konsole verwenden, um dich mit dem Computer zu verbinden und diesen nach interessanten Informationen durchsuchen. Verwende hierzu die folgende Anleitung.
             </p>
         </div>
         <div class="subheading">Schritt 1: Angriffsziel identifizieren</div>
         <div class="smalltext">
             <p>
-                Auf dem zu hackenden Rechner wird auch die Webseite der Fakultät betrieben. Öffne diese in einem zweiten Browserfenster. Suche auf der Webseite nach einem Login-Bereich. Sobald du diesen gefunden hast, kopiere die Adresse der Seite.
+                Auf dem zu hackenden Server wird auch die Webseite der Fakultät betrieben. Öffne diese in einem zweiten Browserfenster und suche nach einem Login-Bereich. Sobald du den Login-Bereich gefunden hast, kopiere seine Adresse aus dem Browserfenster.
             </p>
         </div>
         <div class="subheading">Schritt 2: Brute-Force-Attacke starten</div>
         <div class="smalltext">
             <p>
-                Nutzername und Passwort werden benötigt, um auf den Server zugreifen und Daten einsehen zu können. Da du die Zugangsinformationen nicht besitzt, musst du dir über einen Brute-Force-Angriff Zutritt verschaffen. Dabei werden Nutzername und Passwort von einem Programm solange geraten, bis die richtige Kombination gefunden ist. Brutus ist ein solches Programm. Du startest es, indem du in der Konsole den Befehl <strong>BRUTUS</strong> eingibst und mittels Enter-Taste abschickst. Du wirst anschließend nach einer Adresse gefragt, die attackiert werden soll. Gib hier die Adresse der Login-Seite aus Schritt 1 ein. Anschließend wird Brutus versuchen, die Zugangsinformationen herauszubekommen.
+                Nutzername und Passwort werden benötigt, um auf den Server zugreifen und Daten einsehen zu können. Da du die Zugangsinformationen nicht besitzt, musst du dir über einen Brute-Force-Angriff Zutritt verschaffen. Dabei werden Nutzername und Passwort von einem Programm solange geraten, bis die richtige Kombination gefunden ist. Brutus ist ein solches Programm. Du startest es, indem du in der Konsole den Befehl <strong>BRUTUS</strong> eingibst und mittels Enter-Taste abschickst. Du wirst anschließend nach einer Adresse gefragt, die attackiert werden soll. Gib hier die Adresse des Login-Bereichs aus Schritt 1 ein. Anschließend wird Brutus versuchen, die Zugangsinformationen herauszubekommen.
             </p>
         </div>
         <div class="subheading">Schritt 3: Datenverbindung herstellen</div>
         <div class="smalltext">
             <p>
-                Sobald die Zugangsinformationen gefunden wurden, kannst du den Rechner nach Daten durchsuchen. Stelle dafür zunächst eine Datenverbindung her. Hierfür verwendest du ein anderes Programm namens <strong>DATASPLOIT</strong>, das du über den gleichnamigen Befehl startest.
+                Sobald die Zugangsinformationen gefunden wurden, kannst du den Rechner nach Daten durchsuchen. Stelle hierfür zunächst eine Datenverbindung mit einem Programm namens Copycat her, das du über den gleichnamigen Befehl <strong>COPYCAT</strong> startest.
             </p>
         </div>
         <div class="subheading">Schritt 4: Computer durchsuchen</div>
         <div class="smalltext">
             <p>
-                Sobald die Verbindung steht, kann durch Eingabe des Befehls LIST eine Liste aller auf dem Computer vorhandenen Ordner angezeigt werden. In dieser Ansicht kannst du eventuell bereits erkennen, welche Daten auf dem Server abgelegt sind.
+                Sobald die Verbindung steht, kann durch Eingabe des Befehls <strong>LIST</strong> eine Liste aller auf dem Computer vorhandenen Ordner angezeigt werden. In dieser Ansicht kannst du eventuell bereits erkennen, welche Daten auf dem Server abgelegt sind.
             </p>
             <p>
-                Um die in einem Ordner abgelegten Dateien einzusehen, kannst du den Befehl OPEN gefolgt vom Namen des zu öffnenden Ordners nutzen (z.B. OPEN Dokumente, falls es einen Ordner Dokumente auf dem Rechner gibt).
+                Um die in einem Ordner abgelegten Dateien einzusehen, kannst du den Befehl <strong>OPEN</strong> gefolgt vom Namen des zu öffnenden Ordners nutzen (z.B. OPEN Dokumente, falls es einen Ordner Dokumente auf dem Rechner gibt).
             </p>
             <p>
                 Anschließend wird angezeigt, welche Dateien sich im Ordner befinden. Wenn du auf eine Datei klickst, wird ihr Inhalt in einem neuen Tab angezeigt. Du kannst sie anschließend auf deinem Computer speichern. Versuche alle Dokumente anzusehen und herunterzuladen.
@@ -56,8 +53,8 @@
                     <label for="brutus">Brutus</label>
                 </div>
                 <div>
-                    <input type="checkbox" id="datasploit" value="datasploit" name="tools">
-                    <label for="datasploit">Datasploit</label>
+                    <input type="checkbox" id="copycat" value="copycat" name="tools">
+                    <label for="copycat">Copycat</label>
                 </div>
                 <div>
                     <input type="checkbox" id="filezilla" value="filezilla" name="tools">
@@ -74,7 +71,7 @@
             </fieldset>  
             <br>
             <fieldset>  
-                <legend>Welche Dokumente hast du gefunden?</legend> 
+                <legend>Welche Dokumente konntest du stehlen?</legend> 
                 <div>
                     <input type="checkbox" id="forms" value="forms" name="documents">
                     <label for="forms">Dienstreiseformulare</label>
@@ -102,7 +99,7 @@
             </fieldset>  
             <br>
             <fieldset>  
-                <legend>Von welchen Instituten waren die Dokumente?</legend> 
+                <legend>Aus welchen Bereichen waren die Dokumente?</legend> 
                 <div>
                     <input type="checkbox" id="ethics" value="ethics" name="institutes">
                     <label for="ethics">Angewandte Ethik</label>
