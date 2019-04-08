@@ -20,6 +20,7 @@
         <script src="js/plugins/jspsych-flyin.js"></script> 
 
         <script src="js/jquery.min.js"></script>
+        <script src="js/lodash.js"></script>
         <script src="js/anime.min.js"></script>
         <script src="js/download.min.js"></script>
 
@@ -431,7 +432,7 @@
 
 
         /*
-         * Show Information about Second Part
+         * Presentation of Nonsecret (Public) Crime Information
          */
 
         timeline.push({
@@ -541,146 +542,6 @@
 
 
         /*
-         * Flyin Decisions Briefing
-         */
-        /*
-        timeline.push({
-            type: 'html-button-response',
-            choices: ["Weiter"],
-            stimulus: '<div class="instruction"><div class="heading">Teil 1: Entscheidung</div><div class="smalltext">Im ersten Teil des Tests werden dir vom Ermittler verschiedene Fragen gestellt. Wenn du die auf eine Frage gezeigte Antwort nicht geben möchtest, drücke so schnell wie möglich die <span class="keyButton">Leertaste</span>. Reagierst du nicht, so wird die Antwort nach kurzer Zeit ausgesprochen. Dies erkennst du daran, dass die Antwort auf den Ermittler zufliegt und sich dessen Silhouette schließlich gelb färbt, sobald die Antwort angekommen ist.</div><img src="img/symbols/howto_flyin.jpg" style="padding: 15px;"><div class="smalltext">Ein guter Hacker wird solche Antworten zurückhalten, die seine Schuld beweisen und eher Antworten geben, die ihn unschuldig erscheinen lassen. Natürlich macht man sich auch verdächtig, wenn man offensichtliche oder harmlose Informationen zurückhält. Dein Alter solltest Du beispielsweise korrekt angeben.</div><div class="smalltext">Die Einschätzung des Ermittlers, ob er Dich als schuldig oder unschuldig einschätzt, wird dir während der Befragung am oberen Bildschirmrand angezeigt.</div></div>',
-            on_finish: function(){
-                $('#experiment').focus();
-                $('#experiment').css('cursor', 'none');
-            }
-        }); 
-
-
-        var flyin_instruction = {
-            type: 'html-keyboard-response',
-            stimulus: function () {
-                stim = '<div class="instruction"><div class="heading">Los gehts!</div>';
-                stim += '<div class="smalltext">Positioniere deinen Finger auf der Leertaste. Denke daran, immer dann die Taste zu drücken, wenn eine Antwort erscheint, mit der du nicht auf die gestellte Frage antworten möchtest.</div>';
-                stim += '<div class="smalltext">Drücke nun die <span class="keyButton">Leertaste</span> um zu beginnen.<div>';
-                return stim;
-            },
-            choices: [32]
-        };
-        timeline.push(flyin_instruction); 
-        */
-
-        /*
-         * Flyin Decisions
-         */
-        /*
-        var flyins_warmup = {
-            timeline: [
-                {
-                    type: 'flyin',
-                    question: jsPsych.timelineVariable('question'),
-                    answer: jsPsych.timelineVariable('answer'),
-                    abortionExpected: jsPsych.timelineVariable('abortionExpected')
-                }
-            ],
-            timeline_variables: [
-                // 4 noncritical items
-                {question: "Wie alt bist du?",
-                    answer: function(){return age},
-                    abortionExpected: false},
-                {question: "Welches Geschlecht hast du?",
-                    answer: function(){return sex},
-                    abortionExpected: false},
-                {question: "Was studierst du?",
-                    answer: "Psychologie",
-                    abortionExpected: false},
-                {question: "Wo studierst du?",
-                    answer: "Jena",
-                    abortionExpected: false},
-            ],
-            randomize_order: false,
-            repetitions: 1,
-            on_load: function(){
-                showBar(guilt);
-            },
-            on_finish: function(data){
-                if (data.aborted === data.abortion_expected){
-                    if (guilt >= 10) {
-                        guilt = guilt - 10;
-                    }
-                } else {
-                    if (guilt <= 80) {
-                        guilt = guilt + 20;
-                    } else if (guilt <= 90) {
-                        guilt = guilt + 10;
-                    }
-                }
-                
-            }
-        };
-        timeline.push(flyins_warmup);
-
-
-        var flyins = {
-            timeline: [
-                {
-                    type: 'flyin',
-                    question: jsPsych.timelineVariable('question'),
-                    answer: jsPsych.timelineVariable('answer'),
-                    abortionExpected: jsPsych.timelineVariable('abortionExpected')
-                }
-            ],
-            timeline_variables: [
-                // 4 noncritical items
-                {question: "Wie alt bist du?",
-                    answer: function(){return age},
-                    abortionExpected: false},
-                {question: "Welches Geschlecht hast du?",
-                    answer: function(){return sex},
-                    abortionExpected: false},
-                {question: "Was studierst du?",
-                    answer: "Psychologie",
-                    abortionExpected: false},
-                {question: "Wo studierst du?",
-                    answer: "Jena",
-                    abortionExpected: false},
-                // 4 critical items
-                {question: "Mit welchem Werkzeug wurde gehackt?",
-                    answer: "Konsole",
-                    abortionExpected: true},
-                {question: "Wo stand der Computer, in den eingebrochen wurde?",
-                    answer: "Institut für Psychologie",
-                    abortionExpected: true},
-                {question: "Wer hat die Prüfungsfragen gestohlen?",
-                    answer: "Ich",
-                    abortionExpected: true},
-                {question: "Wieviele Prüfungen wurden gehackt?",
-                    answer: "4",
-                    abortionExpected: true}
-            ],
-            randomize_order: true,
-            repetitions: 5,
-            on_load: function(){
-                showBar(guilt);
-            },
-            on_finish: function(data){
-                if (data.aborted === data.abortion_expected){
-                    if (guilt >= 10) {
-                        guilt = guilt - 10;
-                    }
-                } else {
-                    if (guilt <= 80) {
-                        guilt = guilt + 20;
-                    } else if (guilt <= 90) {
-                        guilt = guilt + 10;
-                    }
-                }
-                
-            }
-        };
-        timeline.push(flyins);
-
-        */
-
-        /*
          * Reaction Time Experiment Elements
          */
 
@@ -689,10 +550,7 @@
             stimulus: '',
             choices: jsPsych.NO_KEYS,
             trial_duration: 1000,
-            data: {rte_part: 'blank'},
-            on_load: function(){
-                showBar(guilt); // show trust bar
-            }
+            data: {rte_part: 'blank'}           
         };
 
 
@@ -719,8 +577,7 @@
         var question = {
             type: 'word-sequence',
             stimulus: function () {
-                iteration = jsPsych.timelineVariable('iteration')();
-                question = tasks[iteration].question;
+                question = jsPsych.timelineVariable('question')();
                 return question;
             },
             image: function () {
@@ -733,10 +590,8 @@
         var target_introduction = {
             type: "html-keyboard-response",
             stimulus: function () {
-                iteration = jsPsych.timelineVariable('iteration')();
-                task = tasks[iteration];
-                targetWord = task.target;
-                stim = '<div class="silhouette-male"> <div class="target-intro">' + targetWord + '</div> </div>';
+                target = jsPsych.timelineVariable('target')();
+                stim = '<div class="silhouette-male"> <div class="target-intro">' + target + '</div> </div>';
                 return stim;
             },
             trial_duration: 400,
@@ -744,13 +599,10 @@
             data: {rte_part: 'target_introduction'},
             on_finish: function (data)
             {
-                iteration = jsPsych.timelineVariable('iteration')();
-                task = tasks[iteration];
-
-                data.trial_action = task.action;
-                data.trial_question = task.question;
-                data.trial_secrecy = task.secrecy;
-                data.trial_target = task.target;
+                data.trial_action = jsPsych.timelineVariable('action')();
+                data.trial_question = jsPsych.timelineVariable('question')();
+                data.trial_secrecy = jsPsych.timelineVariable('secrecy')();
+                data.trial_target = jsPsych.timelineVariable('target')();
             }
         };
 
@@ -758,16 +610,15 @@
         var target = {
             type: "html-keyboard-response",
             stimulus: function () {
-                iteration = jsPsych.timelineVariable('iteration')();
-                task = tasks[iteration];
-                targetWord = task.target;
+                target = jsPsych.timelineVariable('target')();
+                action = jsPsych.timelineVariable('action')();
                 stim = "";
-                if (task.action === "go") {
-                    stim = '<div class="silhouette-male"> <div class="target-go">' + targetWord + '</div> </div>';
-                } else if (task.action === "nogo") {
-                    stim = '<div class="silhouette-male"> <div class="target-nogo">' + targetWord + '</div> </div>';
-                } else if (task.action === 'decision') {
-                    stim = '<div class="silhouette-male"> <div class="target-decision">' + targetWord + '</div> </div>';
+                if (action === "go") {
+                    stim = '<div class="silhouette-male"> <div class="target-go">' + target + '</div> </div>';
+                } else if (action === "nogo") {
+                    stim = '<div class="silhouette-male"> <div class="target-nogo">' + target + '</div> </div>';
+                } else if (action === 'decision') {
+                    stim = '<div class="silhouette-male"> <div class="target-decision">' + target + '</div> </div>';
                 }
                 return stim;
             },
@@ -776,19 +627,19 @@
             data: {rte_part: 'target'},
             on_finish: function (data)
             {
-                iteration = jsPsych.timelineVariable('iteration')();
-                task = tasks[iteration];
+                action = jsPsych.timelineVariable('action')();
+                secrecy = jsPsych.timelineVariable('secrecy')();
 
                 correct = undefined;
                 // correct reaction in go trials: key press
-                if (task.action === 'go') {
+                if (action === 'go') {
                     correct = (data.key_press !== null);
                 // correct reaction in nogo trials: no key press
-                } else if (task.action === 'nogo') {
+                } else if (action === 'nogo') {
                     correct = (data.key_press === null);
                 // correct reaction in decision trials: no key press if target is nonsecret (communicated truth)
-                } else if (task.action === 'decision') {
-                    if (task.secrecy === 'nonsecret') {
+                } else if (action === 'decision') {
+                    if (secrecy === 'nonsecret') {
                         correct = (data.key_press === null);
                     } else {
                         correct = (data.key_press !== null);
@@ -800,7 +651,7 @@
                     continuousCorrects++;
 
                     // update trust bar after decision trials
-                    if (task.action === 'decision') {
+                    if (action === 'decision') {
                         if (guilt >= 10) {
                             guilt = guilt - 10;
                         }
@@ -810,7 +661,7 @@
                     continuousCorrects = 0;
 
                     // update trust bar after decision trials
-                    if (task.action === 'decision') {
+                    if (action === 'decision') {
                         if (guilt <= 80) {
                             guilt = guilt + 20;
                         } else if (guilt <= 90) {
@@ -819,10 +670,10 @@
                     }
                 }
 
-                data.trial_action = task.action;
-                data.trial_question = task.question;
-                data.trial_secrecy = task.secrecy;
-                data.trial_target = task.target;
+                data.trial_action = jsPsych.timelineVariable('action')();
+                data.trial_question = jsPsych.timelineVariable('question')();
+                data.trial_secrecy = jsPsych.timelineVariable('secrecy')();
+                data.trial_target = jsPsych.timelineVariable('target')();
                 data.trial_correct = correct;
                 data.trial_rt = data.rt;
             }
@@ -899,8 +750,7 @@
                 // case 2: check target word
                 if (attention_check_type === 'target') {
 
-                    var task = tasks[iteration];
-                    lastTarget = task.target;
+                    lastTarget = jsPsych.timelineVariable('target')();
                     var otherTargets = secrets.slice();
                     otherTargets = otherTargets.concat(nonsecrets);
                     otherTargets = otherTargets.concat(untruths);
@@ -937,8 +787,7 @@
                 if (attention_check_type === 'target') {
 
                     var targetIdentified = false;
-                    var task = tasks[iteration];
-                    lastTarget = task.target;
+                    lastTarget = jsPsych.timelineVariable('target')();
                     if (shownTargets[data.key_press - 49] === lastTarget){
                         targetIdentified = true;
                     }
@@ -952,8 +801,7 @@
                 if (attention_check_type === 'prime') {
 
                     questionIdentified = false;
-                    var task = tasks[iteration];
-                    lastQuestion = task.question;
+                    lastQuestion = jsPsych.timelineVariable('question')();
                     if (questions[data.key_press - 49] === lastQuestion){
                         questionIdentified = true;
                     }
@@ -976,7 +824,7 @@
                 if (data.rte_part !== 'target_error')
                 {
                     chance = 0.10;
-                    if (tutorialRunning)
+                    if (tutorialPt1Running)
                     {
                         chance = 0.50;
                     }
@@ -1045,52 +893,42 @@
 
 
         /*
-         * Tutorial Reaction Time Experiment Briefing
+         * RTE Tutorial Part 1 - Decision trials
          */
 
-        var tutorial_instruction = {
-            type: 'html-keyboard-response',
-            stimulus: '<div class="instruction"><div class="heading">Aufgepasst!</div><div class="smalltext">Im zweiten Teil des Tests geht es wieder um schnelle Reaktionen. Es werden gleich hintereinander eine vom Ermittler gestellte Frage und ein einzelnes Wort in einem Rechteck erscheinen. Lies beide aufmerksam. Färbt sich das Wort im Rechteck rot, drücke so schnell wie möglich die <span class="keyButton">Leertaste</span> . Färbt es sich dagegen grün, darfst du nicht reagieren. Das Ganze wird mehrfach wiederholt. Von Zeit zu Zeit wird zudem geprüft, ob du dich an die zuletzt gezeigte Frage sowie das Wort im Rechteck erinnern kannst.</div><div class="smalltext"> Drücke die <span class="keyButton">Leertaste</span> um einen Probelauf zu starten.<div>',
+        // Show Instructions
+        timeline.push({
+            type: 'html-keyboard-response',   
+            stimulus: '<div class="instruction"><img src="img/symbols/sherlock.png" alt="Watson"><div class="smalltext"><code><strong>Weiter gehts.</strong></code></div><div class="smalltext"><code>Ich möchte Sie im folgenden bitten, eine Reihe von Aufgaben zu bearbeiten, bei denen Sie besonders schnell reagieren müssen. Wir beginnen zunächst einfach. Ich werde Ihnen verschiedene Fragen stellen. Nach jeder Frage erscheint eine mögliche Antwort umgeben von einem Rechteck. Färbt sich das Wort nach kurzer Zeit gelb, so müssen Sie entscheiden, ob diese Antwort auf die zuvor gestellte Frage gegeben werden soll. Handelt es sich bei der Antwort um eine wahre Information zur Tat, die bereits in der Presseerklärung veröffentlicht wurde, müssen Sie nichts unternehmen. Die Antwort wird in diesem Fall innerhalb einer Sekunde automatisch ausgesprochen. Handelt es sich jedoch bei der gezeigten Antwort nicht um eine bekannte Information zur Tat, müssen Sie diese durch Drücken der <span class="keyButton">Leertaste</span> sofort unterdrücken. </code></div><br><div class="smalltext"><code>Anhand Ihres Antwortverhaltens wird sich meine Einschätzung Ihrer Schuld bzw. Unschuld ändern. Eine Anzeige meiner Einschätzung sehen Sie am oberen Bildschirmrand.</code></div></div>',
             choices: [32],
-            data: {rte_part: 'tutorial_instruction'},
+            data: {rte_part: 'tutorial_pt1_instruction'},
             on_load: function(){
-                hideBar();
+                showBar(guilt); // show trust bar
             }
-        };
-        timeline.push(tutorial_instruction);
+        });
 
+        // Create Random Subset of 30 Decision Trials
+        decisionTasks = tasks.slice(144);
+        decisionTasks = _.sampleSize(decisionTasks, 30);
 
-        /*
-         * Tutorial Reaction Time Experiment
-         */
-
-        tutorialIterator = [
-            {iteration: 54},
-            {iteration: 104},
-            {iteration: 145},
-            {iteration: 40},
-            {iteration: 17},
-            {iteration: 187},
-        ];
-
-
+        // Run Tutorial Part 1
         var continuousCorrects = 0;
-        var tutorialRunning = true;
+        var tutorialPt1Running = true;
 
         var if_tutorial = {
             timeline: [blank, fixation, image, question, target_introduction, target, if_target_error, if_attention_check, if_attention_check_error],
-            timeline_variables: tutorialIterator,
+            timeline_variables: decisionTasks,
             randomize_order: false,
             loop_function: function (data) {
                 // continue trial while not having completed 5 correct actions in a row
-                if (continuousCorrects < tutorialIterator.length)
+                if (continuousCorrects < tutorialIterator.length * 0.75)
                 {
-                    tutorialRunning = true;
+                    tutorialPt1Running = true;
                     return true;
     
                 } else
                 {
-                    tutorialRunning = false;
+                    tutorialPt1Running = false;
                     return false;
                 }
             },
@@ -1100,7 +938,7 @@
 
 
         /*
-         * Reaction Time Experiment Briefing
+         * Reaction Time Experiment Briefing (HIER GEHTS WEITER!!!!!!!!!)
          */
 
         var rte_instruction = {
