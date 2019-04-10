@@ -527,7 +527,7 @@ th{
     width: calc(100% - 40px);
     border-radius: 15px;
  
-    background-image: linear-gradient(to right, #3fa85a, #FF0000);
+    background-image: linear-gradient(to right, #FF0000, #3fa85a);
   }
 
 #barIndicator {
