@@ -85,21 +85,11 @@
 
     function showBar(value) {
 
-        value = 100 - value;
-
-        $('#barOverlay').show();
-
-        var left = value + "%";
-
-        if (value > 95) {
-            left = "calc(" + value + "% - " + value + "px)";
-        }
-
-        $('#barIndicator').css("left", left);
+       
     }
 
     function hideBar() {
-        $('#barOverlay').hide();
+       
     }
 
 
@@ -137,9 +127,6 @@
     // parameters for decisions
     var decisions = [];
 
-    // parameters for go/nogo tasks
-    var tasks = [];
-
     // timeline
     var timeline = [];
 
@@ -148,88 +135,170 @@
 
 
     /*
-     * Setup Go/NoGo Tasks
+     * Setup Tasks for RT experiment - Part 1 (matching stimuli only = 90 trials)
      */
 
-    actions = ['go', 'nogo', 'decision'];
+    var tasksPart1 = [];
 
-    for (action of actions) {
-        for (i = 0; i < questions.length; i++) {
-            // add each combination of question, target and action 8 times
+    for (i = 0; i < questions.length; i++) {
 
-            for (j = 0; j < 8; j++) {
-                // secret truth target
-                task = {
-                    action: action,
-                    question: questions[i],
-                    secrecy: 'secret',
-                    target: secrets[i]
-                };
-                tasks.push(task);
+        for (j = 0; j < 10; j++) {
+            // secret truth target
+            task = {
+                question: questions[i],
+                secrecy: 'secret',
+                target: secrets[i],
+                matching: 'match'
+            };
+            tasksPart1.push(task);
 
-                // nonsecret truth target
-                task = {
-                    action: action,
-                    question: questions[i],
-                    secrecy: 'nonsecret',
-                    target: nonsecrets[i]
-                };
-                tasks.push(task);
+            // nonsecret truth target
+            task = {
+                question: questions[i],
+                secrecy: 'nonsecret',
+                target: nonsecrets[i],
+                matching: 'match'
+            };
+            tasksPart1.push(task);
 
-                // untruth target
-                task = {
-                    action: action,
-                    question: questions[i],
-                    secrecy: 'untruth',
-                    target: untruths[i]
-                };
-                tasks.push(task);
-            }
+            // untruth target
+            task = {
+                question: questions[i],
+                secrecy: 'untruth',
+                target: untruths[i],
+                matching: 'match'
+            };
+            tasksPart1.push(task);
         }
     }
 
+    /*
+     * Setup Tasks for RT experiment - Part 2 (matching and nonmatching stimuli = 176 trials)
+     */
+
+    var tasksPart2 = [];
+
+    // matching stimuli (80% = 144 trials)
+
+    for (i = 0; i < questions.length; i++) {
+
+        for (j = 0; j < 16; j++) {
+            // secret truth target
+            task = {
+                question: questions[i],
+                secrecy: 'secret',
+                target: secrets[i],
+                matching: 'match'
+            };
+            tasksPart2.push(task);
+
+            // nonsecret truth target
+            task = {
+                question: questions[i],
+                secrecy: 'nonsecret',
+                target: nonsecrets[i],
+                matching: 'match'
+            };
+            tasksPart2.push(task);
+
+            // untruth target
+            task = {
+                question: questions[i],
+                secrecy: 'untruth',
+                target: untruths[i],
+                matching: 'match'
+            };
+            tasksPart2.push(task);
+        }
+    }
+
+    // matching stimuli (20% = 36 trials)
+
+    for (j = 0; j < 2; j++) {
+
+        for (i = 0; i < 3; i++){
+            nonmatchingSecrets = secrets.slice();
+            nonmatchingSecrets.splice(i, 1);
+            nonmatchingNonsecrets = nonsecrets.slice();
+            nonmatchingNonsecrets.splice(i, 1);
+            nonmatchingUntruths = untruths.slice();
+            nonmatchingUntruths.splice(i, 1);
+
+            for (nonmatchingSecret in nonmatchingSecrets){
+                task = {
+                    question: questions[0],
+                    secrecy: 'secret',
+                    target: nonmatchingSecret,
+                    matching: 'nonmatch'
+                };
+                tasksPart2.push(task);
+            }
+
+            for (nonmatchingNonsecret in nonmatchingNonsecrets){
+                task = {
+                    question: questions[0],
+                    secrecy: 'nonsecret',
+                    target: nonmatchingNonsecret,
+                    matching: 'nonmatch'
+                };
+                tasksPart2.push(task);
+            }
+
+            for (nonmatchingUntruth in nonmatchingUntruths){
+                task = {
+                    question: questions[0],
+                    secrecy: 'untruth',
+                    target: nonmatchingUntruth,
+                    matching: 'nonmatch'
+                };
+                tasksPart2.push(task);
+            }
+        }        
+    }
+    
 
     /*
      * Show Welcome Screen
      */
 
-    timeline.push({
+    /*timeline.push({
         type: 'html-button-response',
         choices: ["Weiter"],
         stimulus: '<div class="instruction"><div class="heading">Willkommen</div> <div class="smalltext">Vielen Dank,dass du an meiner Studie zum Thema Cyberkriminalität teilnehmen möchtest. Für die Teilnahme benötigst du eine Tastatur. Verwende deshalb bitte <strong>PC oder Notebook</strong>. Tablets und Smartphones sind leider nicht geeignet. Auf den nächsten Seiten folgen weitere Informationen zum Ablauf des Experiments. Bei Fragen oder Problemen erreichst du mich jederzeit per E-Mail.<div><div class="smalltext">Philipp Sprengholz<br>FSU Jena, Institut für Psychologie<br>philipp.sprengholz@uni-jena.de </div> </div>'
-    });
+    });*/
 
 
     /*
      * Show Eligibility Check
      */
-    timeline.push({
+
+    /*timeline.push({
         type: 'html-button-response',
         choices: ["Ich habe nicht an der Studie im Januar teilgenommen"],
         stimulus: '<div class="instruction"><div class="heading">Wichtig</div> <div class="smalltext">Solltest du bereits im Januar an einer ähnlichen Studie teilgenommen haben, bei der es darum ging Prüfungsfragen von einem Computer zu stehlen, kannst du leider nicht am Experiment teilnehmen. Bitte schließe das Fenster in diesem Fall.</div> </div>'
-    });
+    });*/
 
 
     /*
      * Show Information about Experiment
      */
 
-    timeline.push({
+    /*timeline.push({
         type: 'html-button-response',
         choices: ["Weiter"],
         stimulus: '<div class="instruction"><div class="heading">Zum Ablauf</div> <div class="smalltext">Du wirst zunächst etwas über Cyberangriffe lernen. Ich möchte zunächst herausfinden, ob es dir mit einer einfachen Anleitung gelingt, einen Universitätsrechner zu hacken und Daten zu stehlen. Anschließend folgen einige Reaktionszeitaufgaben, in denen du besonders schnell auf bestimmte Wörter reagieren musst.</div><div class="smalltext">Deine Teilnahme ist <strong>freiwillig</strong> und du kannst das Experiment jederzeit abbrechen. Natürlich werden deine Daten <strong>anonymisiert</strong> und vertraulich behandelt. Für deine Teilnahme erhältst du nach Abschluss des Experiments eine Versuchspersonenstunde. </div> </div>'
-    });
+    });*/
 
 
     /*
      * Show Information about Experiment
      */
 
-    timeline.push({
+    /*timeline.push({
         type: 'html-button-response',
         choices: ["Weiter"],
         stimulus: '<div class="instruction"><div class="heading">Ruhe bitte</div><div class="smalltext"> Bitte achte darauf, dass du während der Teilnahme nicht abgelenkt wirst. Suche dir einen <strong>ruhigen Raum</strong>, in dem du die nächsten <strong>45 Minuten</strong> nicht gestört wirst. Bitte lege dein Telefon außer Sichtweite. <div></div>'
-    });
+    });*/
 
 
 
@@ -258,7 +327,7 @@
             data.sex = sex;
         }
     };
-    timeline.push(start);
+    //timeline.push(start);
 
 
     /*
@@ -414,41 +483,41 @@
             clearAlerts();
         }
     };
-    timeline.push(hacking);
+    //timeline.push(hacking);
 
 
     /*
      * Enter Fullscreen Mode
      */
 
-    timeline.push({
+    /*timeline.push({
         type: 'fullscreen',
         fullscreen_mode: true,
         message: '<div class="instruction"><div class="heading">Wechsel in den Vollbildmodus</div><div class="smalltext"> Mit deinem erfolgreichen Hack hast du den ersten Teil des Experiments bereits abgeschlossen. Der nun folgende zweite Teil wird im Vollbildmodus ablaufen. Wenn du das Experiment vorzeitig abbrechen möchtest, kannst du den Vollbildmodus durch Drücken der Tasten <span class="keyButton">Esc</span> oder <span class="keyButton">F11</span> verlassen und das Browserfenster schließen. Bitte beachte, dass ich dir aus technischen Gründen nur dann eine Versuchspersonenstunde ausstellen kann, wenn du bis zum Ende des Experiments dabei bleibst.</div></div>',
         button_label: 'Alles klar'
-    });
+    });*/
 
 
     /*
      * Show Information about Second Part
      */
 
-    timeline.push({
+    /*timeline.push({
         type: 'html-button-response',
         choices: ["Sherlock starten"],
         stimulus: '<div class="instruction"><div class="heading">Achtung!</div><div class="smalltext">Der unbefugte Zugriff auf die Prüfungsfragen wurde durch einen Mitarbeiter des Dekanats bemerkt! Neben einigen anderen Studierenden wurdest du als möglicher Hacker identifiziert.</div><div class="smalltext">Alle Verdächtigen sollen nun einem Test durch ein neuartiges Ermittlungsprogramm namens <strong>Sherlock</strong> unterzogen werden, welches das Vorhandensein von Täterwissen überprüft und eine schuldige Person der Tat überführen kann. Auch du wirst gebeten, im Folgenden daran teilzunehmen.</div></div>'
-    });
+    });*/
 
 
     /*
      * Presentation of Nonsecret (Public) Crime Information
      */
 
-    timeline.push({
+    /*timeline.push({
         type: 'html-button-response',
         choices: ["Weiter"],
         stimulus: '<div class="topmargincontainer"><div class="instruction"><img src="img/symbols/sherlock.png" alt="Sherlock"><div class="smalltext"><code><strong>Guten Tag.</strong></code></div><div class="smalltext"><code>Mein Name ist Sherlock. Ich bin ein Programm, das zur Untersuchung von Straftaten eingesetzt wird. Ich werde prüfen ob Sie über Wissen verfügen, das allein eine an der Tat beteiligte Person besitzen kann.</code></div><div class="smalltext"><code>Ich möchte Sie zunächst bitten, den folgenden Text aufmerksam zu lesen. Es handelt sich um eine Pressemitteilung zur Tat. Die darin aufgeführten Informationen wurden bereits in verschiedenen Medien veröffentlicht und sind öffentlich bekannt.</code></div><br><div class="smalltext"><code><strong>Kürzlich wurde ein Server der Universität Jena gehackt. Die Täter erhielten unter anderem Zugriff auf unveröffentlichte <u>Forschungsdaten</u>. Der verursachte Schaden lässt sich nur schwer beziffern, dürfte aber mehrere zehntausend Euro betragen. Betroffen ist die Fakultät für Sozial- und Verhaltenswissenschaften, insbesondere der Bereich <u>Psychologie</u>. Der Server war gesichert, der Schutz entsprach allerdings nicht dem aktuellen Stand der Technik. So konnten sich die Angreifer mit vergleichsweise einfachen Mitteln Zutritt verschaffen. Für den Dateizugriff wurde offenbar das Programm <u>Copycat</u> eingesetzt, ein unter Hackern weit verbreitetes Werkzeug.</strong></code></div><br><div class="smalltext"><code>Bitte prägen Sie sich alle Details der Pressemeldung gut ein - insbesondere die unterstrichenen Informationen zur Tat. Klicken Sie anschließend auf Weiter.</code></div></div></div>'
-    });
+    });*/
 
 
     /*
@@ -546,7 +615,7 @@
 
         on_finish: function (data) { }
     };
-    timeline.push(chat);
+    //timeline.push(chat);
 
 
     /*
@@ -577,120 +646,65 @@
             question = jsPsych.timelineVariable('question')();
             return question;
         },
-        image: function () {
-            return 'male';
-        },
         data: { rte_part: 'question' }
     };
 
 
-    var target_introduction = {
+    /*var target = {
         type: "html-keyboard-response",
         stimulus: function () {
             target = jsPsych.timelineVariable('target')();
-            stim = '<div class="target-intro"><code>' + target + '</code></div>';
-            return stim;
-        },
-        trial_duration: 400,
-        choices: jsPsych.NO_KEYS,
-        data: { rte_part: 'target_introduction' },
-        on_finish: function (data) {
-            data.trial_action = jsPsych.timelineVariable('action')();
-            data.trial_question = jsPsych.timelineVariable('question')();
-            data.trial_secrecy = jsPsych.timelineVariable('secrecy')();
-            data.trial_target = jsPsych.timelineVariable('target')();
-        }
-    };
-
-
-    var target = {
-        type: "html-keyboard-response",
-        stimulus: function () {
-            target = jsPsych.timelineVariable('target')();
-            action = jsPsych.timelineVariable('action')();
-            stim = "";
-            if (action === "go") {
-                stim = '<div class="target-go"><code>' + target + '</code></div>';
-            } else if (action === "nogo") {
-                stim = '<div class="target-nogo"><code>' + target + '</code></div>';
-            } else if (action === 'decision') {
-                stim = '<div class="target-decision"><code>' + target + '</code></div>';
-            }
-            return stim;
+            return '<div class="target"><code>' + target + '</code></div>';
         },
         trial_duration: 1000,
         choices: [32],
         data: { rte_part: 'target' },
         on_finish: function (data) {
-            action = jsPsych.timelineVariable('action')();
+            
             secrecy = jsPsych.timelineVariable('secrecy')();
-
             correct = undefined;
-            // correct reaction in go trials: key press
-            if (action === 'go') {
-                correct = (data.key_press !== null);
-                // correct reaction in nogo trials: no key press
-            } else if (action === 'nogo') {
+            
+            if (secrecy === 'nonsecret') {
                 correct = (data.key_press === null);
-                // correct reaction in decision trials: no key press if target is nonsecret (communicated truth)
-            } else if (action === 'decision') {
-                if (secrecy === 'nonsecret') {
-                    correct = (data.key_press === null);
-                } else {
-                    correct = (data.key_press !== null);
-                }
-            }
-
-            if (correct) {
-                // update trust bar after decision trials
-                if (action === 'decision') {
-                    if (guilt >= 10) {
-                        guilt = guilt - 10;
-                    }
-                    showBar(guilt);
-                }
             } else {
-                // update trust bar after decision trials
-                if (action === 'decision') {
-                    if (guilt <= 80) {
-                        guilt = guilt + 20;
-                    } else if (guilt <= 90) {
-                        guilt = guilt + 10;
-                    }
-                    showBar(guilt);
-                }
+                correct = (data.key_press !== null);
             }
 
-            data.trial_action = jsPsych.timelineVariable('action')();
             data.trial_question = jsPsych.timelineVariable('question')();
             data.trial_secrecy = jsPsych.timelineVariable('secrecy')();
             data.trial_target = jsPsych.timelineVariable('target')();
+            data.trial_matching = jsPsych.timelineVariable('matching')();
             data.trial_correct = correct;
             data.trial_rt = data.rt;
         }
-    };
+    };*/
+
+    var target = {
+        type: "flyin",
+        answer: function () {
+            return jsPsych.timelineVariable('target')();
+        },
+        abortionExpected: function(){
+            return (jsPsych.timelineVariable('secrecy')() != 'nonsecret');
+        }
+    }
 
 
     var target_error = {
         type: 'html-keyboard-response',
         stimulus: function () {
-            // show error message depending on last trial's action
-            data = jsPsych.data.get().last(1).values()[0];
-            if (data.trial_action === 'go') {
-                errorHeading = 'Zu langsam!';
-                errorMessage = 'Es war ein rotes Wort zu sehen. Sie hätten schnell die Leertaste drücken müssen.';
-            } else if (data.trial_action === 'nogo') {
+
+            secrecy = jsPsych.data.get().last(1).values()[0].trial_secrecy;
+            target = jsPsych.data.get().last(1).values()[0].trial_target;
+            
+            if (secrecy === 'nonsecret') {
                 errorHeading = 'Taste gedrückt!';
-                errorMessage = 'Es war ein grünes Wort zu sehen. Sie hätten keine Taste drücken dürfen.';
-            } else if (data.trial_action === 'decision') {
-                if (data.trial_secrecy === 'nonsecret') {
-                    errorHeading = 'Taste gedrückt!';
-                    errorMessage = 'Es war ein gelbes Wort zu sehen. Da es sich bei <strong>' + data.trial_target + '</strong> um eine Information zur Tat handelte, über die Sie im Vorfeld informiert wurden, hätten Sie diese nicht mittels Tastendruck unterdrücken dürfen.';
-                } else {
-                    errorHeading = 'Keine Taste gedrückt!';
-                    errorMessage = 'Es war ein gelbes Wort zu sehen. Da es sich bei <strong>' + data.trial_target + '</strong> nicht um eine Information zur Tat handelte, über die Sie im Vorfeld informiert wurden, hätten Sie diese mittels Tastendruck unterdrücken müssen.';
-                }
+                errorMessage = 'Die gerade gezeigte Information (' + target + ') wurde in der Presseerklärung veröffentlicht. Sie hätten keine Taste drücken und die Antwort nicht zurückhalten dürfen.';
+            } else {
+                errorHeading = 'Zu langsam!';
+                errorMessage = 'Die gerade gezeigte Information (' + target + ') wurde NICHT in der Presseerklärung veröffentlicht. Sie hätten die Leertaste drücken und die Antwort zurückhalten müssen.';
             }
+            
             return '<div class="instruction"><div class="smalltext"><code><strong>' + errorHeading + '</strong></code></div><div class="smalltext"><code>' + errorMessage + '</code></div><div class="smalltext"><code>Drücken Sie die</code> <span class="keyButton"><code>Leertaste</code></span> <code>um fortzufahren.</code></div></div>';
         },
         choices: [32],
@@ -707,9 +721,9 @@
     var if_target_error = {
         timeline: [target_error],
         conditional_function: function () {
-            // start error trial if subject's action in last trial was not correct
-            data = jsPsych.data.get().last(1).values()[0];
-            if (data.trial_correct) {
+
+            correct = jsPsych.data.get().last(1).values()[0].trial_correct;
+            if (correct) {
                 return false;
             } else {
                 return true;
@@ -759,7 +773,7 @@
                 shownTargets = shownTargets.sort(() => .5 - Math.random());
 
                 stim = '';
-                stim += '<div class="instruction"><div class="smalltext"><code><strong>Welches Wort wurde zuletzt von einem Rechteck umrandet gezeigt?</strong></code></div>';
+                stim += '<div class="instruction"><div class="smalltext"><code><strong>Welche Antwort wurde zuletzt gezeigt?</strong></code></div>';
                 stim += '<div><code>Drücken Sie eine der Tasten <span class="keyButton"><code>1</code></span> bis <span class="keyButton"><code>3</code></span> um das zuletzt gezeigte Wort auszuwählen.</code></div>';
                 stim += '<div class="rteAttentionCheckChoiceBlock">';
                 for (i = 0; i < shownTargets.length; i++) {
@@ -782,9 +796,9 @@
                 }
 
                 data.check_against = attention_check_type;
-                data.check_targetToIdentify = lastTarget;
-                data.check_shownTargets = shownTargets.toString();
-                data.check_chosenTarget = shownTargets[data.key_press - 49];
+                data.check_stimulusToIdentify = lastTarget;
+                data.check_shownStimuli = shownTargets.toString();
+                data.check_chosenStimulus = shownTargets[data.key_press - 49];
                 data.check_correct = targetIdentified;
             }
             if (attention_check_type === 'prime') {
@@ -796,9 +810,9 @@
                 }
 
                 data.check_against = attention_check_type;
-                data.check_questionToIdentify = lastQuestion;
-                data.check_shownQuestions = questions.toString();
-                data.check_chosenQuestion = questions[data.key_press - 49];
+                data.check_stimulusToIdentify = lastQuestion;
+                data.check_shownStimuli = questions.toString();
+                data.check_chosenStimulus = questions[data.key_press - 49];
                 data.check_correct = questionIdentified;
             }
         }
@@ -808,14 +822,10 @@
     var if_attention_check = {
         timeline: [attention_check],
         conditional_function: function () {
-            // start attention check randomly with 15% chance (65% chance in tutorial) if target was classified correctly
-            data = jsPsych.data.get().last(1).values()[0];
-            if (data.rte_part !== 'target_error') {
+            
+            lastPart = jsPsych.data.get().last(1).values()[0].rte_part;
+            if (lastPart !== 'target_error') {
                 chance = 0.10;
-                if (tutorialRunning) {
-                    chance = 0.30;
-                }
-
                 if (Math.random() < chance) {
                     // 50/50 chance to check question prime or target word
                     if (Math.random() < 0.5) {
@@ -844,7 +854,7 @@
                 errorMessage = 'Die von Ihnen ausgewählte Frage wurde nicht als letzte gezeigt. Achten Sie in Zukunft besser auf die Fragen.';
             }
             if (attention_check_type === 'target') {
-                errorMessage = 'Bitte achten Sie in Zukunft genauer auf das Wort im Rechteck.';
+                errorMessage = 'Das von Ihnen ausgewählte Wort wurde nicht als letztes gezeigt. Achten Sie in Zukunft genauer auf die gezeigten Antworten.';
             }
             return '<div class="instruction"><div class="smalltext"><code><strong>' + errorHeading + '</strong></code></div><div class="smalltext"><code>' + errorMessage + '</code></div><div class="smalltext"><code>Drücken Sie die <span class="keyButton"><code>Leertaste</code></span> um fortzufahren.</code></div></div>';
         },
@@ -859,6 +869,7 @@
     var if_attention_check_error = {
         timeline: [attention_check_error],
         conditional_function: function () {
+
             // start error trial if subject's selection was wrong
             data = jsPsych.data.get().last(1).values()[0];
             if (data.rte_part === 'attention_check') {
@@ -872,98 +883,53 @@
             }
         }
     };
-
-
-    /*
-     * RTE Setup
-     */
-    var tutorialRunning = true;
-
+    
 
     /*
-     * RTE Part 1 - Tutorial 1 - Decision Trials Only
+     * RTE Part 1 - Match trials only
      */
 
-    // Briefing
-    timeline.push({
+    var rte_pt1_instruction = {
         type: 'html-keyboard-response',
-        stimulus: '<div class="topmargincontainer"><div class="instruction"><div class="smalltext"><code>Ich möchte Sie nun bitten, eine Reihe von Aufgaben zu bearbeiten, bei denen Sie besonders schnell reagieren müssen. Wir beginnen zunächst einfach. Ich werde Ihnen verschiedene Fragen stellen. Nach jeder Frage erscheint eine mögliche Antwort umgeben von einem Rechteck. Nach kurzer Zeit ändert sich die Farbe der Antwort - und Sie müssen eine Entscheidung treffen. <strong>Entspricht die gezeigte Antwort einer bekannten Information aus der Presseerklärung, unternehmen Sie nichts.</strong> Damit sprechen Sie die Antwort aus. <strong>Wenn die Antwort allerdings nicht mit der Presseerklärung übereinstimmt, sollen Sie diese durch Drücken der Leertaste unterdrücken.</strong> Sie wird dann nicht ausgesprochen und ich stelle ihnen die nächste Frage.</code></div><br><div class="smalltext"><code>Fehler lassen sie schuldig wirken, während korrekte Antworten Unschuld indizieren. Den aktuellen Stand meiner Einschätzung finden Sie jeweils am oberen Bildschirmrand.</code></div><br><div class="smalltext"><code>Drücken Sie die</code> <span class="keyButton"><code>Leertaste</code></span> <code>um zu beginnen.</code></div></div></div>',
-        choices: [32],
-        data: { rte_part: 'rte_pt1_instruction' },
-        on_load: function () {
-            showBar(guilt); // show trust bar
-            tutorialRunning = true;
-        }
-    });
-
-    // Create Random Subset of 25 Decision Trials
-    decisionTasks = tasks.slice(144);
-    decisionTaskSubset = _.sampleSize(decisionTasks, 25);
-
-    // Run Tutorial Part 1
-    var if_tutorial_pt1 = {
-        timeline: [blank, fixation, question, target_introduction, target, if_target_error, if_attention_check, if_attention_check_error],
-        timeline_variables: decisionTaskSubset,
-        randomize_order: false,
-        on_finish: function () { }
-    };
-    timeline.push(if_tutorial_pt1);
-
-
-    /*
-     * RTE Part 2 - Tutorial 2 - Go/Nogo/Decision Trials Mixed
-     */
-
-    // Briefing
-    timeline.push({
-        type: 'html-keyboard-response',
-        stimulus: '<div class="topmargincontainer"><div class="instruction"><div class="smalltext"><code><strong>Jetzt wird es schwieriger</strong></code></div><div class="smalltext"><code>Im folgenden werden wieder Fragen und Antworten präsentiert. Färben sich die Antworten gelb, verhalten Sie sich wie zuvor und unterdrücken diese durch Drücken der Leertaste falls es sich nicht um bekannte und in der Presseerklärung veröffentlichte Informationen handelt. Färbt sich die Antwort jedoch rot, drücken Sie in jedem Fall die Leertaste. Färbt sie sich grün, reagieren Sie nicht.</code></div><br><div class="smalltext"><code>Bereit? Dann drücken Sie nun die <span class="keyButton"><code>Leertaste</code></span> um sich mit der Aufgabe in einigen Probedurchgängen vertraut zu machen.</code></div></div></div>',
-        choices: [32],
-        data: { rte_part: 'rte_pt1_instruction' },
-        on_load: function () {
-            tutorialRunning = true;
-        }
-    });
-
-    // Create Random Subset of 25 Trials
-    taskSubset = _.sampleSize(tasks, 25);
-
-    // Run Tutorial Part 2
-    var if_tutorial_pt2 = {
-        timeline: [blank, fixation, question, target_introduction, target, if_target_error, if_attention_check, if_attention_check_error],
-        timeline_variables: taskSubset,
-        randomize_order: false,
-        on_finish: function () { }
-    };
-    timeline.push(if_tutorial_pt2);
-
-
-    /*
-     * RTE Part 3 - Go/Nogo/Decision Trials Mixed
-     */
-
-    var rte_instruction = {
-        type: 'html-keyboard-response',
-        stimulus: '<div class="topmargincontainer"><div class="instruction"><div class="smalltext"><code><strong>Jetzt wird es ernst</strong></code></div><div class="smalltext"><code>Nachdem Sie sich mit der Aufgabe vertraut gemacht haben, wiederholen wir das Ganze nochmal - nur wesentlich häufiger. Bitte stellen Sie unbedingt sicher, dass Sie in den nächsten 20 Minuten durch nichts abgelenkt werden. Denken Sie daran, aufmerksam zu lesen und so schnell wie möglich die Leertaste zu drücken, wenn sich das von einem Rechteck umgebene Wort rot färbt - oder gelb und es sich um eine unbekannte Information handelt, die nicht als Antwort ausgesprochen werden soll.</code></div><br><div class="smalltext"><code>Drücken Sie nun die <span class="keyButton"><code>Leertaste</code></span> um zu beginnen.</code></div></div></div>',
+        stimulus: '<div class="topmargincontainer"><div class="instruction"><div class="smalltext"><code><strong>RTE 1</strong></code></div><div class="smalltext"><code>Nachdem Sie sich mit der Aufgabe vertraut gemacht haben, wiederholen wir das Ganze nochmal - nur wesentlich häufiger. Bitte stellen Sie unbedingt sicher, dass Sie in den nächsten 20 Minuten durch nichts abgelenkt werden. Denken Sie daran, aufmerksam zu lesen und so schnell wie möglich die Leertaste zu drücken, wenn sich das von einem Rechteck umgebene Wort rot färbt - oder gelb und es sich um eine unbekannte Information handelt, die nicht als Antwort ausgesprochen werden soll.</code></div><br><div class="smalltext"><code>Drücken Sie nun die <span class="keyButton"><code>Leertaste</code></span> um zu beginnen.</code></div></div></div>',
         choices: [32],
         data: { rte_part: 'tutorial_instruction' },
         on_load: function () {
             tutorialRunning = false;
         }
     };
-    timeline.push(rte_instruction);
+    timeline.push(rte_pt1_instruction);
+
+    var rte_pt1 = {
+        timeline: [blank, fixation, question, target, if_target_error, if_attention_check, if_attention_check_error],
+        timeline_variables: tasksPart1,
+        randomize_order: true
+    };
+    timeline.push(rte_pt1);
 
 
     /*
-     * Reaction Time Experiment
+     * RTE Part 2 - Match and nonmatch trials
      */
 
-    var rte = {
-        timeline: [blank, fixation, question, target_introduction, target, if_target_error, if_attention_check, if_attention_check_error],
-        timeline_variables: tasks,
+     var rte_pt2_instruction = {
+        type: 'html-keyboard-response',
+        stimulus: '<div class="topmargincontainer"><div class="instruction"><div class="smalltext"><code><strong>RTE 2</strong></code></div><div class="smalltext"><code>Nachdem Sie sich mit der Aufgabe vertraut gemacht haben, wiederholen wir das Ganze nochmal - nur wesentlich häufiger. Bitte stellen Sie unbedingt sicher, dass Sie in den nächsten 20 Minuten durch nichts abgelenkt werden. Denken Sie daran, aufmerksam zu lesen und so schnell wie möglich die Leertaste zu drücken, wenn sich das von einem Rechteck umgebene Wort rot färbt - oder gelb und es sich um eine unbekannte Information handelt, die nicht als Antwort ausgesprochen werden soll.</code></div><br><div class="smalltext"><code>Drücken Sie nun die <span class="keyButton"><code>Leertaste</code></span> um zu beginnen.</code></div></div></div>',
+        choices: [32],
+        data: { rte_part: 'tutorial_instruction' },
+        on_load: function () {
+            tutorialRunning = false;
+        }
+    };
+    timeline.push(rte_pt2_instruction);
+
+    var rte_pt2 = {
+        timeline: [blank, fixation, question, target, if_target_error, if_attention_check, if_attention_check_error],
+        timeline_variables: tasksPart2,
         randomize_order: true
     };
-    timeline.push(rte);
+    timeline.push(rte_pt2);
+
 
 
     /*
@@ -990,7 +956,6 @@
             }
         },
         on_load: function () {
-            hideBar(); // hide trust bar
             $('#experiment').css('cursor', 'default');
         },
         on_finish: function (data) {

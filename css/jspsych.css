@@ -825,11 +825,11 @@ html, body {
     border: 5px solid #2ECC71;
 }
 
-.target-decision {
+.target {
     font-size: 60px;
     padding: 50px;
-    color: #ffc000;
-    border: 5px solid #ffc000;
+    color: #000;
+    border: 5px solid #000;
 }
 
 .fixation {

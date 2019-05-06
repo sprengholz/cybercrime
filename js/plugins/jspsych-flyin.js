@@ -7,22 +7,16 @@ jsPsych.plugins["flyin"] = (function () {
         name: 'flyin',
         description: '',
         parameters: {
-            question: {
-                type: jsPsych.plugins.parameterType.STRING,
-                pretty_name: 'question string',
-                default: 'None',
-                description: 'The string of words to be displayed as question'
-            },
             answer: {
                 type: jsPsych.plugins.parameterType.STRING,
                 pretty_name: 'answer string',
-                default: 'None',
+                default: undefined,
                 description: 'The string of words to be displayed as answer'
             },
             abortionExpected: {
                 type: jsPsych.plugins.parameterType.BOOLEAN,
                 pretty_name: 'abortion expectancy',
-                default: 'None',
+                default: undefined,
                 description: 'Abortion expectancy (true/false)'
             }
         }
@@ -30,16 +24,9 @@ jsPsych.plugins["flyin"] = (function () {
 
     plugin.trial = function (display_element, trial) {
 
-        var abortion;
-        var abortionDefault = 'Keine Ahnung';
+
         var answerArrived = false; 
-        
-        // randomly decide to start with true or abortion answer
-        if (Math.random() < 0.5){
-            abortion = true;
-        } else {
-            abortion = false;
-        }
+        var abortion = false;
 
 
         // store response
@@ -52,12 +39,17 @@ jsPsych.plugins["flyin"] = (function () {
             autoplay: false,
             complete: function(anim){
                 
-                $('.silhouetteFixed').css('background-image', "url('img/symbols/person_yellow_male.jpg')");
+                if (abortion == trial.abortionExpected) {
+                    $('.silhouetteFixed').css('background-image', "url('img/positive.jpg')");
+                } else {
+                    $('.silhouetteFixed').css('background-image', "url('img/negative.jpg')");
+                }
+                
                 answerArrived = true;
                 
                 setTimeout(function () {
                     end_trial(false);
-                }, 1000);
+                }, 500);
             }
         });
 
@@ -71,10 +63,8 @@ jsPsych.plugins["flyin"] = (function () {
 
             // collect data
             var trial_data = {
-                "question": trial.question,
-                "answer": trial.answer,
-                "abortion_expected": trial.abortionExpected,
-                "aborted": abortion  
+                // TODO: add all other data here (question, target,...)
+                "trial_correct": (abortion == trial.abortionExpected),
             };
 
             // clear display
@@ -99,12 +89,9 @@ jsPsych.plugins["flyin"] = (function () {
                     opacity: 0,                
                     autoplay: true,
                     complete: function(anim){
-                        abortion = !abortion;
-                        if (abortion){
-                            $('.flyin').html(abortionDefault);
-                        } else {
-                            $('.flyin').html(trial.answer);
-                        }
+                        abortion = true;
+                        $('.flyin').html(trial.answer);
+                        
                         animationtimeline.seek(1500);
                         animationtimeline.play();
                     }
@@ -125,25 +112,13 @@ jsPsych.plugins["flyin"] = (function () {
 
 
         // show stimulus word by word
+        display_element.innerHTML = ' <div class="silhouetteFixed" style="background-image: url(\'img/neutral.jpg\');">  </div>   <div class="flyin">' + trial.answer + '</div>';
         
-        if (abortion) {
-            display_element.innerHTML = '<div class="dialogbox"> ' + trial.question + ' </div> <div class="silhouetteFixed" style="background-image: url(\'img/symbols/person_male.jpg\');">  </div>   <div class="flyin">' + abortionDefault + '</div>';
-        } else {
-            display_element.innerHTML = '<div class="dialogbox"> ' + trial.question + ' </div> <div class="silhouetteFixed" style="background-image: url(\'img/symbols/person_male.jpg\');">  </div>   <div class="flyin">' + trial.answer + '</div>';
-        }
-        
+        console.log("ABORTION EXPECTED: " + trial.abortionExpected);
         
         // animation
 
         animationtimeline
-                .add({
-                    targets: ".dialogbox",
-                    top: 140,
-                    duration: 500,
-                    opacity: 1.0,
-                    easing: 'linear',
-                    offset: '+=1000'
-                })
                 .add({
                     targets: ".flyin",
                     duration: 1,
