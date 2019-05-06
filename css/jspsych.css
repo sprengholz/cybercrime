@@ -745,17 +745,14 @@ html, body {
 
 
 .silhouetteFixed {
-    background-image: url('../img/symbols/person_male.jpg');
-    background-repeat: no-repeat;
-    background-attachment: scroll;
-    background-position: top;
+    
     position: fixed;
     top: 250px;
     left: 50%;
     transform: translate(-50%, 0);
    
-    min-width: 500px;
-    min-height: 500px;
+    width: 250px;
+    height: 250px;
     
     
     
