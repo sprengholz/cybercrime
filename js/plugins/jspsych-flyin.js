@@ -25,9 +25,11 @@ jsPsych.plugins["flyin"] = (function () {
     plugin.trial = function (display_element, trial) {
 
 
-        var answerArrived = false; 
-        var abortion = false;
+        var timePassed = false;
+        var aborted = false;
+        var keyPressed = false;
 
+        
 
         // store response
         var response = {
@@ -39,31 +41,13 @@ jsPsych.plugins["flyin"] = (function () {
             autoplay: false,
             complete: function(anim){
                 
-                if (abortion == trial.abortionExpected) {
-                    //$('.silhouetteFixed').css('background-image', "url('img/positive.jpg')");
-
-                    anime({
-                        targets: "#mouth",
-                        duration: 1000,
-                        d: "M17 50 Q 25 50 33 50", 
-                        autoplay: true
-                    });
+                if (aborted == trial.abortionExpected) {
+                    showInvestigator('positive');
                 } else {
-                    //$('.silhouetteFixed').css('background-image', "url('img/negative.jpg')");
-
-                    anime({
-                        targets: "#mouth",
-                        duration: 1000,
-                        d: "M17 51 Q 25 48 33 49", 
-                        autoplay: true
-                    });
+                    showInvestigator('negative');
                 }
                 
-                answerArrived = true;
-                
-                setTimeout(function () {
-                    end_trial(false);
-                }, 500);
+                end_trial(false);
             }
         });
 
@@ -78,8 +62,16 @@ jsPsych.plugins["flyin"] = (function () {
             // collect data
             var trial_data = {
                 // TODO: add all other data here (question, target,...)
-                "trial_correct": (abortion == trial.abortionExpected),
+                "trial_correct": (aborted == trial.abortionExpected),
+
+                "trial_question": jsPsych.timelineVariable('question')(),
+                "trial_secrecy": jsPsych.timelineVariable('secrecy')(),
+                "trial_target": jsPsych.timelineVariable('target')(),
+                "trial_matching": jsPsych.timelineVariable('matching')(),
+                "trial_rt": response.rt,
             };
+
+            console.log("RT = "+response.rt);
 
             // clear display
             display_element.innerHTML = '';
@@ -92,24 +84,35 @@ jsPsych.plugins["flyin"] = (function () {
 
         var after_response = function (info) {
 
-            if (!answerArrived) {
 
-                animationtimeline.pause();
+            if (!keyPressed) {
+                keyPressed = true;
 
-                anime({
-                    targets: ".flyin",
-                    duration: 500,
-                    top: '+=50',
-                    opacity: 0,                
-                    autoplay: true,
-                    complete: function(anim){
-                        abortion = true;
-                        $('.flyin').html(trial.answer);
-                        
-                        animationtimeline.seek(1500);
-                        animationtimeline.play();
+                if (!timePassed) {
+
+                    console.log("ABORTED: "+aborted);
+                    console.log("TPASSED: "+timePassed);
+
+                    // record first response
+                    if (response.key == null) {
+                        response = info;
                     }
-                });
+
+                    animationtimeline.pause();
+
+                    $('#flyin').html('<s><code>'+trial.answer+'</code></s>');
+
+                    anime({
+                        targets: "#flyin",
+                        duration: 500,           
+                        autoplay: true,
+                        complete: function(){
+                            aborted = true;
+                            console.log("ABORTED 2: "+aborted);
+                            animationtimeline.complete();
+                        }
+                    });
+                }
             }
         };
 
@@ -126,33 +129,38 @@ jsPsych.plugins["flyin"] = (function () {
 
 
         // show stimulus word by word
-        display_element.innerHTML = ' <div class="silhouetteFixed"> <svg viewBox="0 0 50 60" xmlns="http://www.w3.org/2000/svg"><g id="hat"><polygon id="hatTop" points="6,15 42,15 46,9 24,1 2,9" fill="none" stroke="black" /><polyline id="hatMiddle" points="6,15 6,18 42,18 42,15" fill="none" stroke="black" /><path id="hatShield" d="M6,18 Q 25 30 42 18" stroke="black" fill="transparent"/><circle id="hatBadge" cx="24" cy="9" r="3" stroke="black" fill="transparent"/></g><line id="browLeft" x1="10" y1="27" x2="20" y2="29" stroke="black" /><line id="browRight" x1="28" y1="29" x2="38" y2="27" stroke="black" /><ellipse id="eyeLeft" cx="15" cy="34" rx="2" ry="2" /><ellipse id="eyeRight" cx="33" cy="34" rx="2" ry="2" /><path id="mouth" d="M17 50 Q 25 50 33 50" stroke="black" fill="transparent"/></svg> </div>   <div class="flyin">' + trial.answer + '</div>';
+        display_element.innerHTML = '<div id="flyin"><code>' + trial.answer + '</code></div>';
         
-        console.log("ABORTION EXPECTED: " + trial.abortionExpected);
         
         // animation
-
         animationtimeline
                 .add({
-                    targets: ".flyin",
-                    duration: 1,
+                    targets: '#flyin',
+                    duration: 10,
                     opacity: 1.0,
-                    offset: '+=500'
+                    offset: '+=0'
                 })
                 .add({
-                    targets: ".flyin",
-                    duration: 2000,
-                    top: 400,
-                    easing: 'linear',
-                    fontSize: '16px',
-                    offset: '+=500'
+                    targets: '#flyin',
+                    duration: 1000,
+                    offset: '+=0',
+                    complete: function() {
+                        timePassed = true;
+                    }
                 })
                 .add({
-                    targets: ".flyin",
+                    targets: '#flyin',
+                    duration: 500,
+                    opacity: 0.3,
+                    top: $(window).height()*0.35,
+                    easing: 'easeInCubic',
+                    fontSize: '16px'
+                })
+                .add({
+                    targets: '#flyin',
                     duration: 1,
                     opacity: 0
                 });
-
         animationtimeline.play();
     };
 

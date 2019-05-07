@@ -35,15 +35,20 @@
     <div id="alertOverlay">
         <span id="alertText"></span>
     </div>
-    <div id="barOverlay">
-
-        <div id="barLeft">
-            <span class="barText">SCHULDIG</span>
-        </div>
-        <div id="barRight">
-            <span class="barText">UNSCHULDIG</span>
-        </div>
-        <div id="barIndicator"></div>
+    <div id = "investigator">
+        <svg style="height: 100%; align-content: center;" viewBox="0 -10 50 80" xmlns="http://www.w3.org/2000/svg">
+            <g id="hat">
+                <polygon id="hatTop" points="6,15 42,15 46,9 24,1 2,9" fill="none" stroke="black" />
+                <polyline id="hatMiddle" points="6,15 6,18 42,18 42,15" fill="none" stroke="black" />
+                <path id="hatShield" d="M6,18 Q 25 30 42 18" stroke="black" fill="transparent"/>
+                <circle id="hatBadge" cx="24" cy="9" r="3" stroke="black" fill="transparent"/>
+            </g>
+            <polyline id="browLeft" points="10,26 20,28" fill="none" stroke="black" />
+            <polyline id="browRight" points="28,28 38,28" fill="none" stroke="black" />
+            <ellipse id="eyeLeft" cx="15" cy="34" rx="2" ry="2" />
+            <ellipse id="eyeRight" cx="33" cy="34" rx="2" ry="2" />
+            <path id="mouth" d="M19 50 Q 25 51 31 50" stroke="black" fill="transparent"/>
+        </svg>
     </div>
     <div id="terminal"></div>
     <div id="experiment"></div>
@@ -82,14 +87,74 @@
 
 
 
+    var investigatorAnimationDuration = 750;
 
-    function showBar(value) {
+    function showInvestigator(emotion) {
+        $('#investigator').show();
+        if (emotion == 'neutral'){
+            anime({
+                targets: "#mouth",
+                duration: investigatorAnimationDuration,
+                d: "M19 51 Q 25 50 31 49", 
+                autoplay: true
+            });
+        }
+        if (emotion == 'negative'){
+            anime({
+                targets: "#browLeft",
+                duration: investigatorAnimationDuration,
+                points: "10,27 20,29", 
+                autoplay: true
+            });
 
-       
+            anime({
+                targets: "#browRight",
+                duration: investigatorAnimationDuration,
+                points: "28,29 38,27", 
+                autoplay: true
+            });
+
+            anime({
+                targets: "#mouth",
+                duration: investigatorAnimationDuration,
+                d: "M19 51 Q 25 48 31 49", 
+                autoplay: true
+            });
+        }
+        if (emotion == 'positive'){
+
+            anime({
+                targets: "#hat",
+                duration: investigatorAnimationDuration,
+                top: "+5px", 
+                autoplay: true
+            });
+
+            anime({
+                targets: "#browLeft",
+                duration: investigatorAnimationDuration,
+                points: "10,26 20,28", 
+                autoplay: true
+            });
+
+            anime({
+                targets: "#browRight",
+                duration: investigatorAnimationDuration,
+                points: "28,28 38,28", 
+                autoplay: true
+            });
+
+            anime({
+                targets: "#mouth",
+                duration: investigatorAnimationDuration,
+                d: "M19 51 Q 25 52 31 51", 
+                autoplay: true
+            });
+        }
     }
 
-    function hideBar() {
-       
+    function hideInvestigator() {
+        $('#investigator').hide();
     }
 
 
