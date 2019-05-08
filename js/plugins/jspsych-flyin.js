@@ -40,12 +40,7 @@ jsPsych.plugins["flyin"] = (function () {
         var animationtimeline = anime.timeline({
             autoplay: false,
             complete: function(anim){
-                
-                if (aborted == trial.abortionExpected) {
-                    showInvestigator('positive');
-                } else {
-                    showInvestigator('negative');
-                }
+
                 
                 end_trial(false);
             }

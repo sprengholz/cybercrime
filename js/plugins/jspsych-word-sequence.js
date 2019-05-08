@@ -28,7 +28,7 @@ jsPsych.plugins["word-sequence"] = (function() {
     
     // show stimulus word by word
     
-    display_element.innerHTML = '<div class="question"><code>'+elements[0]+'</code></div>'; 
+    display_element.innerHTML = '<div class="question">'+elements[0]+'</div>'; 
     
     var i = 1;                    
     function loop () {

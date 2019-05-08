@@ -35,6 +35,7 @@
     <div id="alertOverlay">
         <span id="alertText"></span>
     </div>
+    
     <div id = "investigator">
         <svg style="height: 100%; align-content: center;" viewBox="0 -10 50 80" xmlns="http://www.w3.org/2000/svg">
             <g id="hat">
@@ -49,6 +50,7 @@
             <ellipse id="eyeRight" cx="33" cy="34" rx="2" ry="2" />
             <path id="mouth" d="M19 50 Q 25 51 31 50" stroke="black" fill="transparent"/>
         </svg>
+    
     </div>
     <div id="terminal"></div>
     <div id="experiment"></div>
@@ -763,22 +765,20 @@
             target = jsPsych.data.get().last(1).values()[0].trial_target;
             
             if (secrecy === 'nonsecret') {
-                errorHeading = 'Taste gedrückt!';
-                errorMessage = 'Die gerade gezeigte Information (' + target + ') wurde in der Presseerklärung veröffentlicht. Sie hätten keine Taste drücken und die Antwort nicht zurückhalten dürfen.';
+                errorMessage = 'Die gerade gezeigte Antwort (' + target + ') wurde in der Presseerklärung veröffentlicht - du hättest sie aussprechen müssen und daher keine Taste drücken dürfen!';
             } else {
-                errorHeading = 'Zu langsam!';
-                errorMessage = 'Die gerade gezeigte Information (' + target + ') wurde NICHT in der Presseerklärung veröffentlicht. Sie hätten die Leertaste drücken und die Antwort zurückhalten müssen.';
+                errorMessage = 'Die gerade gezeigte Antwort (' + target + ') wurde NICHT in der Presseerklärung veröffentlicht - du hättest sie zurückhalten und daher die Leertaste drücken müssen!';
             }
             
-            return '<div class="instruction"><div class="smalltext"><code><strong>' + errorHeading + '</strong></code></div><div class="smalltext"><code>' + errorMessage + '</code></div><div class="smalltext"><code>Drücken Sie die</code> <span class="keyButton"><code>Leertaste</code></span> <code>um fortzufahren.</code></div></div>';
+            return '<div class="instruction"><div class="smalltext-ms"><strong>Verdächtig!</strong> ' + errorMessage + '</div><div class="smalltext-ms">Drücke die <span class="keyButton">Leertaste</span> um mit der nächsten Frage fortzufahren.</div></div>';
         },
         choices: [32],
         data: { rte_part: 'target_error' },
         on_load: function () {
-            //$('body').css('background-color', '#ff5555');
+            //
         },
         on_finish: function () {
-            //$('body').css('background-color', '#fff');
+            //
         }
     };
 
@@ -789,8 +789,10 @@
 
             correct = jsPsych.data.get().last(1).values()[0].trial_correct;
             if (correct) {
+                showInvestigator('positive');
                 return false;
             } else {
+                showInvestigator('negative');
                 return true;
             }
         }
@@ -807,11 +809,10 @@
             if (attention_check_type === 'prime') {
 
                 stim = '';
-                stim += '<div class="instruction"><div class="smalltext"><code><strong>Welche Frage wurde zuletzt gezeigt?</strong></code></div>';
-                stim += '<div><code>Drücken Sie eine der Tasten <span class="keyButton"><code>1</code></span> bis <span class="keyButton"><code>3</code></span> um die zuletzt gezeigte Frage auszuwählen.</code></div>';
+                stim += '<div class="instruction"><div class="smalltext-ms"><strong>Welche Frage habe ich dir zuletzt gestellt?</strong> Drücke eine der Tasten <span class="keyButton">1</span> bis <span class="keyButton">3</span> um die zuletzt gezeigte Frage auszuwählen.</div>';
                 stim += '<div class="rteAttentionCheckChoiceBlock">';
                 for (i = 0; i < questions.length; i++) {
-                    stim += '<div class="rteAttentionCheckChoice"><span class="keyButton"><code>' + (i + 1) + '</code></span><span class="rteAttentionCheckChoiceText"><code>' + questions[i] + '</code></span></div>';
+                    stim += '<div class="rteAttentionCheckChoice"><span class="keyButton">' + (i + 1) + '</span><span class="rteAttentionCheckChoiceText">' + questions[i] + '</span></div>';
                 }
                 stim += '<div></div>';
                 return stim;
@@ -838,11 +839,10 @@
                 shownTargets = shownTargets.sort(() => .5 - Math.random());
 
                 stim = '';
-                stim += '<div class="instruction"><div class="smalltext"><code><strong>Welche Antwort wurde zuletzt gezeigt?</strong></code></div>';
-                stim += '<div><code>Drücken Sie eine der Tasten <span class="keyButton"><code>1</code></span> bis <span class="keyButton"><code>3</code></span> um das zuletzt gezeigte Wort auszuwählen.</code></div>';
+                stim += '<div class="instruction"><div class="smalltext-ms"><strong>Welche Antwort wurde zuletzt gezeigt?</strong> Drücke eine der Tasten <span class="keyButton">1</span> bis <span class="keyButton">3</span> um das zuletzt gezeigte Wort auszuwählen.</div>';
                 stim += '<div class="rteAttentionCheckChoiceBlock">';
                 for (i = 0; i < shownTargets.length; i++) {
-                    stim += '<div class="rteAttentionCheckChoice"><span class="keyButton"><code>' + (i + 1) + '</code></span><span class="rteAttentionCheckChoiceText"><code>' + shownTargets[i] + '</code></span></div>';
+                    stim += '<div class="rteAttentionCheckChoice"><span class="keyButton">' + (i + 1) + '</span><span class="rteAttentionCheckChoiceText">' + shownTargets[i] + '</span></div>';
                 }
                 stim += '</div></div>';
                 return stim;
@@ -890,7 +890,7 @@
             
             lastPart = jsPsych.data.get().last(1).values()[0].rte_part;
             if (lastPart !== 'target_error') {
-                chance = 0.10;
+                chance = 0.15;
                 if (Math.random() < chance) {
                     // 50/50 chance to check question prime or target word
                     if (Math.random() < 0.5) {
@@ -913,15 +913,15 @@
         type: 'html-keyboard-response',
         stimulus: function () {
 
-            var errorHeading = 'Falsch!';
+            
             var errorMessage;
             if (attention_check_type === 'prime') {
-                errorMessage = 'Die von Ihnen ausgewählte Frage wurde nicht als letzte gezeigt. Achten Sie in Zukunft besser auf die Fragen.';
+                errorMessage = 'Diese Frage habe ich dir nicht zuletzt gestellt. Achte in Zukunft besser auf die Fragen und Antworten - andernfalls machst du dich verdächtig!';
             }
             if (attention_check_type === 'target') {
-                errorMessage = 'Das von Ihnen ausgewählte Wort wurde nicht als letztes gezeigt. Achten Sie in Zukunft genauer auf die gezeigten Antworten.';
+                errorMessage = 'Das von dir gewählte Wort wurde nicht zuletzt gezeigt. Achte in Zukunft besser auf die Fragen und Antworten - andernfalls machst du dich verdächtig!';
             }
-            return '<div class="instruction"><div class="smalltext"><code><strong>' + errorHeading + '</strong></code></div><div class="smalltext"><code>' + errorMessage + '</code></div><div class="smalltext"><code>Drücken Sie die <span class="keyButton"><code>Leertaste</code></span> um fortzufahren.</code></div></div>';
+            return '<div class="instruction"><div class="smalltext-ms"><strong>Falsch!</strong> ' + errorMessage + '</div><div class="smalltext-ms">Drücke die <span class="keyButton">Leertaste</span> um mit der nächsten Frage fortzufahren.</div></div>';
         },
         choices: [32],
         data: { rte_part: 'prime_check_error' },
@@ -939,8 +939,10 @@
             data = jsPsych.data.get().last(1).values()[0];
             if (data.rte_part === 'attention_check') {
                 if (data.check_correct) {
+                    showInvestigator('positive');
                     return false;
                 } else {
+                    showInvestigator('negative');
                     return true;
                 }
             } else {
@@ -955,15 +957,48 @@
      */
 
     var rte_pt1_instruction = {
-        type: 'html-keyboard-response',
-        stimulus: '<div class="topmargincontainer"><div class="instruction"><div class="smalltext"><code><strong>RTE 1</strong></code></div><div class="smalltext"><code>Nachdem Sie sich mit der Aufgabe vertraut gemacht haben, wiederholen wir das Ganze nochmal - nur wesentlich häufiger. Bitte stellen Sie unbedingt sicher, dass Sie in den nächsten 20 Minuten durch nichts abgelenkt werden. Denken Sie daran, aufmerksam zu lesen und so schnell wie möglich die Leertaste zu drücken, wenn sich das von einem Rechteck umgebene Wort rot färbt - oder gelb und es sich um eine unbekannte Information handelt, die nicht als Antwort ausgesprochen werden soll.</code></div><br><div class="smalltext"><code>Drücken Sie nun die <span class="keyButton"><code>Leertaste</code></span> um zu beginnen.</code></div></div></div>',
-        choices: [32],
-        data: { rte_part: 'tutorial_instruction' },
-        on_load: function () {
-            tutorialRunning = false;
+        type: 'external-html',
+        url: "rte_pt1_instruction.html",
+        cont_btn: "next",
+        check_fn: function () {
+
+            var count = $('input[type=checkbox][value="correct"]:checked').length;
+            
+            console.log(count);
+
+            if (count == 4){
+                return true;
+            } else {
+                showAlert('Deine Auswahl ist nicht korrekt. Bitte prüfe deine Antworten.');
+                return false;
+            }
+
+        },
+        data: { 
+            rte_part: 'rte_pt1_instruction'
+        },
+        on_load: function (data) {
+            showInvestigator('positive');
+        },
+        on_finish: function (data) {
+            clearAlerts();
         }
     };
     timeline.push(rte_pt1_instruction);
+
+
+    var rte_pt1_start = {
+        type: 'html-keyboard-response',
+        stimulus: '<div class="instruction"><div class="smalltext-ms">Denke daran, immer dann die Leertaste zu drücken, wenn die blaue Antwort nicht mit den Presseinformationen übereinstimmt und deshalb zurückgehalten werden soll. Wenn du bereit bist, positioniere jetzt deine Finger auf der Leertaste. Es wird etwa 5 bis 10 Minuten dauern, bis die nächste Pause kommt. Stelle sicher, dass du in dieser Zeit nicht gestört wirst.</div><br><div class="smalltext-ms">Drücke nun die <span class="keyButton">Leertaste</span> um zu beginnen.</div></div>',
+        choices: [32],
+        data: { 
+            rte_part: 'rte_pt1_start'
+        },
+        on_load: function () {
+            $('body').css('cursor', 'none');
+        }
+    };
+    timeline.push(rte_pt1_start);
 
     var rte_pt1 = {
         timeline: [blank, fixation, question, target, if_target_error, if_attention_check, if_attention_check_error],
@@ -1005,7 +1040,7 @@
 
     var likert = {
         type: 'external-html',
-        url: "likert.html",
+        url: "attention.html",
         cont_btn: "next",
         check_fn: function () {
             likertAnswers = $("input:checked").map(function () {
@@ -1037,7 +1072,7 @@
 
     var debriefing = {
         type: 'html-keyboard-response',
-        stimulus: '<div class="instruction"><div class="heading">Geschafft!</div><div class="smalltext">Vielen Dank für deine Teilnahme. Du hast mir sehr geholfen.</div><div class="smalltext" id="uploadinfo">Deine Eingaben werden nun anonymisiert und verschlüsselt übertragen. Dies kann bis zu einer Minute dauern. Bitte warte...</div><img id="uploadimage" src="img/symbols/spinner.gif" alt="Übertragung läuft"><div class="smalltext" id="particitext"></div><div class="smalltext" id="particicode"></div><button class="navbutton" type="button" id="downloadbutton" style="display: none;" onclick="triggerDataDownload();">Daten speichern</button><div class="smalltext" id="finishtext" style="display: none;">Du kannst den Vollbildmodus durch Drücken der Tasten <span class="keyButton">Esc</span> oder <span class="keyButton">F11</span> verlassen und das Browserfenster dann einfach schließen.<br><b>Bitte beachte, dass dein Hacking-Angriff nur simuliert wurde und die in zukünftigen Klausuren gestellten Prüfungsfragen von den heruntergeladenen Dokumenten abweichen können. Falls du Interesse an den Forschungsergebnissen und dem untersuchten Paradigma zur Aufdeckung von Täterwissen hast, kannst du weitere Informationen gern per E-Mail erfragen.</b></div></div>',
+        stimulus: '<div class="instruction"><div class="heading">Geschafft!</div><div class="smalltext">Vielen Dank für deine Teilnahme. Du hast mir sehr geholfen.</div><div class="smalltext" id="uploadinfo">Deine Eingaben werden nun anonymisiert und verschlüsselt übertragen. Dies kann bis zu einer Minute dauern. Bitte warte...</div><img id="uploadimage" src="img/spinner.gif" alt="Übertragung läuft"><div class="smalltext" id="particitext"></div><div class="smalltext" id="particicode"></div><button class="navbutton" type="button" id="downloadbutton" style="display: none;" onclick="triggerDataDownload();">Daten speichern</button><div class="smalltext" id="finishtext" style="display: none;">Du kannst den Vollbildmodus durch Drücken der Tasten <span class="keyButton">Esc</span> oder <span class="keyButton">F11</span> verlassen und das Browserfenster dann einfach schließen.<br><b>Bitte beachte, dass dein Hacking-Angriff nur simuliert wurde und die in zukünftigen Klausuren gestellten Prüfungsfragen von den heruntergeladenen Dokumenten abweichen können. Falls du Interesse an den Forschungsergebnissen und dem untersuchten Paradigma zur Aufdeckung von Täterwissen hast, kannst du weitere Informationen gern per E-Mail erfragen.</b></div></div>',
         choices: jsPsych.NO_KEYS,
         on_load: function () {
             // wait 3s before upload for visualization purposes

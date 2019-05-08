@@ -71,6 +71,17 @@
  
 }
 
+.heading-ms {
+  
+    font-family: monospace;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 1.6em;
+    margin-top: 45px;
+    margin-bottom: 20px;
+   
+  }
+
 .subheading {
     font-weight: bold;
     font-size: 20px;
@@ -90,8 +101,16 @@
   
 }
 
+.smalltext-ms {
+    font-family: monospace;
+    font-size: 18px;
+    line-height: 1.6em;
+    margin-top: 15px;
+    
+  }
+
 .instruction{
-    text-align: center;
+    text-align: left;
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
@@ -218,7 +237,16 @@ th{
 
 
 
-
+.checkbox-label {
+    display: block;
+    margin-left: 30px;
+}
+.checkbox {
+    float: left;
+    margin-left: 5px;
+    margin-right: 15px;
+    margin-top: 8px;
+}
 
 
 
@@ -480,7 +508,7 @@ th{
 
 #alertOverlay {
 
-  
+  z-index: 999;
   font-family: 'Open Sans', 'Arial', sans-serif;
   font-size: 20px;
   background: #ff5555; 
@@ -493,7 +521,7 @@ th{
   
   
       display: none;
-    position: absolute;
+    position: fixed;
     right: 0;
     left: 0;
     margin-right: auto;
@@ -657,6 +685,7 @@ html, body {
     display: block;
     margin: 0px;
     overflow-x:hidden;
+    position: relative;
 }
 
 #experiment {
@@ -691,7 +720,7 @@ html, body {
 .question {
     font-size: 60px;
     
-    font-style: italic;
+    font-family: monospace;
     
 }
 
@@ -734,25 +763,22 @@ html, body {
 
 #flyin {
     position: fixed;
-
+    font-family: monospace;
     white-space: nowrap;
-    font-size: 80px;
+    font-size: 60px;
     top: 50%;
     left: 0%;
     text-align: center;
     width: 100%;
     opacity: 0;
+    color: #4286f4;
 }
 
 
 
 #investigator {
     
-    position: fixed;
-
-
-
-  
+    position: absolute;  
     text-align: center;
     width: 100%;
     height: 40%;
@@ -827,6 +853,7 @@ html, body {
 
 .target {
     font-size: 60px;
+    font-family: monospace;
     padding: 50px;
     color: #000;
     border: 5px solid #000;
@@ -838,15 +865,15 @@ html, body {
 }
 
 
-
+.rteInstructionContainer {
+    padding-top: 40vh;
+}
 
 
 
 .rteAttentionCheckChoiceBlock {
     margin-top: 50px;
-    margin-left: auto;
-    margin-right: auto;
-    width: fit-content;
+    font-size: 18px;
 }
 
 .rteAttentionCheckChoice {
@@ -861,13 +888,13 @@ html, body {
     border: 2px solid #efeeee;
     border-radius: 5px;
     box-shadow: 2px 2px 0px #bbb;
-    color: #555;
     background-color: #efeeee;
-    font-size: 20px;
+    
 }
 
 .rteAttentionCheckChoiceText {
     margin-left: 15px;
+    font-family: monospace;
 }
 
 
