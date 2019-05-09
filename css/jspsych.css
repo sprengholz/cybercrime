@@ -39,6 +39,7 @@
    max-width: 95%; /* this is mainly an IE 10-11 fix */
    text-align: center;
    margin: auto; /* this is for overflowing content */
+   /*margin-top: 0px;*/
  }
 
  .jspsych-top {
@@ -114,9 +115,15 @@
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
-    
-    
 }
+
+.instruction-tac{
+    text-align: center;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 
 #vignetteText{
     margin-top: 50px;
@@ -243,11 +250,19 @@ th{
 }
 .checkbox {
     float: left;
-    margin-left: 5px;
-    margin-right: 15px;
+    margin-left: 0px;
+    margin-right: 0px;
     margin-top: 8px;
 }
 
+.presstext {
+    border: 2px solid #ddd;
+  
+    border-radius: 5px;
+    padding: 10px;
+    color: #555;
+    font-style: italic;
+}
 
 
 
@@ -391,9 +406,10 @@ th{
 
 #chat{
     height: 500px;
-    width:500px;
-    background-color: #f5f5f5;
-    border: 1px solid #adadad;
+    max-width: 800px;
+    background-color: #fff;
+    border: 2px solid #ddd;
+    border-radius: 5px 5px 0px 0px;
     text-align: left;
     margin-top: 50px;
     margin-left: auto;
@@ -409,6 +425,7 @@ th{
 #messageArea{
     height: 430px;
     overflow: auto;
+    
 }
 
 
@@ -416,7 +433,7 @@ th{
 .message{
     width: 100%;
     display: inline-block;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 400;
     font-family: 'Open Sans', 'Arial', sans-serif;
  
@@ -424,13 +441,13 @@ th{
 
 .messageOther {
     
-    border: 1px solid #ccc;
+    
     border-radius: 0px 10px 10px 10px;
     margin: 5px;
     float: left;
     padding: 10px;
-    max-width: 350px;
-    background-color: #fff;
+    max-width: 550px;
+    background-color: #eee;
     box-shadow: 0px 2px #ddd;
     
 }
@@ -443,7 +460,7 @@ th{
     float: right;
     padding: 10px;
     max-width: 350px;
-    background-color: #dff2f3;
+    background-color: #fff;
     box-shadow: 0px 2px #ddd;
 }
 
@@ -452,7 +469,7 @@ th{
 #answerArea {
     height: 50px;
     text-align: center;
-    border-top: 1px solid #ccc;
+    border-top: 2px solid #ddd;
     padding-top: 9px;
     padding-bottom: 10px;
     background-color: #f5f5f5;
@@ -462,17 +479,17 @@ th{
 
 
 #sendMessageButton {
-    width: 115px; 
-    padding: 5px; 
-    margin: 5px 5px 5px 0px;
+    width: calc(20% - 15px); 
+    margin-top: 0px;
+   
     height: 44px;
 }
 
 #messageInput {
     text-align: left; 
-    width: 350px; 
-    padding-left: 5px; 
-    margin: 5px;
+    width: calc(80% - 15px); 
+   
+
     height: 40px;
     
 }
@@ -614,7 +631,7 @@ font-size: 16px;
 
     display: none;
     height: 270px;
-    position: absolute;
+    position: fixed;
     bottom: 0px;
     right: 30px;
     width: 500px;
@@ -866,9 +883,9 @@ html, body {
 
 
 .rteInstructionContainer {
-    padding-top: 40vh;
+    min-height: 62vh;
+    padding-top: 38vh;
 }
-
 
 
 .rteAttentionCheckChoiceBlock {

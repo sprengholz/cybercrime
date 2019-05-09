@@ -43,13 +43,16 @@ jsPsych.plugins['chat'] = (function () {
         });
 
         function openPressText(){
-            $('#pressText').slideDown();
+            $('#presstext').slideDown();
         }
             
         var check = function() {
 
             field = $('#messageInput');
             textToSend = field.val().trim();
+            if (textToSend.length == 0){
+                textToSend = "&nbsp;";
+            }
             
             attempts.push(textToSend);
             
@@ -118,14 +121,13 @@ jsPsych.plugins['chat'] = (function () {
                 }
             }
             
-            // falls keine Nachrichten mehr vorhanden, Button zum Beenden des Trials einblenden
+            // falls keine Nachrichten mehr vorhanden, Chat beenden
             if (trial.conversation.length === 0)
             {
-                // Sendebutton ausgrauen
-                // Weiter Button sichtbar machen
+                
                 setTimeout(function(){
                     finishChat();   
-                },7000);
+                },5000);
             }
         };
         

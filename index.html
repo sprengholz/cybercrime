@@ -36,7 +36,7 @@
         <span id="alertText"></span>
     </div>
     
-    <div id = "investigator">
+    <div id = "investigator" style="display: none;">
         <svg style="height: 100%; align-content: center;" viewBox="0 -10 50 80" xmlns="http://www.w3.org/2000/svg">
             <g id="hat">
                 <polygon id="hatTop" points="6,15 42,15 46,9 24,1 2,9" fill="none" stroke="black" />
@@ -197,8 +197,8 @@
     // timeline
     var timeline = [];
 
-    // guilt indicator
-    var guilt = 50;
+    // press text
+    var presstext = '<div class="presstext">Kürzlich wurde ein Server der Universität Jena gehackt. Die Täter erhielten unter anderem Zugriff auf unveröffentlichte <strong>Forschungsdaten</strong>. Der verursachte Schaden lässt sich nur schwer beziffern, dürfte aber mehrere zehntausend Euro betragen. Betroffen ist die Fakultät für Sozial- und Verhaltenswissenschaften, insbesondere der Bereich <strong>Psychologie</strong>. Der Server war gesichert, der Schutz entsprach allerdings nicht dem aktuellen Stand der Technik. So konnten sich die Angreifer mit vergleichsweise einfachen Mitteln Zutritt verschaffen. Für den Dateizugriff wurde offenbar das Programm <strong>Copycat</strong> eingesetzt, ein unter Hackern weit verbreitetes Werkzeug.</div>';
 
 
     /*
@@ -279,7 +279,7 @@
         }
     }
 
-    // matching stimuli (20% = 36 trials)
+    // nonmatching stimuli (20% = 36 trials)
 
     for (j = 0; j < 2; j++) {
 
@@ -291,7 +291,7 @@
             nonmatchingUntruths = untruths.slice();
             nonmatchingUntruths.splice(i, 1);
 
-            for (nonmatchingSecret in nonmatchingSecrets){
+            for (nonmatchingSecret of nonmatchingSecrets){
                 task = {
                     question: questions[0],
                     secrecy: 'secret',
@@ -301,7 +301,7 @@
                 tasksPart2.push(task);
             }
 
-            for (nonmatchingNonsecret in nonmatchingNonsecrets){
+            for (nonmatchingNonsecret of nonmatchingNonsecrets){
                 task = {
                     question: questions[0],
                     secrecy: 'nonsecret',
@@ -311,7 +311,7 @@
                 tasksPart2.push(task);
             }
 
-            for (nonmatchingUntruth in nonmatchingUntruths){
+            for (nonmatchingUntruth of nonmatchingUntruths){
                 task = {
                     question: questions[0],
                     secrecy: 'untruth',
@@ -323,49 +323,53 @@
         }        
     }
     
-
+    
     /*
-     * Show Welcome Screen
+     * Show welcome screen
      */
 
-    /*timeline.push({
+    var welcome = {
         type: 'html-button-response',
         choices: ["Weiter"],
-        stimulus: '<div class="instruction"><div class="heading">Willkommen</div> <div class="smalltext">Vielen Dank,dass du an meiner Studie zum Thema Cyberkriminalität teilnehmen möchtest. Für die Teilnahme benötigst du eine Tastatur. Verwende deshalb bitte <strong>PC oder Notebook</strong>. Tablets und Smartphones sind leider nicht geeignet. Auf den nächsten Seiten folgen weitere Informationen zum Ablauf des Experiments. Bei Fragen oder Problemen erreichst du mich jederzeit per E-Mail.<div><div class="smalltext">Philipp Sprengholz<br>FSU Jena, Institut für Psychologie<br>philipp.sprengholz@uni-jena.de </div> </div>'
-    });*/
+        stimulus: '<div class="instruction-tac"><div class="heading">Willkommen</div> <div class="smalltext">Vielen Dank,dass du an meiner Studie zum Thema Cyberkriminalität teilnehmen möchtest. Für die Teilnahme benötigst du eine Tastatur. Verwende deshalb bitte <strong>PC oder Notebook</strong>. Tablets und Smartphones sind leider nicht geeignet. Auf den nächsten Seiten folgen weitere Informationen zum Ablauf des Experiments. Bei Fragen oder Problemen erreichst du mich jederzeit per E-Mail.<div><div class="smalltext">Philipp Sprengholz<br>FSU Jena, Institut für Psychologie<br>philipp.sprengholz@uni-jena.de </div> </div>'
+    };
+    timeline.push(welcome);
 
 
     /*
-     * Show Eligibility Check
+     * Show eligibility check
      */
 
-    /*timeline.push({
+    var eligibility_check = {
         type: 'html-button-response',
         choices: ["Ich habe nicht an der Studie im Januar teilgenommen"],
-        stimulus: '<div class="instruction"><div class="heading">Wichtig</div> <div class="smalltext">Solltest du bereits im Januar an einer ähnlichen Studie teilgenommen haben, bei der es darum ging Prüfungsfragen von einem Computer zu stehlen, kannst du leider nicht am Experiment teilnehmen. Bitte schließe das Fenster in diesem Fall.</div> </div>'
-    });*/
+        stimulus: '<div class="instruction-tac"><div class="heading">Wichtig</div> <div class="smalltext">Solltest du bereits im Januar an einer ähnlichen Studie teilgenommen haben, bei der es darum ging Prüfungsfragen von einem Computer zu stehlen, kannst du leider nicht am Experiment teilnehmen. Bitte schließe das Fenster in diesem Fall.</div> </div>'
+    };
+    timeline.push(eligibility_check);
 
 
     /*
-     * Show Information about Experiment
+     * Show experiment summary
      */
 
-    /*timeline.push({
+    var experiment_summary = {
         type: 'html-button-response',
         choices: ["Weiter"],
-        stimulus: '<div class="instruction"><div class="heading">Zum Ablauf</div> <div class="smalltext">Du wirst zunächst etwas über Cyberangriffe lernen. Ich möchte zunächst herausfinden, ob es dir mit einer einfachen Anleitung gelingt, einen Universitätsrechner zu hacken und Daten zu stehlen. Anschließend folgen einige Reaktionszeitaufgaben, in denen du besonders schnell auf bestimmte Wörter reagieren musst.</div><div class="smalltext">Deine Teilnahme ist <strong>freiwillig</strong> und du kannst das Experiment jederzeit abbrechen. Natürlich werden deine Daten <strong>anonymisiert</strong> und vertraulich behandelt. Für deine Teilnahme erhältst du nach Abschluss des Experiments eine Versuchspersonenstunde. </div> </div>'
-    });*/
+        stimulus: '<div class="instruction-tac"><div class="heading">Zum Ablauf</div> <div class="smalltext">Du wirst zunächst etwas über Cyberangriffe lernen. Ich möchte zunächst herausfinden, ob es dir mit einer einfachen Anleitung gelingt, einen Universitätsrechner zu hacken und Daten zu stehlen. Anschließend folgen einige Reaktionszeitaufgaben, in denen du besonders schnell auf bestimmte Wörter reagieren musst.</div><div class="smalltext">Deine Teilnahme ist <strong>freiwillig</strong> und du kannst das Experiment jederzeit abbrechen. Natürlich werden deine Daten <strong>anonymisiert</strong> und vertraulich behandelt. Für deine Teilnahme erhältst du nach Abschluss des Experiments eine Versuchspersonenstunde. </div> </div>'
+    };
+    timeline.push(experiment_summary);
 
 
     /*
-     * Show Information about Experiment
+     * Ask for silent environment
      */
 
-    /*timeline.push({
+    var environment = {
         type: 'html-button-response',
         choices: ["Weiter"],
-        stimulus: '<div class="instruction"><div class="heading">Ruhe bitte</div><div class="smalltext"> Bitte achte darauf, dass du während der Teilnahme nicht abgelenkt wirst. Suche dir einen <strong>ruhigen Raum</strong>, in dem du die nächsten <strong>45 Minuten</strong> nicht gestört wirst. Bitte lege dein Telefon außer Sichtweite. <div></div>'
-    });*/
+        stimulus: '<div class="instruction-tac"><div class="heading">Ruhe bitte</div><div class="smalltext"> Bitte achte darauf, dass du während der Teilnahme nicht abgelenkt wirst. Suche dir einen <strong>ruhigen Raum</strong>, in dem du die nächsten <strong>45 Minuten</strong> nicht gestört wirst. Bitte lege dein Telefon außer Sichtweite. <div></div>'
+    };
+    timeline.push(environment);
 
 
 
@@ -373,7 +377,7 @@
      * Ask for Demographic Information
      */
 
-    var start = {
+    var demographics = {
         type: 'external-html',
         url: 'demographics.html',
         cont_btn: 'next',
@@ -394,7 +398,7 @@
             data.sex = sex;
         }
     };
-    //timeline.push(start);
+    timeline.push(demographics);
 
 
     /*
@@ -550,41 +554,47 @@
             clearAlerts();
         }
     };
-    //timeline.push(hacking);
+    timeline.push(hacking);
 
 
     /*
      * Enter Fullscreen Mode
      */
 
-    /*timeline.push({
+    var fullscreen = {
         type: 'fullscreen',
         fullscreen_mode: true,
-        message: '<div class="instruction"><div class="heading">Wechsel in den Vollbildmodus</div><div class="smalltext"> Mit deinem erfolgreichen Hack hast du den ersten Teil des Experiments bereits abgeschlossen. Der nun folgende zweite Teil wird im Vollbildmodus ablaufen. Wenn du das Experiment vorzeitig abbrechen möchtest, kannst du den Vollbildmodus durch Drücken der Tasten <span class="keyButton">Esc</span> oder <span class="keyButton">F11</span> verlassen und das Browserfenster schließen. Bitte beachte, dass ich dir aus technischen Gründen nur dann eine Versuchspersonenstunde ausstellen kann, wenn du bis zum Ende des Experiments dabei bleibst.</div></div>',
+        message: '<div class="instruction"><div class="heading">Wechsel in den Vollbildmodus</div><div class="smalltext">Mit deinem erfolgreichen Hack hast du den ersten Teil des Experiments bereits abgeschlossen. Der nun folgende zweite Teil wird im Vollbildmodus ablaufen. Wenn du das Experiment vorzeitig abbrechen möchtest, kannst du den Vollbildmodus durch Drücken der Tasten <span class="keyButton">Esc</span> oder <span class="keyButton">F11</span> verlassen und das Browserfenster schließen. Bitte beachte, dass ich dir aus technischen Gründen nur dann eine Versuchspersonenstunde ausstellen kann, wenn du bis zum Ende des Experiments dabei bleibst.</div></div>',
         button_label: 'Alles klar'
-    });*/
+    };
+    timeline.push(fullscreen);
 
 
     /*
      * Show Information about Second Part
      */
 
-    /*timeline.push({
+    var sherlock_intro = {
         type: 'html-button-response',
         choices: ["Sherlock starten"],
-        stimulus: '<div class="instruction"><div class="heading">Achtung!</div><div class="smalltext">Der unbefugte Zugriff auf die Prüfungsfragen wurde durch einen Mitarbeiter des Dekanats bemerkt! Neben einigen anderen Studierenden wurdest du als möglicher Hacker identifiziert.</div><div class="smalltext">Alle Verdächtigen sollen nun einem Test durch ein neuartiges Ermittlungsprogramm namens <strong>Sherlock</strong> unterzogen werden, welches das Vorhandensein von Täterwissen überprüft und eine schuldige Person der Tat überführen kann. Auch du wirst gebeten, im Folgenden daran teilzunehmen.</div></div>'
-    });*/
+        stimulus: '<div class="instruction-tac"><div class="heading">Achtung!</div><div class="smalltext">Der unbefugte Zugriff auf die Prüfungsfragen wurde durch einen Mitarbeiter des Dekanats bemerkt! Neben einigen anderen Studierenden wurdest du als möglicher Hacker identifiziert.</div><div class="smalltext">Alle Verdächtigen sollen nun einem Test durch ein neuartiges Ermittlungsprogramm namens <strong>Sherlock</strong> unterzogen werden, welches das Vorhandensein von Täterwissen überprüft und eine schuldige Person der Tat überführen kann. Auch du wirst gebeten, im Folgenden daran teilzunehmen.</div></div>'
+    };
+    timeline.push(sherlock_intro);
 
 
     /*
      * Presentation of Nonsecret (Public) Crime Information
      */
 
-    /*timeline.push({
+    var sherlock_welcome = {
         type: 'html-button-response',
         choices: ["Weiter"],
-        stimulus: '<div class="topmargincontainer"><div class="instruction"><img src="img/symbols/sherlock.png" alt="Sherlock"><div class="smalltext"><code><strong>Guten Tag.</strong></code></div><div class="smalltext"><code>Mein Name ist Sherlock. Ich bin ein Programm, das zur Untersuchung von Straftaten eingesetzt wird. Ich werde prüfen ob Sie über Wissen verfügen, das allein eine an der Tat beteiligte Person besitzen kann.</code></div><div class="smalltext"><code>Ich möchte Sie zunächst bitten, den folgenden Text aufmerksam zu lesen. Es handelt sich um eine Pressemitteilung zur Tat. Die darin aufgeführten Informationen wurden bereits in verschiedenen Medien veröffentlicht und sind öffentlich bekannt.</code></div><br><div class="smalltext"><code><strong>Kürzlich wurde ein Server der Universität Jena gehackt. Die Täter erhielten unter anderem Zugriff auf unveröffentlichte <u>Forschungsdaten</u>. Der verursachte Schaden lässt sich nur schwer beziffern, dürfte aber mehrere zehntausend Euro betragen. Betroffen ist die Fakultät für Sozial- und Verhaltenswissenschaften, insbesondere der Bereich <u>Psychologie</u>. Der Server war gesichert, der Schutz entsprach allerdings nicht dem aktuellen Stand der Technik. So konnten sich die Angreifer mit vergleichsweise einfachen Mitteln Zutritt verschaffen. Für den Dateizugriff wurde offenbar das Programm <u>Copycat</u> eingesetzt, ein unter Hackern weit verbreitetes Werkzeug.</strong></code></div><br><div class="smalltext"><code>Bitte prägen Sie sich alle Details der Pressemeldung gut ein - insbesondere die unterstrichenen Informationen zur Tat. Klicken Sie anschließend auf Weiter.</code></div></div></div>'
-    });*/
+        stimulus: '<div class="rteInstructionContainer"><div class="instruction"><div class="smalltext-ms"><strong>Guten Tag.</strong></div><div class="smalltext-ms">Mein Name ist Sherlock. Ich bin ein Programm, das zur Untersuchung von Straftaten eingesetzt wird. Ich werde prüfen ob Sie über Wissen verfügen, das allein eine an der Tat beteiligte Person besitzen kann.</div><div class="smalltext-ms">Ich möchte Sie zunächst bitten, den folgenden Text aufmerksam zu lesen. Es handelt sich um eine Pressemitteilung zur Tat. Die darin aufgeführten Informationen wurden bereits in verschiedenen Medien publiziert und sind öffentlich bekannt.</div><br><div class="smalltext-ms">'+presstext+'</div><br><div class="smalltext-ms">Bitte prägen Sie sich alle Details der Pressemeldung gut ein - insbesondere die fett gedruckten Informationen zur Tat. Klicken Sie anschließend auf Weiter.</div></div></div></div>',
+        on_load: function(){
+            showInvestigator('positive');
+        }
+    };
+    timeline.push(sherlock_welcome);
 
 
     /*
@@ -631,7 +641,7 @@
                 {
                     person: 'Subject',
                     evaluate_answer: false,
-                    message: 'Ich denke Sie wissen mehr, als Sie zugeben. Unterhalten wir uns zu den Details der Tat.'
+                    message: 'Ich denke Sie wissen mehr als Sie zugeben. Unterhalten wir uns zu den Details der Tat.'
                 },
                 {
                     person: 'Ermittler',
@@ -657,7 +667,7 @@
                     secret: secrets[1],
                     nonsecret_message: 'Richtig, das wurde bereits in der Presseerklärung genannt.',
                     secret_message: 'Das konnten Sie nicht aus der Presseerklärung wissen! Verdächtig.',
-                    missing_message: 'Mit dieser Antwort bin ich nicht zufrieden. Sie wissen mehr darüber! ' + questions[1]
+                    missing_message: 'Mit dieser Antwort bin ich nicht zufrieden. Sie müssen mehr darüber wissen! ' + questions[1]
                 },
                 {
                     person: 'Ermittler',
@@ -674,7 +684,7 @@
                 },
                 {
                     person: 'Ermittler',
-                    text: 'Vielen Dank für Ihre Antworten. Bitte warten Sie kurz, es geht gleich weiter.'
+                    text: 'Danke. Sie werden nun zur nächsten Aufgabe weitergeleitet.'
                 }
             ];
             return conv;
@@ -682,7 +692,7 @@
 
         on_finish: function (data) { }
     };
-    //timeline.push(chat);
+    timeline.push(chat);
 
 
     /*
@@ -717,35 +727,6 @@
     };
 
 
-    /*var target = {
-        type: "html-keyboard-response",
-        stimulus: function () {
-            target = jsPsych.timelineVariable('target')();
-            return '<div class="target"><code>' + target + '</code></div>';
-        },
-        trial_duration: 1000,
-        choices: [32],
-        data: { rte_part: 'target' },
-        on_finish: function (data) {
-            
-            secrecy = jsPsych.timelineVariable('secrecy')();
-            correct = undefined;
-            
-            if (secrecy === 'nonsecret') {
-                correct = (data.key_press === null);
-            } else {
-                correct = (data.key_press !== null);
-            }
-
-            data.trial_question = jsPsych.timelineVariable('question')();
-            data.trial_secrecy = jsPsych.timelineVariable('secrecy')();
-            data.trial_target = jsPsych.timelineVariable('target')();
-            data.trial_matching = jsPsych.timelineVariable('matching')();
-            data.trial_correct = correct;
-            data.trial_rt = data.rt;
-        }
-    };*/
-
     var target = {
         type: "flyin",
         answer: function () {
@@ -765,12 +746,12 @@
             target = jsPsych.data.get().last(1).values()[0].trial_target;
             
             if (secrecy === 'nonsecret') {
-                errorMessage = 'Die gerade gezeigte Antwort (' + target + ') wurde in der Presseerklärung veröffentlicht - du hättest sie aussprechen müssen und daher keine Taste drücken dürfen!';
+                errorMessage = 'Die gerade gezeigte Antwort (' + target + ') wurde in der Presseerklärung veröffentlicht - Sie hätten diese aussprechen müssen und daher keine Taste drücken dürfen!';
             } else {
-                errorMessage = 'Die gerade gezeigte Antwort (' + target + ') wurde NICHT in der Presseerklärung veröffentlicht - du hättest sie zurückhalten und daher die Leertaste drücken müssen!';
+                errorMessage = 'Die gerade gezeigte Antwort (' + target + ') wurde NICHT in der Presseerklärung veröffentlicht - Sie hätten diese zurückhalten und daher die Leertaste drücken müssen!';
             }
             
-            return '<div class="instruction"><div class="smalltext-ms"><strong>Verdächtig!</strong> ' + errorMessage + '</div><div class="smalltext-ms">Drücke die <span class="keyButton">Leertaste</span> um mit der nächsten Frage fortzufahren.</div></div>';
+            return '<div class="rteInstructionContainer"><div class="instruction"><div class="smalltext-ms"><strong>Verdächtig!</strong> ' + errorMessage + ' Bei Bedarf können Sie hier noch einmal den Pressetext lesen:</div><div class="smalltext-ms">'+presstext+'</div><div class="smalltext-ms">Drücken Sie die <span class="keyButton">Leertaste</span> um mit der nächsten Frage fortzufahren.</div></div></div>';
         },
         choices: [32],
         data: { rte_part: 'target_error' },
@@ -809,12 +790,12 @@
             if (attention_check_type === 'prime') {
 
                 stim = '';
-                stim += '<div class="instruction"><div class="smalltext-ms"><strong>Welche Frage habe ich dir zuletzt gestellt?</strong> Drücke eine der Tasten <span class="keyButton">1</span> bis <span class="keyButton">3</span> um die zuletzt gezeigte Frage auszuwählen.</div>';
+                stim += '<div class="rteInstructionContainer"><div class="instruction"><div class="smalltext-ms"><strong>Welche Frage habe ich Ihnen zuletzt gestellt?</strong> Drücken Sie eine der Tasten <span class="keyButton">1</span> bis <span class="keyButton">3</span> um die zuletzt gezeigte Frage auszuwählen.</div>';
                 stim += '<div class="rteAttentionCheckChoiceBlock">';
                 for (i = 0; i < questions.length; i++) {
                     stim += '<div class="rteAttentionCheckChoice"><span class="keyButton">' + (i + 1) + '</span><span class="rteAttentionCheckChoiceText">' + questions[i] + '</span></div>';
                 }
-                stim += '<div></div>';
+                stim += '<div></div></div>';
                 return stim;
             }
             // case 2: check target word
@@ -839,12 +820,12 @@
                 shownTargets = shownTargets.sort(() => .5 - Math.random());
 
                 stim = '';
-                stim += '<div class="instruction"><div class="smalltext-ms"><strong>Welche Antwort wurde zuletzt gezeigt?</strong> Drücke eine der Tasten <span class="keyButton">1</span> bis <span class="keyButton">3</span> um das zuletzt gezeigte Wort auszuwählen.</div>';
+                stim += '<div class="rteInstructionContainer"><div class="instruction"><div class="smalltext-ms"><strong>Welche Antwort wurde zuletzt gezeigt?</strong> Drücken Sie eine der Tasten <span class="keyButton">1</span> bis <span class="keyButton">3</span> um das zuletzt gezeigte Wort auszuwählen.</div>';
                 stim += '<div class="rteAttentionCheckChoiceBlock">';
                 for (i = 0; i < shownTargets.length; i++) {
                     stim += '<div class="rteAttentionCheckChoice"><span class="keyButton">' + (i + 1) + '</span><span class="rteAttentionCheckChoiceText">' + shownTargets[i] + '</span></div>';
                 }
-                stim += '</div></div>';
+                stim += '</div></div></div>';
                 return stim;
             }
         },
@@ -890,7 +871,7 @@
             
             lastPart = jsPsych.data.get().last(1).values()[0].rte_part;
             if (lastPart !== 'target_error') {
-                chance = 0.15;
+                chance = 0.99;
                 if (Math.random() < chance) {
                     // 50/50 chance to check question prime or target word
                     if (Math.random() < 0.5) {
@@ -916,12 +897,12 @@
             
             var errorMessage;
             if (attention_check_type === 'prime') {
-                errorMessage = 'Diese Frage habe ich dir nicht zuletzt gestellt. Achte in Zukunft besser auf die Fragen und Antworten - andernfalls machst du dich verdächtig!';
+                errorMessage = 'Diese Frage habe ich Ihnen nicht zuletzt gestellt. Achten Sie in Zukunft besser auf die Fragen und Antworten - andernfalls machen Sie sich verdächtig!';
             }
             if (attention_check_type === 'target') {
-                errorMessage = 'Das von dir gewählte Wort wurde nicht zuletzt gezeigt. Achte in Zukunft besser auf die Fragen und Antworten - andernfalls machst du dich verdächtig!';
+                errorMessage = 'Das von Ihnen gewählte Wort wurde nicht zuletzt gezeigt. Achten Sie in Zukunft besser auf die Fragen und Antworten - andernfalls machen Sie sich verdächtig!';
             }
-            return '<div class="instruction"><div class="smalltext-ms"><strong>Falsch!</strong> ' + errorMessage + '</div><div class="smalltext-ms">Drücke die <span class="keyButton">Leertaste</span> um mit der nächsten Frage fortzufahren.</div></div>';
+            return '<div class="rteInstructionContainer"><div class="instruction"><div class="smalltext-ms"><strong>Falsch!</strong> ' + errorMessage + '</div><div class="smalltext-ms">Drücken Sie die <span class="keyButton">Leertaste</span> um mit der nächsten Frage fortzufahren.</div></div></div>';
         },
         choices: [32],
         data: { rte_part: 'prime_check_error' },
@@ -969,7 +950,7 @@
             if (count == 4){
                 return true;
             } else {
-                showAlert('Deine Auswahl ist nicht korrekt. Bitte prüfe deine Antworten.');
+                showAlert('Ihre Auswahl ist nicht korrekt. Bitte prüfen Sie Ihre Antworten.');
                 return false;
             }
 
@@ -989,7 +970,7 @@
 
     var rte_pt1_start = {
         type: 'html-keyboard-response',
-        stimulus: '<div class="instruction"><div class="smalltext-ms">Denke daran, immer dann die Leertaste zu drücken, wenn die blaue Antwort nicht mit den Presseinformationen übereinstimmt und deshalb zurückgehalten werden soll. Wenn du bereit bist, positioniere jetzt deine Finger auf der Leertaste. Es wird etwa 5 bis 10 Minuten dauern, bis die nächste Pause kommt. Stelle sicher, dass du in dieser Zeit nicht gestört wirst.</div><br><div class="smalltext-ms">Drücke nun die <span class="keyButton">Leertaste</span> um zu beginnen.</div></div>',
+        stimulus: '<div class="rteInstructionContainer"><div class="instruction"><div class="smalltext-ms">Denken Sie daran, immer dann die Leertaste zu drücken, wenn die blaue Antwort nicht mit den Presseinformationen übereinstimmt und deshalb zurückgehalten werden soll. <strong>Wenn Sie bereit sind, positionieren Sie jetzt Ihre Finger auf der Leertaste.</strong> Es wird etwa 5 bis 10 Minuten dauern, bis die nächste Pause kommt. Stellen Sie bitte sicher, dass Sie in dieser Zeit nicht gestört werden.</div><div class="smalltext-ms">Drücken Sie nun die <span class="keyButton">Leertaste</span> um zu beginnen.</div></div></div>',
         choices: [32],
         data: { 
             rte_part: 'rte_pt1_start'
@@ -999,6 +980,7 @@
         }
     };
     timeline.push(rte_pt1_start);
+
 
     var rte_pt1 = {
         timeline: [blank, fixation, question, target, if_target_error, if_attention_check, if_attention_check_error],
@@ -1013,15 +995,50 @@
      */
 
      var rte_pt2_instruction = {
-        type: 'html-keyboard-response',
-        stimulus: '<div class="topmargincontainer"><div class="instruction"><div class="smalltext"><code><strong>RTE 2</strong></code></div><div class="smalltext"><code>Nachdem Sie sich mit der Aufgabe vertraut gemacht haben, wiederholen wir das Ganze nochmal - nur wesentlich häufiger. Bitte stellen Sie unbedingt sicher, dass Sie in den nächsten 20 Minuten durch nichts abgelenkt werden. Denken Sie daran, aufmerksam zu lesen und so schnell wie möglich die Leertaste zu drücken, wenn sich das von einem Rechteck umgebene Wort rot färbt - oder gelb und es sich um eine unbekannte Information handelt, die nicht als Antwort ausgesprochen werden soll.</code></div><br><div class="smalltext"><code>Drücken Sie nun die <span class="keyButton"><code>Leertaste</code></span> um zu beginnen.</code></div></div></div>',
-        choices: [32],
-        data: { rte_part: 'tutorial_instruction' },
-        on_load: function () {
-            tutorialRunning = false;
+        type: 'external-html',
+        url: "rte_pt2_instruction.html",
+        cont_btn: "next",
+        check_fn: function () {
+
+            var count = $('input[type=checkbox][value="correct"]:checked').length;
+            
+            console.log(count);
+
+            if (count == 2){
+                return true;
+            } else {
+                showAlert('Ihre Auswahl ist nicht korrekt. Bitte prüfen Sie Ihre Antworten.');
+                return false;
+            }
+
+        },
+        data: { 
+            rte_part: 'rte_pt1_instruction'
+        },
+        on_load: function (data) {
+            showInvestigator('positive');
+            $('body').css('cursor', 'default');
+        },
+        on_finish: function (data) {
+            clearAlerts();
         }
     };
     timeline.push(rte_pt2_instruction);
+
+
+    var rte_pt2_start = {
+        type: 'html-keyboard-response',
+        stimulus: '<div class="rteInstructionContainer"><div class="instruction"><div class="smalltext-ms">Denken Sie daran, immer dann die Leertaste zu drücken, wenn die blaue Antwort nicht mit den Presseinformationen übereinstimmt und deshalb zurückgehalten werden soll. <strong>Wenn Sie bereit sind, positionieren Sie jetzt Ihre Finger auf der Leertaste.</strong> Es wird etwa 15 Minuten dauern, bis die nächste Pause kommt. Stellen Sie bitte sicher, dass Sie in dieser Zeit nicht gestört werden.</div><div class="smalltext-ms">Drücken Sie nun die <span class="keyButton">Leertaste</span> um zu beginnen.</div></div></div>',
+        choices: [32],
+        data: { 
+            rte_part: 'rte_pt1_start'
+        },
+        on_load: function () {
+            $('body').css('cursor', 'none');
+        }
+    };
+    timeline.push(rte_pt2_start);
+
 
     var rte_pt2 = {
         timeline: [blank, fixation, question, target, if_target_error, if_attention_check, if_attention_check_error],
@@ -1038,7 +1055,7 @@
 
     var likertAnswers = [];
 
-    var likert = {
+    var attention = {
         type: 'external-html',
         url: "attention.html",
         cont_btn: "next",
@@ -1057,13 +1074,14 @@
         },
         on_load: function () {
             $('#experiment').css('cursor', 'default');
+            hideInvestigator();
         },
         on_finish: function (data) {
             data.answers = likertAnswers;
             clearAlerts();
         }
     };
-    timeline.push(likert);
+    timeline.push(attention);
 
 
     /*
@@ -1072,7 +1090,7 @@
 
     var debriefing = {
         type: 'html-keyboard-response',
-        stimulus: '<div class="instruction"><div class="heading">Geschafft!</div><div class="smalltext">Vielen Dank für deine Teilnahme. Du hast mir sehr geholfen.</div><div class="smalltext" id="uploadinfo">Deine Eingaben werden nun anonymisiert und verschlüsselt übertragen. Dies kann bis zu einer Minute dauern. Bitte warte...</div><img id="uploadimage" src="img/spinner.gif" alt="Übertragung läuft"><div class="smalltext" id="particitext"></div><div class="smalltext" id="particicode"></div><button class="navbutton" type="button" id="downloadbutton" style="display: none;" onclick="triggerDataDownload();">Daten speichern</button><div class="smalltext" id="finishtext" style="display: none;">Du kannst den Vollbildmodus durch Drücken der Tasten <span class="keyButton">Esc</span> oder <span class="keyButton">F11</span> verlassen und das Browserfenster dann einfach schließen.<br><b>Bitte beachte, dass dein Hacking-Angriff nur simuliert wurde und die in zukünftigen Klausuren gestellten Prüfungsfragen von den heruntergeladenen Dokumenten abweichen können. Falls du Interesse an den Forschungsergebnissen und dem untersuchten Paradigma zur Aufdeckung von Täterwissen hast, kannst du weitere Informationen gern per E-Mail erfragen.</b></div></div>',
+        stimulus: '<div class="instruction"><div class="heading">Geschafft!</div><div class="smalltext">Vielen Dank für deine Teilnahme. Du hast mir sehr geholfen.</div><div class="smalltext" id="uploadinfo">Deine Eingaben werden nun anonymisiert und verschlüsselt übertragen. Dies kann bis zu einer Minute dauern. Bitte warte...</div><img id="uploadimage" src="img/spinner.gif" alt="Übertragung läuft"><div class="smalltext" id="particitext"></div><div class="smalltext" id="particicode"></div><button class="navbutton" type="button" id="downloadbutton" style="display: none;" onclick="triggerDataDownload();">Daten speichern</button><div class="smalltext" id="finishtext" style="display: none;">Du kannst den Vollbildmodus durch Drücken der Tasten <span class="keyButton">Esc</span> oder <span class="keyButton">F11</span> verlassen und das Browserfenster dann einfach schließen.<br><b>Bitte beachte, dass dein Hacking-Angriff nur simuliert wurde und die in zukünftigen Klausuren gestellten Prüfungsfragen von den heruntergeladenen Dokumenten abweichen werden. Falls du Interesse an den Forschungsergebnissen und dem untersuchten Paradigma zur Aufdeckung von Täterwissen hast, kannst du weitere Informationen gern per E-Mail erfragen.</b></div></div>',
         choices: jsPsych.NO_KEYS,
         on_load: function () {
             // wait 3s before upload for visualization purposes

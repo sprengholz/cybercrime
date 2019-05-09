@@ -1,37 +1,29 @@
-<div class="topmargincontainer">
 
-    <img src="img/symbols/sherlock.png" alt="Watson">
-
-    <div class="instruction">
-        <div id="instructionTitle" class="smalltext"><code><strong>Ich möchte Ihnen ein paar Fragen stellen.</strong></code></div>
-        <div id="instructionText" class="smalltext"><code>Bitte nutzen Sie zur Beantwortung das unten eingeblendete Chatfenster. Sie müssen alle Fragen auf Basis der zuvor gelesenen Pressemitteilung beantworten können. Wenn Sie diese noch einmal lesen möchten, klicken Sie bitte <a id="openPressTextButton" href="#">hier</a>.</code></div>
-    
-        <div id="pressText" style="display: none">
-            <br>
-            <div class="smalltext"><code><strong>Kürzlich wurde ein Server der Universität Jena gehackt. Die Täter erhielten unter anderem Zugriff auf unveröffentlichte <u>Forschungsdaten</u>. Der verursachte Schaden lässt sich nur schwer beziffern, dürfte aber mehrere zehntausend Euro betragen. Betroffen ist die Fakultät für Sozial- und Verhaltenswissenschaften, insbesondere der Bereich <u>Psychologie</u>. Der Server war gesichert, der Schutz entsprach allerdings nicht dem aktuellen Stand der Technik. So konnten sich die Angreifer mit vergleichsweise einfachen Mitteln Zutritt verschaffen. Für den Dateizugriff wurde offenbar das Programm <u>Copycat</u> eingesetzt, ein unter Hackern weit verbreitetes Werkzeug.</strong></code></div>
-            <br>
-        </div>
-
-    </div>
-
-    <div id="chat">
-        <div id="chatContent">
-            
-
-
-            <div id="messageArea"></div>
-
-            <div id="answerArea">
-                <input type="text" id="messageInput" placeholder="Antwort eintippen...">
-                <button class="navbutton" id="sendMessageButton">Senden</button>
+    <div class="rteInstructionContainer">
+        <div class="instruction">
+            <div id="instructionTitle" class="smalltext-ms">
+                <strong>
+                    Ich möchte Ihnen zunächst einige Fragen stellen
+                </strong>
             </div>
-
+            <div id="instructionText" class="smalltext-ms">
+                Bitte nutzen Sie zur Beantwortung das unten eingeblendete Chatfenster. Sie müssen alle Fragen auf Basis der zuvor gelesenen Pressemitteilung beantworten können. Wenn Sie diese noch einmal lesen möchten, klicken Sie bitte <a id="openPressTextButton" href="#">hier</a>.
+            </div>
+            <div class="smalltext-ms">
+                <div id="presstext" class="presstext" style="display: none">
+                    Kürzlich wurde ein Server der Universität Jena gehackt. Die Täter erhielten unter anderem Zugriff auf unveröffentlichte <strong>Forschungsdaten</strong>. Der verursachte Schaden lässt sich nur schwer beziffern, dürfte aber mehrere zehntausend Euro betragen. Betroffen ist die Fakultät für Sozial- und Verhaltenswissenschaften, insbesondere der Bereich <strong>Psychologie</strong>. Der Server war gesichert, der Schutz entsprach allerdings nicht dem aktuellen Stand der Technik. So konnten sich die Angreifer mit vergleichsweise einfachen Mitteln Zutritt verschaffen. Für den Dateizugriff wurde offenbar das Programm <strong>Copycat</strong> eingesetzt, ein unter Hackern weit verbreitetes Werkzeug.
+                </div>
+            </div>
         </div>
-            
+
+        <div id="chat">
+            <div id="chatContent">
+                <div id="messageArea"></div>
+
+                <div id="answerArea">
+                    <input type="text" id="messageInput" placeholder="Antwort eintippen...">
+                    <button class="navbutton" id="sendMessageButton">Senden</button>
+                </div>
+            </div>
+        </div>
     </div>
-</div>   
-
-
-
-
-
