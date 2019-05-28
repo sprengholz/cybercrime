@@ -187,9 +187,11 @@
         'Copycat',
         'Psychologie'];
 
-    var untruths = ['Notenlisten',
-        'Wireshark',
-        'Erziehungswissenschaft'];
+    var untruths = [
+        ['Notenlisten', 'Projektanträge', 'Rechnungen', 'Zeugnisse'],
+        ['Wireshark', 'Aircrack', 'Filezilla', 'Hashcat'],
+        ['Erziehungswissenschaft', 'Politikwissenschaft', 'Ethik', 'Gesellschaftstheorie']
+    ];
 
     // parameters for decisions
     var decisions = [];
@@ -202,15 +204,16 @@
 
 
     /*
-     * Setup Tasks for RT experiment - Part 1 (matching stimuli only = 90 trials)
+     * Setup Tasks for RT experiment - Part 1 (matching stimuli only = 96 trials)
      */
 
     var tasksPart1 = [];
 
     for (i = 0; i < questions.length; i++) {
+        
+        // secret truth target (3 x 8 trials)
 
-        for (j = 0; j < 10; j++) {
-            // secret truth target
+        for (j = 0; j < 8; j++) {
             task = {
                 question: questions[i],
                 secrecy: 'secret',
@@ -218,8 +221,11 @@
                 matching: 'match'
             };
             tasksPart1.push(task);
+        }
 
-            // nonsecret truth target
+        // nonsecret truth target (3 x 16 trials)
+
+        for (j = 0; j < 16; j++) {
             task = {
                 question: questions[i],
                 secrecy: 'nonsecret',
@@ -227,101 +233,132 @@
                 matching: 'match'
             };
             tasksPart1.push(task);
+        }
 
-            // untruth target
-            task = {
-                question: questions[i],
-                secrecy: 'untruth',
-                target: untruths[i],
-                matching: 'match'
-            };
-            tasksPart1.push(task);
+        // untruth target (3 x 4 x 2 trials)
+
+        for (j = 0; j < 2; j++) {
+
+            for (k = 0; k < 4; k++) {
+                task = {
+                    question: questions[i],
+                    secrecy: 'untruth',
+                    target: untruths[i][k],
+                    matching: 'match'
+                };
+                tasksPart1.push(task);
+            }
         }
     }
 
+
     /*
-     * Setup Tasks for RT experiment - Part 2 (matching and nonmatching stimuli = 176 trials)
+     * Setup Tasks for RT experiment - Part 2 (matching and nonmatching stimuli = 168 trials)
      */
 
     var tasksPart2 = [];
 
-    // matching stimuli (80% = 144 trials)
+    // matching stimuli (86% = 144 trials)
 
     for (i = 0; i < questions.length; i++) {
+        
+        // secret truth target (3 x 12 trials)
 
-        for (j = 0; j < 16; j++) {
-            // secret truth target
+        for (j = 0; j < 12; j++) {
             task = {
                 question: questions[i],
                 secrecy: 'secret',
                 target: secrets[i],
                 matching: 'match'
             };
-            tasksPart2.push(task);
+            tasksPart1.push(task);
+        }
 
-            // nonsecret truth target
+        // nonsecret truth target (3 x 24 trials)
+
+        for (j = 0; j < 24; j++) {
             task = {
                 question: questions[i],
                 secrecy: 'nonsecret',
                 target: nonsecrets[i],
                 matching: 'match'
             };
-            tasksPart2.push(task);
+            tasksPart1.push(task);
+        }
 
-            // untruth target
-            task = {
-                question: questions[i],
-                secrecy: 'untruth',
-                target: untruths[i],
-                matching: 'match'
-            };
-            tasksPart2.push(task);
+        // untruth target (3 x 4 x 3 trials)
+
+        for (j = 0; j < 3; j++) {
+
+            for (k = 0; k < 4; k++) {
+                task = {
+                    question: questions[i],
+                    secrecy: 'untruth',
+                    target: untruths[i][k],
+                    matching: 'match'
+                };
+                tasksPart1.push(task);
+            }
         }
     }
 
-    // nonmatching stimuli (20% = 36 trials)
+    // nonmatching stimuli (14% = 24 trials)
 
-    for (j = 0; j < 2; j++) {
+    for (i = 0; i < 3; i++){
 
-        for (i = 0; i < 3; i++){
-            nonmatchingSecrets = secrets.slice();
-            nonmatchingSecrets.splice(i, 1);
-            nonmatchingNonsecrets = nonsecrets.slice();
-            nonmatchingNonsecrets.splice(i, 1);
-            nonmatchingUntruths = untruths.slice();
-            nonmatchingUntruths.splice(i, 1);
+        // nonmatching secrets (3 x 2 trials)
 
-            for (nonmatchingSecret of nonmatchingSecrets){
-                task = {
-                    question: questions[0],
-                    secrecy: 'secret',
-                    target: nonmatchingSecret,
-                    matching: 'nonmatch'
-                };
-                tasksPart2.push(task);
-            }
+        nonmatchingSecrets = secrets.slice();
+        nonmatchingSecrets.splice(i, 1);
 
+        for (nonmatchingSecret of nonmatchingSecrets){
+            task = {
+                question: questions[i],
+                secrecy: 'secret',
+                target: nonmatchingSecret,
+                matching: 'nonmatch'
+            };
+            tasksPart2.push(task);
+        }
+
+        // nonmatching nonsecrets (3 x 2 x 2 trials)
+
+        nonmatchingNonsecrets = nonsecrets.slice();
+        nonmatchingNonsecrets.splice(i, 1);
+        
+        for (j = 0; j < 2; j++) {
             for (nonmatchingNonsecret of nonmatchingNonsecrets){
                 task = {
-                    question: questions[0],
+                    question: questions[i],
                     secrecy: 'nonsecret',
                     target: nonmatchingNonsecret,
                     matching: 'nonmatch'
                 };
                 tasksPart2.push(task);
             }
+        }
+        
+        // nonmatching untruths (3 x 2 trials)
 
-            for (nonmatchingUntruth of nonmatchingUntruths){
-                task = {
-                    question: questions[0],
-                    secrecy: 'untruth',
-                    target: nonmatchingUntruth,
-                    matching: 'nonmatch'
-                };
-                tasksPart2.push(task);
-            }
-        }        
-    }
+        nonmatchingUntruths = untruths.slice();
+        nonmatchingUntruths.splice(i, 1);
+        nonmatchingUntruths = nonmatchingUntruths.flat();
+
+        for (j = 0; j < 2; j++){
+
+            // randomly select the target
+            nonmatchingUntruth = nonmatchingUntruths[Math.floor(Math.random() * nonmatchingUntruths.length)];
+
+            task = {
+                question: questions[i],
+                secrecy: 'untruth',
+                target: nonmatchingUntruth,
+                matching: 'nonmatch'
+            };
+            tasksPart2.push(task);
+        }
+    }        
+    
     
     
     /*
@@ -520,19 +557,19 @@
                                 this.echo("----------------------------------------------");
                                 this.echo("Folder 'Psychologie' contains 5 files");
                                 this.echo("----------------------------------------------");
-                                this.echo("<a href='files/Klausur_Inferenzstatistik.pdf' style='color: #ffff8b;' target='_blank'>                                   Klausur_Inferenzstatistik.pdf</a>", { "raw": true });
-                                this.echo("<a href='files/Klausur_Testtheorie.pdf' style='color: #ffff8b;' target='_blank'>                                         Klausur_Testtheorie.pdf</a>", { "raw": true });
-                                this.echo("<a href='files/Forschung_InfluenceOfVisualStimuliOnPerceptionOfSpatialAudio.csv' style='color: #ffff8b;' target='_blank'>Studiendaten_InfluenceOfVisualStimuliOnPerc...</a>", { "raw": true });
-                                this.echo("<a href='files/Forschung_MusicTrainingAndInhibitoryControl.xlsx' style='color: #ffff8b;' target='_blank'>                Studiendaten_MusicTrainingAndInhibitoryCont...</a>", { "raw": true });
-                                this.echo("<a href='files/Forschung_AltruisticPunishmentAndReward.csv' style='color: #ffff8b;' target='_blank'>                     Studiendaten_AltruisticPunishmentAndReward.csv</a>", { "raw": true });
+                                this.echo("<a href='files/Pruefungsfragen_Inferenzstatistik.pdf' style='color: #ffff8b;' target='_blank'>                                   Pruefungsfragen_Inferenzstatistik.pdf</a>", { "raw": true });
+                                this.echo("<a href='files/Pruefungsfragen_Testtheorie.pdf' style='color: #ffff8b;' target='_blank'>                                         Pruefungsfragen_Testtheorie.pdf</a>", { "raw": true });
+                                this.echo("<a href='files/Forschungsdaten_InfluenceOfVisualStimuliOnPerceptionOfSpatialAudio.csv' style='color: #ffff8b;' target='_blank'>  Forschungsdaten_InfluenceOfVisualStimuliOn...</a>", { "raw": true });
+                                this.echo("<a href='files/Forschungsdaten_MusicTrainingAndInhibitoryControl.xlsx' style='color: #ffff8b;' target='_blank'>                  Forschungsdaten_MusicTrainingAndInhibitory...</a>", { "raw": true });
+                                this.echo("<a href='files/Forschungsdaten_AltruisticPunishmentAndReward.csv' style='color: #ffff8b;' target='_blank'>                       Forschungsdaten_AltruisticPunishmentAndRew...</a>", { "raw": true });
                                 this.echo("----------------------------------------------");
                             } else if (folder.trim().toLowerCase() === "soziologie") {
                                 this.echo("----------------------------------------------");
                                 this.echo("Folder 'Soziologie' contains 3 files");
                                 this.echo("----------------------------------------------");
-                                this.echo("<a href='files/Klausur_Bildungssoziologie.pdf' style='color: #ffff8b;' target='_blank'>Klausur_Bildungssoziologie.pdf</a>", { "raw": true });
-                                this.echo("<a href='files/Klausur_Makrosoziologie.pdf' style='color: #ffff8b;' target='_blank'>Klausur_Makrosoziologie.pdf</a>", { "raw": true });
-                                this.echo("<a href='files/Klausur_Sozialisationstheorien.pdf' style='color: #ffff8b;' target='_blank'>Klausur_Sozialisationstheorien.pdf</a>", { "raw": true });
+                                this.echo("<a href='files/Pruefungsfragen_Bildungssoziologie.pdf' style='color: #ffff8b;' target='_blank'>                                  Pruefungsfragen_Bildungssoziologie.pdf</a>", { "raw": true });
+                                this.echo("<a href='files/Pruefungsfragen_Makrosoziologie.pdf' style='color: #ffff8b;' target='_blank'>                                     Pruefungsfragen_Makrosoziologie.pdf</a>", { "raw": true });
+                                this.echo("<a href='files/Pruefungsfragen_Sozialisationstheorien.pdf' style='color: #ffff8b;' target='_blank'>                              Pruefungsfragen_Sozialisationstheorien.pdf</a>", { "raw": true });
                                 this.echo("----------------------------------------------");
                             } else {
                                 this.echo("[[;#E45F5F;black]There is no folder named '" + folder + "'!]");
@@ -804,7 +841,7 @@
                 lastTarget = jsPsych.timelineVariable('target')();
                 var otherTargets = secrets.slice();
                 otherTargets = otherTargets.concat(nonsecrets);
-                otherTargets = otherTargets.concat(untruths);
+                otherTargets = otherTargets.concat(untruths.flat());
 
                 for (i = 0; i < otherTargets.length; i++) {
                     if (otherTargets[i] === lastTarget) {
@@ -871,7 +908,7 @@
             
             lastPart = jsPsych.data.get().last(1).values()[0].rte_part;
             if (lastPart !== 'target_error') {
-                chance = 0.15;
+                chance = 0.08;
                 if (Math.random() < chance) {
                     // 50/50 chance to check question prime or target word
                     if (Math.random() < 0.5) {

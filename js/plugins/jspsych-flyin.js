@@ -137,7 +137,7 @@ jsPsych.plugins["flyin"] = (function () {
                 })
                 .add({
                     targets: '#flyin',
-                    duration: 1000,
+                    duration: 1500,
                     offset: '+=0',
                     complete: function() {
                         timePassed = true;
