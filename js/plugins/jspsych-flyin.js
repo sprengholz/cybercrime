@@ -71,8 +71,10 @@ jsPsych.plugins["flyin"] = (function () {
             // clear display
             display_element.innerHTML = '';
 
-            // finish trial
+            
             jsPsych.finishTrial(trial_data);
+            
+            
 
         };
 

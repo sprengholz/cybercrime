@@ -48,7 +48,7 @@
             <polyline id="browRight" points="28,28 38,28" fill="none" stroke="black" />
             <ellipse id="eyeLeft" cx="15" cy="34" rx="2" ry="2" />
             <ellipse id="eyeRight" cx="33" cy="34" rx="2" ry="2" />
-            <path id="mouth" d="M19 50 Q 25 51 31 50" stroke="black" fill="transparent"/>
+            <path id="mouth" d="M19 50 Q 25 50 31 50" stroke="black" fill="transparent"/>
         </svg>
     
     </div>
@@ -89,70 +89,108 @@
 
 
 
-    var investigatorAnimationDuration = 750;
+    var investigatorAnimationDuration = 500;
 
-    function showInvestigator(emotion) {
+    function showInvestigator() {
         $('#investigator').show();
-        if (emotion == 'neutral'){
-            anime({
-                targets: "#mouth",
-                duration: investigatorAnimationDuration,
-                d: "M19 51 Q 25 50 31 49", 
-                autoplay: true
-            });
-        }
-        if (emotion == 'negative'){
-            anime({
-                targets: "#browLeft",
-                duration: investigatorAnimationDuration,
-                points: "10,27 20,29", 
-                autoplay: true
-            });
+    }
 
-            anime({
-                targets: "#browRight",
-                duration: investigatorAnimationDuration,
-                points: "28,29 38,27", 
-                autoplay: true
-            });
+    function showInvestigatorAnger() {
 
-            anime({
-                targets: "#mouth",
-                duration: investigatorAnimationDuration,
-                d: "M19 51 Q 25 48 31 49", 
-                autoplay: true
-            });
-        }
-        if (emotion == 'positive'){
+        var animation = anime.timeline({
+            autoplay: true
+        });
+        animation
+        .add({
+            targets: "#browLeft",
+            points: "10,27 20,29",
+            duration: investigatorAnimationDuration,
+            offset: 0
+        })
+        .add({
+            targets: "#browRight",
+            points: "28,29 38,27",
+            duration: investigatorAnimationDuration,
+            offset: 0
+        })
+        .add({
+            targets: "#mouth",
+            d: "M19 51 Q 25 48 31 49",
+            duration: investigatorAnimationDuration,
+            offset: 0
+        })
+    }
 
-            anime({
-                targets: "#hat",
-                duration: investigatorAnimationDuration,
-                top: "+5px", 
-                autoplay: true
-            });
+    function showInvestigatorNeutral() {
+        
+        var animation = anime.timeline({
+            autoplay: true
+        });
+        animation
+        .add({
+            targets: "#browLeft",
+            points: "10,26 20,28",
+            duration: investigatorAnimationDuration,
+            offset: 0
+        })
+        .add({
+            targets: "#browRight",
+            points: "28,28 38,28",
+            duration: investigatorAnimationDuration,
+            offset: 0
+        })
+        .add({
+            targets: "#mouth",
+            d: "M19 50 Q 25 50 31 50",
+            duration: investigatorAnimationDuration,
+            offset: 0
+        });
+    }
 
-            anime({
-                targets: "#browLeft",
-                duration: investigatorAnimationDuration,
-                points: "10,26 20,28", 
-                autoplay: true
-            });
-
-            anime({
-                targets: "#browRight",
-                duration: investigatorAnimationDuration,
-                points: "28,28 38,28", 
-                autoplay: true
-            });
-
-            anime({
-                targets: "#mouth",
-                duration: investigatorAnimationDuration,
-                d: "M19 51 Q 25 52 31 51", 
-                autoplay: true
-            });
-        }
+    function showInvestigatorAffirmation() {
+        
+        var animation = anime.timeline({
+            autoplay: true
+        });
+        animation
+        .add({
+            targets: "#eyeLeft",
+            ry: "1",
+            duration: investigatorAnimationDuration/4,
+            offset: investigatorAnimationDuration/4
+        })
+        .add({
+            targets: "#eyeRight",
+            ry: "1",
+            duration: investigatorAnimationDuration/4,
+            offset: investigatorAnimationDuration/4
+        })
+        .add({
+            targets: "#mouth",
+            duration: investigatorAnimationDuration,
+            d: "M19 50 Q 25 51 31 49", 
+            offset: 0
+        })
+        .add({
+            targets: "#eyeLeft",
+            ry: "2",
+            duration: investigatorAnimationDuration,
+            offset: investigatorAnimationDuration/2,
+            duration: investigatorAnimationDuration/4
+        })
+        .add({
+            targets: "#eyeRight",
+            ry: "2",
+            duration: investigatorAnimationDuration,
+            offset: investigatorAnimationDuration/2,
+            duration: investigatorAnimationDuration/4
+        })
+        .add({
+            targets: "#mouth",
+            d: "M19 50 Q 25 50 31 50",
+            duration: investigatorAnimationDuration,
+            offset: investigatorAnimationDuration
+        });
     }
 
     function hideInvestigator() {
@@ -190,7 +228,7 @@
     var untruths = [
         ['Notenlisten', 'Projektanträge', 'Rechnungen', 'Zeugnisse'],
         ['Wireshark', 'Aircrack', 'Filezilla', 'Hashcat'],
-        ['Erziehungswissenschaft', 'Politikwissenschaft', 'Ethik', 'Gesellschaftstheorie']
+        ['Erziehungswissenschaft', 'Politikwissenschaft', 'Kunstgeschichte', 'Philosophie']
     ];
 
     // parameters for decisions
@@ -251,7 +289,7 @@
         }
     }
 
-
+    
     /*
      * Setup Tasks for RT experiment - Part 2 (matching and nonmatching stimuli = 168 trials)
      */
@@ -271,7 +309,7 @@
                 target: secrets[i],
                 matching: 'match'
             };
-            tasksPart1.push(task);
+            tasksPart2.push(task);
         }
 
         // nonsecret truth target (3 x 24 trials)
@@ -283,7 +321,7 @@
                 target: nonsecrets[i],
                 matching: 'match'
             };
-            tasksPart1.push(task);
+            tasksPart2.push(task);
         }
 
         // untruth target (3 x 4 x 3 trials)
@@ -297,7 +335,7 @@
                     target: untruths[i][k],
                     matching: 'match'
                 };
-                tasksPart1.push(task);
+                tasksPart2.push(task);
             }
         }
     }
@@ -360,7 +398,6 @@
     }        
     
     
-    
     /*
      * Show welcome screen
      */
@@ -370,7 +407,7 @@
         choices: ["Weiter"],
         stimulus: '<div class="instruction-tac"><div class="heading">Willkommen</div> <div class="smalltext">Vielen Dank,dass du an meiner Studie zum Thema Cyberkriminalität teilnehmen möchtest. Für die Teilnahme benötigst du eine Tastatur. Verwende deshalb bitte <strong>PC oder Notebook</strong>. Tablets und Smartphones sind leider nicht geeignet. Auf den nächsten Seiten folgen weitere Informationen zum Ablauf des Experiments. Bei Fragen oder Problemen erreichst du mich jederzeit per E-Mail.<div><div class="smalltext">Philipp Sprengholz<br>FSU Jena, Institut für Psychologie<br>philipp.sprengholz@uni-jena.de </div> </div>'
     };
-    timeline.push(welcome);
+    //timeline.push(welcome);
 
 
     /*
@@ -382,7 +419,7 @@
         choices: ["Ich habe nicht an der Studie im Januar teilgenommen"],
         stimulus: '<div class="instruction-tac"><div class="heading">Wichtig</div> <div class="smalltext">Solltest du bereits im Januar an einer ähnlichen Studie teilgenommen haben, bei der es darum ging Prüfungsfragen von einem Computer zu stehlen, kannst du leider nicht am Experiment teilnehmen. Bitte schließe das Fenster in diesem Fall.</div> </div>'
     };
-    timeline.push(eligibility_check);
+    //timeline.push(eligibility_check);
 
 
     /*
@@ -394,7 +431,7 @@
         choices: ["Weiter"],
         stimulus: '<div class="instruction-tac"><div class="heading">Zum Ablauf</div> <div class="smalltext">Du wirst zunächst etwas über Cyberangriffe lernen. Ich möchte herausfinden, ob es dir mit einer einfachen Anleitung gelingt, einen Universitätsrechner zu hacken und Daten zu stehlen. Anschließend folgen einige Reaktionszeitaufgaben, in denen du besonders schnell auf bestimmte Wörter reagieren musst.</div><div class="smalltext">Deine Teilnahme ist <strong>freiwillig</strong> und du kannst das Experiment jederzeit abbrechen. Natürlich werden deine Daten <strong>anonymisiert</strong> und vertraulich behandelt. Für deine Teilnahme erhältst du nach Abschluss des Experiments eine Versuchspersonenstunde. </div> </div>'
     };
-    timeline.push(experiment_summary);
+    //timeline.push(experiment_summary);
 
 
     /*
@@ -406,7 +443,7 @@
         choices: ["Weiter"],
         stimulus: '<div class="instruction-tac"><div class="heading">Ruhe bitte</div><div class="smalltext"> Bitte achte darauf, dass du während der Teilnahme nicht abgelenkt wirst. Suche dir einen <strong>ruhigen Raum</strong>, in dem du die nächsten <strong>45 Minuten</strong> nicht gestört wirst. Bitte lege dein Telefon außer Sichtweite. <div></div>'
     };
-    timeline.push(environment);
+    //timeline.push(environment);
 
 
 
@@ -435,7 +472,7 @@
             data.sex = sex;
         }
     };
-    timeline.push(demographics);
+    //timeline.push(demographics);
 
 
     /*
@@ -591,7 +628,7 @@
             clearAlerts();
         }
     };
-    timeline.push(hacking);
+    //timeline.push(hacking);
 
 
     /*
@@ -604,7 +641,7 @@
         message: '<div class="instruction-tac"><div class="heading">Wechsel in den Vollbildmodus</div><div class="smalltext">Mit deinem erfolgreichen Hack hast du den ersten Teil des Experiments bereits abgeschlossen. Der nun folgende zweite Teil wird im Vollbildmodus ablaufen. Wenn du das Experiment vorzeitig abbrechen möchtest, kannst du den Vollbildmodus durch Drücken der Tasten <span class="keyButton">Esc</span> oder <span class="keyButton">F11</span> verlassen und das Browserfenster schließen. Bitte beachte, dass ich dir aus technischen Gründen nur dann eine Versuchspersonenstunde ausstellen kann, wenn du bis zum Ende des Experiments dabei bleibst.</div></div>',
         button_label: 'Alles klar'
     };
-    timeline.push(fullscreen);
+    //timeline.push(fullscreen);
 
 
     /*
@@ -616,7 +653,7 @@
         choices: ["Sherlock starten"],
         stimulus: '<div class="instruction-tac"><div class="heading">Achtung!</div><div class="smalltext">Der unbefugte Zugriff auf die Prüfungsfragen wurde durch einen Mitarbeiter des Dekanats bemerkt! Neben einigen anderen Studierenden wurdest du als möglicher Hacker identifiziert.</div><div class="smalltext">Alle Verdächtigen sollen nun einem Test durch ein neuartiges Ermittlungsprogramm namens <strong>Sherlock</strong> unterzogen werden, welches das Vorhandensein von Täterwissen überprüft und eine schuldige Person der Tat überführen kann. Auch du wirst gebeten, im Folgenden daran teilzunehmen.</div></div>'
     };
-    timeline.push(sherlock_intro);
+    //timeline.push(sherlock_intro);
 
 
     /*
@@ -628,10 +665,10 @@
         choices: ["Weiter"],
         stimulus: '<div class="rteInstructionContainer"><div class="instruction"><div class="smalltext-ms"><strong>Guten Tag.</strong></div><div class="smalltext-ms">Mein Name ist Sherlock. Ich bin ein Programm, das zur Untersuchung von Straftaten eingesetzt wird. Ich werde prüfen ob Sie über Wissen verfügen, das allein eine an der Tat beteiligte Person besitzen kann.</div><div class="smalltext-ms">Ich möchte Sie zunächst bitten, den folgenden Text aufmerksam zu lesen. Es handelt sich um eine Pressemitteilung zur Tat. Die darin aufgeführten Informationen wurden bereits in verschiedenen Medien publiziert und sind öffentlich bekannt.</div><br><div class="smalltext-ms">'+presstext+'</div><br><div class="smalltext-ms">Bitte prägen Sie sich alle Details der Pressemeldung gut ein - insbesondere die fett gedruckten Informationen zur Tat. Klicken Sie anschließend auf Weiter.</div></div></div></div>',
         on_load: function(){
-            showInvestigator('positive');
+            showInvestigator();
         }
     };
-    timeline.push(sherlock_welcome);
+    //timeline.push(sherlock_welcome);
 
 
     /*
@@ -729,7 +766,7 @@
 
         on_finish: function (data) { }
     };
-    timeline.push(chat);
+    //timeline.push(chat);
 
 
     /*
@@ -750,7 +787,10 @@
         stimulus: '<div class="fixation">+</div>',
         choices: jsPsych.NO_KEYS,
         trial_duration: 400,
-        data: { rte_part: 'fixation' }
+        data: { rte_part: 'fixation' },
+        on_load: function() {
+            showInvestigatorNeutral(); 
+        }
     };
 
 
@@ -807,10 +847,10 @@
 
             correct = jsPsych.data.get().last(1).values()[0].trial_correct;
             if (correct) {
-                showInvestigator('positive');
+                showInvestigatorAffirmation();
                 return false;
             } else {
-                showInvestigator('negative');
+                showInvestigatorAnger();
                 return true;
             }
         }
@@ -957,10 +997,10 @@
             data = jsPsych.data.get().last(1).values()[0];
             if (data.rte_part === 'attention_check') {
                 if (data.check_correct) {
-                    showInvestigator('positive');
+                    showInvestigatorAffirmation();
                     return false;
                 } else {
-                    showInvestigator('negative');
+                    showInvestigatorAnger();
                     return true;
                 }
             } else {
@@ -996,7 +1036,7 @@
             rte_part: 'rte_pt1_instruction'
         },
         on_load: function (data) {
-            showInvestigator('positive');
+            showInvestigator();
         },
         on_finish: function (data) {
             clearAlerts();
@@ -1054,7 +1094,7 @@
             rte_part: 'rte_pt1_instruction'
         },
         on_load: function (data) {
-            showInvestigator('positive');
+            showInvestigator();
             $('body').css('cursor', 'default');
         },
         on_finish: function (data) {

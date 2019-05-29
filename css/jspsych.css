@@ -731,11 +731,11 @@ html, body {
 
 
 .question-intro {
-    font-size: 45px;
+    font-size: 55px;
 }
 
 .question {
-    font-size: 45px;
+    font-size: 55px;
     
     font-family: monospace;
     
@@ -782,7 +782,7 @@ html, body {
     position: fixed;
     font-family: monospace;
     white-space: nowrap;
-    font-size: 45px;
+    font-size: 55px;
     top: 50%;
     left: 0%;
     text-align: center;
@@ -855,21 +855,21 @@ html, body {
 }
 
 .target-go {
-    font-size: 45px;
+    font-size: 55px;
     padding: 50px;
     color: #FF5555;
     border: 5px solid #FF5555;
 }
 
 .target-nogo {
-    font-size: 45px;
+    font-size: 55px;
     padding: 50px;
     color: #2ECC71;
     border: 5px solid #2ECC71;
 }
 
 .target {
-    font-size: 45px;
+    font-size: 55px;
     font-family: monospace;
     padding: 50px;
     color: #000;
@@ -877,7 +877,7 @@ html, body {
 }
 
 .fixation {
-    font-size: 45px;
+    font-size: 55px;
     
 }
 
