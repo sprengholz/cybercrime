@@ -948,7 +948,7 @@
             
             lastPart = jsPsych.data.get().last(1).values()[0].rte_part;
             if (lastPart !== 'target_error') {
-                chance = 0.08;
+                chance = 0.075;
                 if (Math.random() < chance) {
                     // 50/50 chance to check question prime or target word
                     if (Math.random() < 0.5) {
