@@ -216,19 +216,52 @@
         'Welches Werkzeug wurde verwendet?',
         'Welcher Bereich ist betroffen?'];
 
-    // secret and non-secret (irrelevant) answers
-    var secrets = ['Prüfungsfragen',
-        'Brutus',
-        'Soziologie'];
 
-    var nonsecrets = ['Forschungsdaten',
-        'Copycat',
-        'Psychologie'];
+    // answers
+    var documents = [
+        'Prüfungsfragen', 
+        'Zeugnisse', 
+        'Forschungsergebnisse', 
+        'Notenlisten', 
+        'Protokolle', 
+        'Lohnscheine'
+    ];
+
+    var tools = [
+        'Medusa', 
+        'Hydra', 
+        'Wireshark', 
+        'Sniper', 
+        'Hashcat', 
+        'Aircrack'
+    ];
+
+    var subjects = [
+        'Soziologie', 
+        'Kunstgeschichte', 
+        'Rechtswissenschaft', 
+        'Zahnmedizin', 
+        'Mathematik', 
+        'Sportmanagement'
+    ];
+
+    // randomly pick secret and non-secret as well as untruth answers
+    var secrets = [
+        documents.splice(Math.random()*documents.length, 1),
+        tools.splice(Math.random()*tools.length, 1),
+        subjects.splice(Math.random()*subjects.length, 1)
+    ];
+
+    var nonsecrets = [
+        documents.splice(Math.random()*documents.length, 1),
+        tools.splice(Math.random()*tools.length, 1),
+        subjects.splice(Math.random()*subjects.length, 1)
+    ];
 
     var untruths = [
-        ['Notenlisten', 'Projektanträge', 'Rechnungen', 'Zeugnisse'],
-        ['Wireshark', 'Aircrack', 'Filezilla', 'Hashcat'],
-        ['Erziehungswissenschaft', 'Politikwissenschaft', 'Kunstgeschichte', 'Philosophie']
+        documents.slice(),
+        tools.slice(),
+        subjects.slice()
     ];
 
     // parameters for decisions
@@ -238,7 +271,7 @@
     var timeline = [];
 
     // press text
-    var presstext = '<div class="presstext">Kürzlich wurde ein Server der Universität Jena gehackt. Die Täter erhielten unter anderem Zugriff auf unveröffentlichte <strong>Forschungsdaten</strong>. Der verursachte Schaden lässt sich nur schwer beziffern, dürfte aber mehrere zehntausend Euro betragen. Betroffen ist die Fakultät für Sozial- und Verhaltenswissenschaften, insbesondere der Bereich <strong>Psychologie</strong>. Der Server war gesichert, der Schutz entsprach allerdings nicht dem aktuellen Stand der Technik. So konnten sich die Angreifer mit vergleichsweise einfachen Mitteln Zutritt verschaffen. Für den Dateizugriff wurde offenbar das Programm <strong>Copycat</strong> eingesetzt, ein unter Hackern weit verbreitetes Werkzeug.</div>';
+    var presstext = '<div class="presstext">Kürzlich wurde ein Server der Universität Jena gehackt. Die Täter erhielten unter anderem Zugriff auf <strong>'+nonsecrets[0]+'</strong> aus dem Bereich <strong>'+nonsecrets[2]+'</strong>. Der Server war gesichert, der Schutz entsprach allerdings nicht dem aktuellen Stand der Technik. So konnten sich die Angreifer mit vergleichsweise einfachen Mitteln Zutritt verschaffen. Für den Angriff wurde offenbar das Programm <strong>'+nonsecrets[1]+'</strong> eingesetzt, ein unter Hackern weit verbreitetes Werkzeug.</div>';
 
 
     /*
