@@ -214,35 +214,35 @@
     // questions
     var questions = ['Was wurde gestohlen?',
         'Welches Werkzeug wurde verwendet?',
-        'Welcher Bereich ist betroffen?'];
+        'Welches Institut ist betroffen?'];
 
 
     // answers
     var documents = [
-        'Prüfungsfragen', 
-        'Zeugnisse', 
-        'Forschungsergebnisse', 
+        'Klausuren',
+        'Lohnscheine',
+        'Manuskripte',
         'Notenlisten', 
         'Protokolle', 
-        'Lohnscheine'
+        'Zeugnisse'
     ];
 
     var tools = [
-        'Medusa', 
-        'Hydra', 
+        'Aircrack',
+        'Grover',
+        'Hashcat',
+        'Medusa',  
         'Wireshark', 
-        'Sniper', 
-        'Hashcat', 
-        'Aircrack'
+        'Sniper'
     ];
 
     var subjects = [
-        'Soziologie', 
+        'Bioinformatik',
         'Kunstgeschichte', 
-        'Rechtswissenschaft', 
-        'Zahnmedizin', 
-        'Mathematik', 
-        'Sportmanagement'
+        'Lasertechnik',
+        'Philosophie',   
+        'Sportmanagement',
+        'Zahnmedizin'
     ];
 
     // randomly pick secret and non-secret as well as untruth answers
@@ -271,7 +271,7 @@
     var timeline = [];
 
     // press text
-    var presstext = '<div class="presstext">Kürzlich wurde ein Server der Universität Jena gehackt. Die Täter erhielten unter anderem Zugriff auf <strong>'+nonsecrets[0]+'</strong> aus dem Bereich <strong>'+nonsecrets[2]+'</strong>. Der Server war gesichert, der Schutz entsprach allerdings nicht dem aktuellen Stand der Technik. So konnten sich die Angreifer mit vergleichsweise einfachen Mitteln Zutritt verschaffen. Für den Angriff wurde offenbar das Programm <strong>'+nonsecrets[1]+'</strong> eingesetzt, ein unter Hackern weit verbreitetes Werkzeug.</div>';
+    var presstext = '<div class="presstext">Kürzlich wurde ein Server der Universität Jena gehackt. Die Täter erhielten unter anderem Zugriff auf <strong>'+nonsecrets[0]+'</strong>, vor allem das Institut für <strong>'+nonsecrets[2]+'</strong> ist betroffen. Der Server war gesichert, der Schutz entsprach allerdings nicht dem aktuellen Stand der Technik. So konnten sich die Angreifer mit vergleichsweise einfachen Mitteln Zutritt verschaffen. Für den Angriff wurde offenbar das Programm <strong>'+nonsecrets[1]+'</strong> eingesetzt, ein unter Hackern weit verbreitetes Werkzeug.</div>';
 
 
     /*
@@ -522,21 +522,21 @@
             var checkedTools = $("input[name='tools']:checked").map(function () {
                 return this.value;
             }).get();
-            if (!(checkedTools.includes("brutus") && checkedTools.includes("copycat") && checkedTools.length === 2)) {
+            if (!(checkedTools.includes(nonsecrets[1]) && checkedTools.includes(secrets[1]) && checkedTools.length === 2)) {
                 answersCorrect = false;
             }
 
             var checkedDocuments = $("input[name='documents']:checked").map(function () {
                 return this.value;
             }).get();
-            if (!(checkedDocuments.includes("research") && checkedDocuments.includes("exams") && checkedDocuments.length === 2)) {
+            if (!(checkedDocuments.includes(nonsecrets[0]) && checkedDocuments.includes(secrets[0]) && checkedDocuments.length === 2)) {
                 answersCorrect = false;
             }
 
             var checkedInstitutes = $("input[name='institutes']:checked").map(function () {
                 return this.value;
             }).get();
-            if (!(checkedInstitutes.includes("psychology") && checkedInstitutes.includes("sociology") && checkedInstitutes.length === 2)) {
+            if (!(checkedInstitutes.includes(nonsecrets[2]) && checkedInstitutes.includes(secrets[2]) && checkedInstitutes.length === 2)) {
                 answersCorrect = false;
             }
 
@@ -549,18 +549,21 @@
         },
         on_load: function (data) {
 
+
+            // config terminal
+
             $('#terminal').show();
 
             var attacked = false;
             var connected = false;
 
-            var getAdress = function () {
+            var getAddress = function () {
                 $.when($('#terminal').terminal().read("Address: ")).done(function (address) {
-                    if (address.includes("fsv.uni-jena.de/Login")) {
+                    if (address.toLowerCase().includes("uni-jena.de/login")) {
                         attack();
                     } else {
                         $('#terminal').terminal().echo("[[;#E45F5F;black]Target not found. Check address.]");
-                        getAdress();
+                        getAddress();
                     }
                 });
             };
@@ -577,7 +580,7 @@
                         if (i >= 15) {
                             terminal.update(-1, "[[;#96C47D;black]✔ Credentials found");
                             terminal.echo("Username: admin");
-                            terminal.echo("Password: s3cr3t99");
+                            terminal.echo("Password: **********");
                             clearInterval(interval);
                             terminal.resume();
                             attacked = true;
@@ -599,8 +602,8 @@
                             terminal.echo("----------------------------------------------");
                             terminal.echo("Folder               Files       Last accessed");
                             terminal.echo("----------------------------------------------");
-                            terminal.echo("+ Psychologie        0             13 days ago");
-                            terminal.echo("+ Soziologie         0             18 days ago");
+                            terminal.echo("+ "+nonsecrets[2].toString().padEnd(15, " ")+"    0             13 days ago");
+                            terminal.echo("+ "+secrets[2].toString().padEnd(15, " ")+"    0             18 days ago");
                             terminal.echo("----------------------------------------------");
                             clearInterval(interval);
                             terminal.resume();
@@ -610,51 +613,62 @@
             };
 
             jQuery(function ($, undefined) {
-                $('#terminal').terminal({
-                    BRUTUS: function () {
-                        getAdress();
-                    },
-                    COPYCAT: function () {
-                        if (attacked) {
-                            connect();
-                        } else {
-                            this.echo("[[;#E45F5F;black]Credentials missing. Run BRUTUS first.]");
+                $('#terminal').terminal(
+                    function (command) {
+                        if (command.toLowerCase() === nonsecrets[1].toString().toLowerCase()) {
+                            getAddress();
                         }
-                    },
-                    OPEN: function (folder) {
-                        if (attacked && connected) {
-                            if (folder.trim().toLowerCase() === "psychologie") {
-                                this.echo("----------------------------------------------");
-                                this.echo("Folder 'Psychologie' contains 5 files");
-                                this.echo("----------------------------------------------");
-                                this.echo("<a href='files/Pruefungsfragen_Inferenzstatistik.pdf' style='color: #ffff8b;' target='_blank'>                                   Pruefungsfragen_Inferenzstatistik.pdf</a>", { "raw": true });
-                                this.echo("<a href='files/Pruefungsfragen_Testtheorie.pdf' style='color: #ffff8b;' target='_blank'>                                         Pruefungsfragen_Testtheorie.pdf</a>", { "raw": true });
-                                this.echo("<a href='files/Forschungsdaten_InfluenceOfVisualStimuliOnPerceptionOfSpatialAudio.csv' style='color: #ffff8b;' target='_blank'>  Forschungsdaten_InfluenceOfVisualStimuliOn...</a>", { "raw": true });
-                                this.echo("<a href='files/Forschungsdaten_MusicTrainingAndInhibitoryControl.xlsx' style='color: #ffff8b;' target='_blank'>                  Forschungsdaten_MusicTrainingAndInhibitory...</a>", { "raw": true });
-                                this.echo("<a href='files/Forschungsdaten_AltruisticPunishmentAndReward.csv' style='color: #ffff8b;' target='_blank'>                       Forschungsdaten_AltruisticPunishmentAndRew...</a>", { "raw": true });
-                                this.echo("----------------------------------------------");
-                            } else if (folder.trim().toLowerCase() === "soziologie") {
-                                this.echo("----------------------------------------------");
-                                this.echo("Folder 'Soziologie' contains 3 files");
-                                this.echo("----------------------------------------------");
-                                this.echo("<a href='files/Pruefungsfragen_Bildungssoziologie.pdf' style='color: #ffff8b;' target='_blank'>                                  Pruefungsfragen_Bildungssoziologie.pdf</a>", { "raw": true });
-                                this.echo("<a href='files/Pruefungsfragen_Makrosoziologie.pdf' style='color: #ffff8b;' target='_blank'>                                     Pruefungsfragen_Makrosoziologie.pdf</a>", { "raw": true });
-                                this.echo("<a href='files/Pruefungsfragen_Sozialisationstheorien.pdf' style='color: #ffff8b;' target='_blank'>                              Pruefungsfragen_Sozialisationstheorien.pdf</a>", { "raw": true });
-                                this.echo("----------------------------------------------");
+                        else if (command.toLowerCase() === secrets[1].toString().toLowerCase()) {
+                            if (attacked) {
+                                connect();
                             } else {
-                                this.echo("[[;#E45F5F;black]There is no folder named '" + folder + "'!]");
+                                this.echo('[[;#E45F5F;black]Credentials missing. Run '+nonsecret[1]+' first.]');
                             }
-                        } else {
-                            this.echo("[[;#E45F5F;black]Connection missing.]");
                         }
-                    }
-                }, {
-                        greetings: "[[b;#aaa;black]REMOTE ACCESS CONSOLE]",
+                        else if (command.toLowerCase().replace(/\s/g, "") === 'open' + nonsecrets[2].toString().toLowerCase()) {
+                            // OPENS NONSECRET FOLDER
+                        }
+                        else if (command.toLowerCase().replace(/\s/g, "") === 'open' + secrets[2].toString().toLowerCase()) {
+                            // OPENS SECRET FOLDER
+                        }
+                        else {
+                            this.echo("[[;#E45F5F;black]Unknown command.]");
+                        }
+                        /*function (folder) {
+                            if (attacked && connected) {
+                                if (folder.trim().toLowerCase() === nonsecret[2].toLowerCase()) {
+                                    this.echo("----------------------------------------------");
+                                    this.echo("Folder '"+nonsecret[2]+"' contains 5 files");
+                                    this.echo("----------------------------------------------");
+                                    this.echo("<a href='files/Pruefungsfragen_Inferenzstatistik.pdf' style='color: #ffff8b;' target='_blank'>                                   Pruefungsfragen_Inferenzstatistik.pdf</a>", { "raw": true });
+                                    this.echo("<a href='files/Pruefungsfragen_Testtheorie.pdf' style='color: #ffff8b;' target='_blank'>                                         Pruefungsfragen_Testtheorie.pdf</a>", { "raw": true });
+                                    this.echo("<a href='files/Forschungsdaten_InfluenceOfVisualStimuliOnPerceptionOfSpatialAudio.csv' style='color: #ffff8b;' target='_blank'>  Forschungsdaten_InfluenceOfVisualStimuliOn...</a>", { "raw": true });
+                                    this.echo("<a href='files/Forschungsdaten_MusicTrainingAndInhibitoryControl.xlsx' style='color: #ffff8b;' target='_blank'>                  Forschungsdaten_MusicTrainingAndInhibitory...</a>", { "raw": true });
+                                    this.echo("<a href='files/Forschungsdaten_AltruisticPunishmentAndReward.csv' style='color: #ffff8b;' target='_blank'>                       Forschungsdaten_AltruisticPunishmentAndRew...</a>", { "raw": true });
+                                    this.echo("----------------------------------------------");
+                                } else if (folder.trim().toLowerCase() === secret[2].toLowerCase()) {
+                                    this.echo("----------------------------------------------");
+                                    this.echo("Folder '"+secret[2]+"' contains 3 files");
+                                    this.echo("----------------------------------------------");
+                                    this.echo("<a href='files/Pruefungsfragen_Bildungssoziologie.pdf' style='color: #ffff8b;' target='_blank'>                                  Pruefungsfragen_Bildungssoziologie.pdf</a>", { "raw": true });
+                                    this.echo("<a href='files/Pruefungsfragen_Makrosoziologie.pdf' style='color: #ffff8b;' target='_blank'>                                     Pruefungsfragen_Makrosoziologie.pdf</a>", { "raw": true });
+                                    this.echo("<a href='files/Pruefungsfragen_Sozialisationstheorien.pdf' style='color: #ffff8b;' target='_blank'>                              Pruefungsfragen_Sozialisationstheorien.pdf</a>", { "raw": true });
+                                    this.echo("----------------------------------------------");
+                                } else {
+                                    this.echo("[[;#E45F5F;black]There is no folder named '" + folder + "'!]");
+                                }
+                            } else {
+                                this.echo("[[;#E45F5F;black]Connection missing.]");
+                            }
+                        }*/
+                    }, {
+                        greetings: "[[b;#aaa;black]Error. Please check command.]",
                         name: 'hacking',
                         prompt: '> ',
                         convertLinks: false
                     });
             });
+
         },
         on_finish: function (data) {
             $('#terminal').hide();
@@ -1291,6 +1305,9 @@
             jsPsych.data.displayData();
         }
     });
+
+
+
 
 </script>
 
