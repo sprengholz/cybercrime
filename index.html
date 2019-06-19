@@ -223,7 +223,7 @@
         'Lohnscheine',
         'Manuskripte',
         'Notenlisten', 
-        'Protokolle', 
+        'Verträge', 
         'Zeugnisse'
     ];
 
@@ -245,17 +245,94 @@
         'Zahnmedizin'
     ];
 
+    var files = [
+        'Bioinformatik/Klausur_Algorithmen.pdf',
+        'Bioinformatik/Klausur_Softwareentwicklung.pdf',
+        'Bioinformatik/Lohnschein_Arndt.pdf',
+        'Bioinformatik/Lohnschein_Mueller.pdf',
+        'Bioinformatik/Manuskript_BioSoftwareEngineering.pdf',
+        'Bioinformatik/Manuskript_SimilarSequenceAlgorithm.pdf',
+        'Bioinformatik/Notenliste_MB03.pdf',
+        'Bioinformatik/Notenliste_MM12.pdf',
+        'Bioinformatik/Vertrag_Eismann.pdf',
+        'Bioinformatik/Vertrag_Neuer.pdf',
+        'Bioinformatik/Zeugnis_AnjaHerrmann.pdf',
+        'Bioinformatik/Zeugnis_SusanneGrams.pdf',
+        'Kunstgeschichte/Five Minutes_centenarians_ws.pdf',
+        'Kunstgeschichte/Klausur_Baugeschichte.pdf',
+        'Kunstgeschichte/Klausur_Bildinterpretation.pdf',
+        'Kunstgeschichte/Lohnschein_Lutz.pdf',
+        'Kunstgeschichte/Lohnschein_Mangold.pdf',
+        'Kunstgeschichte/Manuskript_NetArtOfThe90s.pdf',
+        'Kunstgeschichte/Manuskript_ReligionAndVisualArt.pdf',
+        'Kunstgeschichte/Notenliste_MB04.pdf',
+        'Kunstgeschichte/Notenliste_MB07.pdf',
+        'Kunstgeschichte/Vertrag_Alwar.pdf',
+        'Kunstgeschichte/Vertrag_Lund.pdf',
+        'Kunstgeschichte/Zeugnis_EvaAlbrecht.pdf',
+        'Kunstgeschichte/Zeugnis_PaulaBrandstaetter.pdf',
+        'Lasertechnik/arbeitsvertrags-muster_whk-shk_gultig-ab-25.-mai-2015.pdf',
+        'Lasertechnik/Klausur_Halbleiterphysik.pdf',
+        'Lasertechnik/Klausur_Wellenoptik.pdf',
+        'Lasertechnik/Lohnschein_Fritsche.pdf',
+        'Lasertechnik/Lohnschein_Unterberger.pdf',
+        'Lasertechnik/Manuskript_DynamicLaserImaging.pdf',
+        'Lasertechnik/Manuskript_LaserPlasmaInteractions.pdf',
+        'Lasertechnik/Notenliste_MM03.pdf',
+        'Lasertechnik/Notenliste_MM04.pdf',
+        'Lasertechnik/Vertrag_Ogorsolka.pdf',
+        'Lasertechnik/Vertrag_Reinhardt.pdf',
+        'Lasertechnik/Zeugnis_CarolinSchulz.pdf',
+        'Lasertechnik/Zeugnis_SahraAlthaus.pdf',
+        'Philosophie/Klausur_Erkenntnistheorie.pdf',
+        'Philosophie/Klausur_Logik.pdf',
+        'Philosophie/Lohnschein_Krumbolz.pdf',
+        'Philosophie/Lohnschein_Meixner.pdf',
+        'Philosophie/Manuskript_ReexaminingTheFormalizedNotionOfTruth.pdf',
+        'Philosophie/Manuskript_TheTruthAboutVagueness.pdf',
+        'Philosophie/Notenliste_MB01.pdf',
+        'Philosophie/Notenliste_MB09.pdf',
+        'Philosophie/Vertrag_Evers.pdf',
+        'Philosophie/Vertrag_Mischke.pdf',
+        'Philosophie/Zeugnis_ChristinaTann.pdf',
+        'Philosophie/Zeugnis_LisaWagner.pdf',
+        'Sportmanagement/Klausur_BWL.pdf',
+        'Sportmanagement/Klausur_Marketing.pdf',
+        'Sportmanagement/Lohnschein_Rahn.pdf',
+        'Sportmanagement/Lohnschein_Stolz.pdf',
+        'Sportmanagement/Manuskript_SportBusinessExcellence.pdf',
+        'Sportmanagement/Manuskript_SportMarketing.pdf',
+        'Sportmanagement/Notenliste_MB01.pdf',
+        'Sportmanagement/Notenliste_MB02.pdf',
+        'Sportmanagement/Vertrag_Alvarez.pdf',
+        'Sportmanagement/Vertrag_Manns.pdf',
+        'Sportmanagement/Zeugnis_LenaAmstatt.pdf',
+        'Sportmanagement/Zeugnis_SonyaEsteban.pdf',
+        'Zahnmedizin/Klausur_Dentalchemie.pdf',
+        'Zahnmedizin/Klausur_Physiologie.pdf',
+        'Zahnmedizin/Lohnschein_Ernst.pdf',
+        'Zahnmedizin/Lohnschein_Sternberg.pdf',
+        'Zahnmedizin/Manuskript_DentalRestoration.pdf',
+        'Zahnmedizin/Manuskript_OralHealth.pdf',
+        'Zahnmedizin/Notenliste_ME04.pdf',
+        'Zahnmedizin/Notenliste_ME07.pdf',
+        'Zahnmedizin/Vertrag_Rehberger.pdf',
+        'Zahnmedizin/Vertrag_Zander.pdf',
+        'Zahnmedizin/Zeugnis_KatjaKaufmann.pdf',
+        'Zahnmedizin/Zeugnis_StefanieRubens.pdf'
+    ]
+
     // randomly pick secret and non-secret as well as untruth answers
     var secrets = [
-        documents.splice(Math.random()*documents.length, 1),
-        tools.splice(Math.random()*tools.length, 1),
-        subjects.splice(Math.random()*subjects.length, 1)
+        documents.splice(Math.random()*documents.length, 1)[0],
+        tools.splice(Math.random()*tools.length, 1)[0],
+        subjects.splice(Math.random()*subjects.length, 1)[0]
     ];
 
     var nonsecrets = [
-        documents.splice(Math.random()*documents.length, 1),
-        tools.splice(Math.random()*tools.length, 1),
-        subjects.splice(Math.random()*subjects.length, 1)
+        documents.splice(Math.random()*documents.length, 1)[0],
+        tools.splice(Math.random()*tools.length, 1)[0],
+        subjects.splice(Math.random()*subjects.length, 1)[0]
     ];
 
     var untruths = [
@@ -438,7 +515,7 @@
     var welcome = {
         type: 'html-button-response',
         choices: ["Weiter"],
-        stimulus: '<div class="instruction" style="max-width: 600px; margin-top: 110px;"><div class="heading">Hi</div><div class="smalltext"> Vielen Dank für dein Interesse an der vorliegenden Studie. Im Falle einer Teilnahme sollst du verschiedene Aufgaben am <strong>PC oder Notebook</strong> bearbeiten. Hierfür benötigst du eine richtige Tastatur - Tablets oder Smartphones sind also nicht geeignet. Das Ganze wird etwa <strong>45 Minuten</strong> dauern.</div><div class="smalltext">Die Teilnahme an der Studie hat keine bekannten Risiken. Alle gesammelten Daten werden <strong>anonym</strong> ausgewertet, ausschließlich für nicht-kommerzielle Zwecke im Rahmen wissenschaftlicher Forschung verwendet und nicht an Dritte weitergegeben. Eine nachträgliche Identifizierung deiner Daten ist nicht möglich (Privacy by Design, §25 DSGVO).</div><div class="smalltext">Du kannst die Bearbeitung zu jeder Zeit und ohne Angabe von Gründen beenden. Bitte beachte, dass dir bei einem Abbruch aus technischen Gründen keine Versuchspersonenstunde ausgestellt werden kann. Diese erhältst du nach Abschluss des Experiments.</div><div class="smalltext">Wenn du Fragen zur Studie hast oder an den Ergebnissen interessiert bist, sende bitte eine E-Mail an:<div><div class="smalltext">Philipp Sprengholz<br>FSU Jena, Institut für Psychologie<br>philipp.sprengholz@uni-jena.de</div><div class="smalltext">Durch Klicken des folgenden Buttons bestätigst du, dass du alle Informationen gelesen und verstanden hast und an der Studie teilnehmen möchtest.</div></div>'
+        stimulus: '<div class="instruction" style="max-width: 600px; margin-top: 110px;"><div class="heading">Hi</div><div class="smalltext"> Vielen Dank für dein Interesse an der vorliegenden Studie. Im Falle einer Teilnahme sollst du verschiedene Aufgaben am <strong>PC oder Notebook</strong> bearbeiten. Hierfür benötigst du eine richtige Tastatur - Tablets oder Smartphones sind also nicht geeignet. Das Ganze wird etwa <strong>45 Minuten</strong> dauern.</div><div class="smalltext">Die Teilnahme an der Studie hat keine bekannten Risiken. Alle gesammelten Daten werden <strong>anonym</strong> ausgewertet, ausschließlich für nicht-kommerzielle Zwecke im Rahmen wissenschaftlicher Forschung verwendet und nicht an Dritte weitergegeben. Eine nachträgliche Identifizierung deiner Daten ist nicht möglich (Privacy by Design, §25 DSGVO).Rückfragen zum Datenschutz können an die Datenschutzbeauftragte der Universität gerichtet werden:</div><div class="smalltext">Stefanie Buchmann<br>+49 3641 931087<br>stefanie.buchmann@uni-jena.de</div><div class="smalltext">Du kannst die Bearbeitung zu jeder Zeit und ohne Angabe von Gründen beenden. Bitte beachte, dass dir bei einem Abbruch aus technischen Gründen keine Versuchspersonenstunde ausgestellt werden kann. Diese erhältst du nach Abschluss des Experiments.</div><div class="smalltext">Wenn du Fragen zur Studie hast oder an den Ergebnissen interessiert bist, sende bitte eine E-Mail an:<div><div class="smalltext">Philipp Sprengholz<br>FSU Jena, Institut für Psychologie<br>philipp.sprengholz@uni-jena.de</div><div class="smalltext"><strong>Durch Klicken des folgenden Buttons bestätigst du, dass du alle Informationen gelesen und verstanden hast und an der Studie teilnehmen möchtest.</strong></div></div>'
     };
     timeline.push(welcome);
 
@@ -522,21 +599,21 @@
             var checkedTools = $("input[name='tools']:checked").map(function () {
                 return this.value;
             }).get();
-            if (!(checkedTools.includes(nonsecrets[1]) && checkedTools.includes(secrets[1]) && checkedTools.length === 2)) {
+            if (!(checkedTools.includes(nonsecrets[1].toString()) && checkedTools.includes(secrets[1].toString()) && (checkedTools.length === 2))) {
                 answersCorrect = false;
             }
 
             var checkedDocuments = $("input[name='documents']:checked").map(function () {
                 return this.value;
             }).get();
-            if (!(checkedDocuments.includes(nonsecrets[0]) && checkedDocuments.includes(secrets[0]) && checkedDocuments.length === 2)) {
+            if (!(checkedDocuments.includes(nonsecrets[0].toString()) && checkedDocuments.includes(secrets[0].toString()) && (checkedDocuments.length === 2))) {
                 answersCorrect = false;
             }
 
             var checkedInstitutes = $("input[name='institutes']:checked").map(function () {
                 return this.value;
             }).get();
-            if (!(checkedInstitutes.includes(nonsecrets[2]) && checkedInstitutes.includes(secrets[2]) && checkedInstitutes.length === 2)) {
+            if (!(checkedInstitutes.includes(nonsecrets[2].toString()) && checkedInstitutes.includes(secrets[2].toString()) && (checkedInstitutes.length === 2))) {
                 answersCorrect = false;
             }
 
@@ -622,47 +699,62 @@
                             if (attacked) {
                                 connect();
                             } else {
-                                this.echo('[[;#E45F5F;black]Credentials missing. Run '+nonsecret[1]+' first.]');
+                                this.echo('[[;#E45F5F;black]Credentials missing. Run '+nonsecrets[1]+' first.]');
                             }
                         }
                         else if (command.toLowerCase().replace(/\s/g, "") === 'open' + nonsecrets[2].toString().toLowerCase()) {
-                            // OPENS NONSECRET FOLDER
+
+                            filesToShow = []
+                            for (file of files) {
+                                if (file.includes(nonsecrets[2]) && file.includes(nonsecrets[0].toString().substring(0,5))) {
+                                    filesToShow.push(file);
+                                }
+                                if (file.includes(nonsecrets[2]) && file.includes(secrets[0].toString().substring(0,5))) {
+                                    filesToShow.push(file);
+                                }
+                            }
+
+                            this.echo("----------------------------------------------");
+                            this.echo("Folder '"+nonsecrets[2]+"' contains "+filesToShow.length+" files");
+                            this.echo("----------------------------------------------");
+
+                            for (file of filesToShow) {
+                                filename = file.substring(file.indexOf('/')+1);
+                                this.echo("<a href='files/"+file+"' style='color: #ffff8b;' target='_blank'>"+filename.padEnd(46, " ")+"</a>", { "raw": true });
+                            }
+
+                            this.echo("----------------------------------------------");
+
                         }
                         else if (command.toLowerCase().replace(/\s/g, "") === 'open' + secrets[2].toString().toLowerCase()) {
-                            // OPENS SECRET FOLDER
+
+                            filesToShow = []
+                            for (file of files) {
+                                if (file.includes(secrets[2]) && file.includes(nonsecrets[0].toString().substring(0,5))) {
+                                    filesToShow.push(file);
+                                }
+                                if (file.includes(secrets[2]) && file.includes(secrets[0].toString().substring(0,5))) {
+                                    filesToShow.push(file);
+                                }
+                            }
+
+                            this.echo("----------------------------------------------");
+                            this.echo("Folder '"+secrets[2]+"' contains "+filesToShow.length+" files");
+                            this.echo("----------------------------------------------");
+
+                            for (file of filesToShow) {
+                                filename = file.substring(file.indexOf('/')+1);
+                                this.echo("<a href='files/"+file+"' style='color: #ffff8b;' target='_blank'>"+filename.padEnd(46, " ")+"</a>", { "raw": true });
+                            }
+
+                            this.echo("----------------------------------------------");
+
                         }
                         else {
-                            this.echo("[[;#E45F5F;black]Unknown command.]");
+                            this.echo("[[;#E45F5F;black]Error. Please check command.]");
                         }
-                        /*function (folder) {
-                            if (attacked && connected) {
-                                if (folder.trim().toLowerCase() === nonsecret[2].toLowerCase()) {
-                                    this.echo("----------------------------------------------");
-                                    this.echo("Folder '"+nonsecret[2]+"' contains 5 files");
-                                    this.echo("----------------------------------------------");
-                                    this.echo("<a href='files/Pruefungsfragen_Inferenzstatistik.pdf' style='color: #ffff8b;' target='_blank'>                                   Pruefungsfragen_Inferenzstatistik.pdf</a>", { "raw": true });
-                                    this.echo("<a href='files/Pruefungsfragen_Testtheorie.pdf' style='color: #ffff8b;' target='_blank'>                                         Pruefungsfragen_Testtheorie.pdf</a>", { "raw": true });
-                                    this.echo("<a href='files/Forschungsdaten_InfluenceOfVisualStimuliOnPerceptionOfSpatialAudio.csv' style='color: #ffff8b;' target='_blank'>  Forschungsdaten_InfluenceOfVisualStimuliOn...</a>", { "raw": true });
-                                    this.echo("<a href='files/Forschungsdaten_MusicTrainingAndInhibitoryControl.xlsx' style='color: #ffff8b;' target='_blank'>                  Forschungsdaten_MusicTrainingAndInhibitory...</a>", { "raw": true });
-                                    this.echo("<a href='files/Forschungsdaten_AltruisticPunishmentAndReward.csv' style='color: #ffff8b;' target='_blank'>                       Forschungsdaten_AltruisticPunishmentAndRew...</a>", { "raw": true });
-                                    this.echo("----------------------------------------------");
-                                } else if (folder.trim().toLowerCase() === secret[2].toLowerCase()) {
-                                    this.echo("----------------------------------------------");
-                                    this.echo("Folder '"+secret[2]+"' contains 3 files");
-                                    this.echo("----------------------------------------------");
-                                    this.echo("<a href='files/Pruefungsfragen_Bildungssoziologie.pdf' style='color: #ffff8b;' target='_blank'>                                  Pruefungsfragen_Bildungssoziologie.pdf</a>", { "raw": true });
-                                    this.echo("<a href='files/Pruefungsfragen_Makrosoziologie.pdf' style='color: #ffff8b;' target='_blank'>                                     Pruefungsfragen_Makrosoziologie.pdf</a>", { "raw": true });
-                                    this.echo("<a href='files/Pruefungsfragen_Sozialisationstheorien.pdf' style='color: #ffff8b;' target='_blank'>                              Pruefungsfragen_Sozialisationstheorien.pdf</a>", { "raw": true });
-                                    this.echo("----------------------------------------------");
-                                } else {
-                                    this.echo("[[;#E45F5F;black]There is no folder named '" + folder + "'!]");
-                                }
-                            } else {
-                                this.echo("[[;#E45F5F;black]Connection missing.]");
-                            }
-                        }*/
                     }, {
-                        greetings: "[[b;#aaa;black]Error. Please check command.]",
+                        greetings: "[[b;#aaa;black]REMOTE ACCESS CONSOLE]",
                         name: 'hacking',
                         prompt: '> ',
                         convertLinks: false

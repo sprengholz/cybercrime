@@ -43,7 +43,8 @@ jsPsych.plugins['chat'] = (function () {
         });
 
         function openPressText(){
-            $('#presstext').slideDown();
+            $('#presstextContainer').html(presstext);
+            $('#presstextContainer').slideDown();
         }
             
         var check = function() {
