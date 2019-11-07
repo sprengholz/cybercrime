@@ -14,11 +14,13 @@
     <script src="js/plugins/jspsych-external-html.js"></script>
     <script src="js/plugins/jspsych-fullscreen.js"></script>
     <script src="js/plugins/jspsych-instructions.js"></script>
+    
 
     <script src="js/plugins/jspsych-vignette.js"></script>
     <script src="js/plugins/jspsych-chat.js"></script>
     <script src="js/plugins/jspsych-word-sequence.js"></script>
     <script src="js/plugins/jspsych-flyin.js"></script>
+    <script src="js/plugins/jspsych-timer.js"></script>
 
     <script src="js/jquery.min.js"></script>
     <script src="js/lodash.js"></script>
@@ -509,6 +511,23 @@
     
     
     /*
+     * JUST FOR TESTING PHASE
+     */
+
+     var testing = {
+        type: 'html-keyboard-response',
+        choices: [32],
+        stimulus: '<div class="instruction" style="max-width: 600px; margin-top: 110px;"><div class="heading">Hi</div><div class="smalltext">Vielen Dank für dein Interesse. Leider ist die aktuelle Studie beendet. Hier entsteht ein neuer Prototyp.</div></div>',
+        on_load: function(){
+            showInvestigator();
+            $('body').css('cursor', 'none');
+            $('#experiment').focus();
+        }
+    };
+    timeline.push(testing);
+
+
+    /*
      * Show welcome screen
      */
 
@@ -517,7 +536,7 @@
         choices: ["Weiter"],
         stimulus: '<div class="instruction" style="max-width: 600px; margin-top: 110px;"><div class="heading">Hi</div><div class="smalltext"> Vielen Dank für dein Interesse an der vorliegenden Studie. Im Falle einer Teilnahme sollst du verschiedene Aufgaben am <strong>PC oder Notebook</strong> bearbeiten. Hierfür benötigst du eine richtige Tastatur - Tablets oder Smartphones sind also nicht geeignet. Das Ganze wird etwa <strong>45 Minuten</strong> dauern.</div><div class="smalltext">Die Teilnahme an der Studie hat keine bekannten Risiken. Alle gesammelten Daten werden <strong>anonym</strong> ausgewertet, ausschließlich für nicht-kommerzielle Zwecke im Rahmen wissenschaftlicher Forschung verwendet und nicht an Dritte weitergegeben. Eine nachträgliche Identifizierung deiner Daten ist nicht möglich (Privacy by Design, §25 DSGVO).Rückfragen zum Datenschutz können an die Datenschutzbeauftragte der Universität gerichtet werden:</div><div class="smalltext">Stefanie Buchmann<br>+49 3641 931087<br>stefanie.buchmann@uni-jena.de</div><div class="smalltext">Du kannst die Bearbeitung zu jeder Zeit und ohne Angabe von Gründen beenden. Bitte beachte, dass dir bei einem Abbruch aus technischen Gründen keine Versuchspersonenstunde ausgestellt werden kann. Diese erhältst du nach Abschluss des Experiments.</div><div class="smalltext">Wenn du Fragen zur Studie hast oder an den Ergebnissen interessiert bist, sende bitte eine E-Mail an:<div><div class="smalltext">Philipp Sprengholz<br>FSU Jena, Institut für Psychologie<br>philipp.sprengholz@uni-jena.de</div><div class="smalltext"><strong>Durch Klicken des folgenden Buttons bestätigst du, dass du alle Informationen gelesen und verstanden hast und an der Studie teilnehmen möchtest.</strong></div></div>'
     };
-    timeline.push(welcome);
+    //timeline.push(welcome);
 
 
     /*
@@ -529,7 +548,7 @@
         choices: ["Ich habe nicht an der Studie im Januar teilgenommen"],
         stimulus: '<div class="instruction-tac"><div class="heading">Wichtig</div> <div class="smalltext">Solltest du bereits im Januar an einer ähnlichen Studie teilgenommen haben, bei der es darum ging Prüfungsfragen von einem Computer zu stehlen, kannst du leider nicht am Experiment teilnehmen. Bitte schließe das Fenster in diesem Fall.</div> </div>'
     };
-    timeline.push(eligibility_check);
+    //timeline.push(eligibility_check);
 
 
     /*
@@ -541,7 +560,7 @@
         choices: ["Weiter"],
         stimulus: '<div class="instruction-tac"><div class="heading">Zum Ablauf</div> <div class="smalltext">Du wirst zunächst etwas über Cyberangriffe lernen. Ich möchte herausfinden, ob es dir mit einer einfachen Anleitung gelingt, einen Universitätsrechner zu hacken und Daten zu stehlen. Anschließend folgen einige Reaktionszeitaufgaben, in denen du besonders schnell auf bestimmte Wörter reagieren musst.</div></div>'
     };
-    timeline.push(experiment_summary);
+    //timeline.push(experiment_summary);
 
 
     /*
@@ -553,7 +572,7 @@
         choices: ["Weiter"],
         stimulus: '<div class="instruction-tac"><div class="heading">Ruhe bitte</div><div class="smalltext"> Bitte achte darauf, dass du während der Teilnahme nicht abgelenkt wirst. Suche dir einen <strong>ruhigen Raum</strong> und lege dein Telefon außer Sichtweite. <div></div>'
     };
-    timeline.push(environment);
+    //timeline.push(environment);
 
 
 
@@ -582,7 +601,7 @@
             data.sex = sex;
         }
     };
-    timeline.push(demographics);
+    //timeline.push(demographics);
 
 
     /*
@@ -767,7 +786,7 @@
             clearAlerts();
         }
     };
-    timeline.push(hacking);
+    //timeline.push(hacking);
 
 
     /*
@@ -780,7 +799,7 @@
         message: '<div class="instruction-tac"><div class="heading">Wechsel in den Vollbildmodus</div><div class="smalltext">Mit deinem erfolgreichen Hack hast du den ersten Teil des Experiments bereits abgeschlossen. Der nun folgende zweite Teil wird im Vollbildmodus ablaufen. Wenn du das Experiment vorzeitig abbrechen möchtest, kannst du den Vollbildmodus durch Drücken der Tasten <span class="keyButton">Esc</span> oder <span class="keyButton">F11</span> verlassen und das Browserfenster schließen. Bitte beachte, dass ich dir aus technischen Gründen nur dann eine Versuchspersonenstunde ausstellen kann, wenn du bis zum Ende des Experiments dabei bleibst.</div></div>',
         button_label: 'Alles klar'
     };
-    timeline.push(fullscreen);
+    //timeline.push(fullscreen);
 
 
     /*
@@ -792,7 +811,7 @@
         choices: ["Sherlock starten"],
         stimulus: '<div class="instruction-tac"><div class="heading">Achtung!</div><div class="smalltext">Der unbefugte Zugriff auf die Prüfungsfragen wurde durch einen Mitarbeiter des Dekanats bemerkt! Neben einigen anderen Studierenden wurdest du als möglicher Hacker identifiziert.</div><div class="smalltext">Alle Verdächtigen sollen nun einem Test durch ein neuartiges Ermittlungsprogramm namens <strong>Sherlock</strong> unterzogen werden, welches das Vorhandensein von Täterwissen überprüft und eine schuldige Person der Tat überführen kann. Auch du wirst gebeten, im Folgenden daran teilzunehmen.</div></div>'
     };
-    timeline.push(sherlock_intro);
+    //timeline.push(sherlock_intro);
 
 
     /*
@@ -807,7 +826,7 @@
             showInvestigator();
         }
     };
-    timeline.push(sherlock_welcome);
+    //timeline.push(sherlock_welcome);
 
 
     /*
@@ -905,7 +924,7 @@
 
         on_finish: function (data) { }
     };
-    timeline.push(chat);
+    //timeline.push(chat);
 
 
     /*
@@ -934,13 +953,27 @@
 
 
     var question = {
+        type: 'timer',
+        stimulus: function(){
+            return '<div class="question">'+jsPsych.timelineVariable('question')()+'</div>';
+        },
+        duration: function(){
+            var min = 250 + jsPsych.timelineVariable('question')().length * 10;
+            var max = min + 3000;
+            return Math.random() < 0.5 ? min : max;
+        }, 
+        data: { rte_part: 'question' }
+    };
+    
+    
+    /*var question = {
         type: 'word-sequence',
         stimulus: function () {
             question = jsPsych.timelineVariable('question')();
             return question;
         },
         data: { rte_part: 'question' }
-    };
+    };*/
 
 
     var target = {
@@ -1181,7 +1214,7 @@
             clearAlerts();
         }
     };
-    timeline.push(rte_pt1_instruction);
+    //timeline.push(rte_pt1_instruction);
 
 
     var rte_pt1_start = {

@@ -8,7 +8,30 @@
  /* Container holding jsPsych content */
 
 
- 
+#progress {
+    
+    width: 300px;
+    position: absolute;
+    top: calc(50% + 75px);
+    left: calc(50% - 150px);
+}
+
+
+#progress-border {
+    fill: rgb(255,255,255);
+    stroke-width: 1;
+    stroke: rgb(0,0,0);
+}
+
+#progress-bar {
+    fill: rgb(0,0,0);
+    stroke-width: 1;
+    stroke: rgb(0,0,0);
+}
+
+
+
+
  .jspsych-display-element {
    display: flex;
    flex-direction: column;
@@ -783,7 +806,7 @@ html, body {
     font-family: monospace;
     white-space: nowrap;
     font-size: 55px;
-    top: 50%;
+    top: calc(50% - 15px);
     left: 0%;
     text-align: center;
     width: 100%;
