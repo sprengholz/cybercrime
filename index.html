@@ -60,7 +60,7 @@
 <script>
 
     /*
-     * Helper
+     * Helpers
      */
 
     function load(element, file, callback) {
@@ -73,6 +73,17 @@
             }
         };
         xmlhttp.send();
+    }
+
+    function shuffle(array) {
+        var j, x, i;
+        for (i = array.length - 1; i > 0; i--) {
+            j = Math.floor(Math.random() * (i + 1));
+            x = array[i];
+            array[i] = array[j];
+            array[j] = x;
+        }
+        return array;
     }
 
 
@@ -411,9 +422,9 @@
 
     var tasksPart2 = [];
 
-    // matching stimuli (86% = 144 trials)
+    // matching stimuli (120 trials)
 
-    // -- secrets (3 x 12 trials)
+    // -- secrets (3 x 12 = 36 trials)
 
     for (j = 0; j < 12; j++) {
         task = {
@@ -445,7 +456,7 @@
         tasksPart2.push(task);
     }
 
-    // -- irrelevants (3 x 4 x 3 trials)
+    // -- irrelevants (3 x 3 x 4 = 36 trials)
 
     for (i = 0; i < questions.length; i++) {
         for (j = 0; j < 3; j++) {
@@ -461,10 +472,10 @@
         }
     }
 
-    // -- nonsecrets (for 2 of 3 questions, 2 x 36 trials)
+    // -- nonsecrets (for 2 of 3 questions, 2 x 24 trials)
 
     for (i = 0; i < questions.length-1; i++) {
-        for (j = 0; j < 36; j++) {
+        for (j = 0; j < 24; j++) {
             task = {
                 question: questions[i],
                 secrecy: 'nonsecret',
@@ -475,9 +486,13 @@
         }
     }
 
-    // nonmatching stimuli (14% = 24 trials)
+    var tutorialTasks = tasksPart2.slice();
+    tutorialTasks = shuffle(tutorialTasks);
+    tutorialTasks = tutorialTasks.slice(0,15);
 
-    // -- secrets (2 trials per 3 questions)
+    // nonmatching stimuli (40 trials)
+
+    // -- secrets (3 x 4 trials)
 
     task = {
         question: questions[0],
@@ -485,6 +500,7 @@
         target: secrets[1],
         matching: 'nonmatch'
     };
+    tasksPart2.push(task);
     tasksPart2.push(task);
 
     task = {
@@ -496,9 +512,26 @@
     tasksPart2.push(task);
 
     task = {
+        question: questions[0],
+        secrecy: 'secret',
+        target: secrets[3],
+        matching: 'nonmatch'
+    };
+    tasksPart2.push(task);
+
+    task = {
         question: questions[1],
         secrecy: 'secret',
         target: secrets[0],
+        matching: 'nonmatch'
+    };
+    tasksPart2.push(task);
+    tasksPart2.push(task);
+
+    task = {
+        question: questions[1],
+        secrecy: 'secret',
+        target: secrets[2],
         matching: 'nonmatch'
     };
     tasksPart2.push(task);
@@ -518,6 +551,7 @@
         matching: 'nonmatch'
     };
     tasksPart2.push(task);
+    tasksPart2.push(task);
 
     task = {
         question: questions[2],
@@ -526,8 +560,9 @@
         matching: 'nonmatch'
     };
     tasksPart2.push(task);
+    tasksPart2.push(task);
 
-    // -- untruths (random selection of 2 trials for each of the 3 questions)
+    // -- untruths (3 x 4 trials, random selection)
 
     for (i = 0; i < 3; i++) {
 
@@ -535,10 +570,11 @@
         nonmatchingUntruths.splice(i, 1);
         nonmatchingUntruths = nonmatchingUntruths.flat();
 
-        for (j = 0; j < 2; j++){
+        for (j = 0; j < 4; j++){
 
-            // randomly select the target
-            nonmatchingUntruth = nonmatchingUntruths[Math.floor(Math.random() * nonmatchingUntruths.length)];
+            // randomly select the target, then remove it
+            var index = Math.floor(Math.random() * nonmatchingUntruths.length);
+            nonmatchingUntruth = nonmatchingUntruths.splice(index, 1)[0];
 
             task = {
                 question: questions[i],
@@ -550,9 +586,9 @@
         }
     }
 
-    // -- nonsecrets (1 trial per 2 questions, 6 repeats each)
+    // -- nonsecrets (2 x 8 trials)
 
-    for (i = 0; i < 6; i++) {
+    for (i = 0; i < 8; i++) {
 
         task = {
             question: questions[0],
@@ -570,12 +606,12 @@
         };
         tasksPart2.push(task);
     }
-    
 
-       
-        
-         
-    
+    // shuffle items
+    tasksPart2 = shuffle(tasksPart2);
+
+    // add tutorial items at the beginning
+    tasksPart2 = tutorialTasks.concat(tasksPart2);
     
     /*
      * JUST FOR TESTING PHASE
@@ -1324,7 +1360,7 @@
 
     var rte_pt2_start = {
         type: 'html-keyboard-response',
-        stimulus: '<div class="rteInstructionContainer"><div class="instruction"><div class="smalltext-ms">Denken Sie daran, immer dann die Leertaste zu drücken, wenn die blaue Antwort nicht mit den Presseinformationen übereinstimmt und deshalb zurückgehalten werden soll. <strong>Wenn Sie bereit sind, positionieren Sie jetzt Ihre Finger auf der Leertaste.</strong> Es wird 15 bis 20 Minuten dauern, bis die nächste Pause kommt. Stellen Sie bitte sicher, dass Sie in dieser Zeit nicht gestört werden.</div><div class="smalltext-ms">Drücken Sie nun die <span class="keyButton">Leertaste</span> um zu beginnen.</div></div></div>',
+        stimulus: '<div class="rteInstructionContainer"><div class="instruction"><div class="smalltext-ms">Denken Sie daran, immer dann die Leertaste zu drücken, wenn die blaue Antwort nicht mit den Presseinformationen übereinstimmt und deshalb zurückgehalten werden soll. <strong>Wenn Sie bereit sind, positionieren Sie jetzt Ihre Finger auf der Leertaste.</strong> Es wird etwa 20 Minuten dauern, bis die nächste Pause kommt. Stellen Sie bitte sicher, dass Sie in dieser Zeit nicht gestört werden.</div><div class="smalltext-ms">Drücken Sie nun die <span class="keyButton">Leertaste</span> um zu beginnen.</div></div></div>',
         choices: [32],
         data: { 
             rte_part: 'rte_pt2_start'
@@ -1340,7 +1376,7 @@
     var rte_pt2 = {
         timeline: [blank, fixation, question, target, if_target_error, if_attention_check, if_attention_check_error],
         timeline_variables: tasksPart2,
-        randomize_order: true
+        randomize_order: false
     };
     timeline.push(rte_pt2);
 
@@ -1387,7 +1423,7 @@
 
     var debriefing = {
         type: 'html-keyboard-response',
-        stimulus: '<div class="instruction-tac"><div class="heading">Geschafft!</div><div class="smalltext">Vielen Dank für deine Teilnahme. Du hast mir sehr geholfen.</div><div class="smalltext" id="uploadinfo">Deine Eingaben werden nun anonymisiert und verschlüsselt übertragen. Dies kann bis zu einer Minute dauern. Bitte warte...</div><img id="uploadimage" src="img/spinner.gif" alt="Übertragung läuft"><div class="smalltext" id="particitext"></div><div class="smalltext" id="particicode"></div><button class="navbutton" type="button" id="downloadbutton" style="display: none;" onclick="triggerDataDownload();">Daten speichern</button><div class="smalltext" id="finishtext" style="display: none;">Du kannst den Vollbildmodus durch Drücken der Tasten <span class="keyButton">Esc</span> oder <span class="keyButton">F11</span> verlassen und das Browserfenster dann einfach schließen.<br><b>Bitte beachte, dass dein Hacking-Angriff nur simuliert wurde und die in zukünftigen Klausuren gestellten Prüfungsfragen von den heruntergeladenen Dokumenten abweichen werden. Falls du Interesse an den Forschungsergebnissen und dem untersuchten Paradigma zur Aufdeckung von Täterwissen hast, kannst du weitere Informationen gern per E-Mail erfragen.</b></div></div>',
+        stimulus: '<div class="instruction-tac"><div class="heading">Geschafft!</div><div class="smalltext">Vielen Dank für deine Teilnahme. Du hast mir sehr geholfen.</div><div class="smalltext" id="uploadinfo">Deine Eingaben werden nun anonymisiert und verschlüsselt übertragen. Dies kann bis zu einer Minute dauern. Bitte warte...</div><img id="uploadimage" src="img/spinner.gif" alt="Übertragung läuft"><div class="smalltext" id="particitext"></div><div class="smalltext" id="particicode"></div><button class="navbutton" type="button" id="downloadbutton" style="display: none;" onclick="triggerDataDownload();">Daten speichern</button><div class="smalltext" id="finishtext" style="display: none;">Du kannst den Vollbildmodus durch Drücken der Tasten <span class="keyButton">Esc</span> oder <span class="keyButton">F11</span> verlassen und das Browserfenster dann einfach schließen.<br><b>Bitte beachte, dass dein Hacking-Angriff nur simuliert wurde und die heruntergeladenen Dokumenten anicht echt waren. Falls du Interesse an den Forschungsergebnissen und dem untersuchten Paradigma zur Aufdeckung von Täterwissen hast, kannst du weitere Informationen gern per E-Mail erfragen.</b></div></div>',
         choices: jsPsych.NO_KEYS,
         on_load: function () {
             // wait 3s before upload for visualization purposes
