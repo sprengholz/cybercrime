@@ -328,13 +328,13 @@
     var secrets = [
         documents.splice(Math.random()*documents.length, 1)[0],
         tools.splice(Math.random()*tools.length, 1)[0],
+        subjects.splice(Math.random()*subjects.length, 1)[0],
         subjects.splice(Math.random()*subjects.length, 1)[0]
     ];
 
     var nonsecrets = [
         documents.splice(Math.random()*documents.length, 1)[0],
-        tools.splice(Math.random()*tools.length, 1)[0],
-        subjects.splice(Math.random()*subjects.length, 1)[0]
+        tools.splice(Math.random()*tools.length, 1)[0]
     ];
 
     var untruths = [
@@ -350,13 +350,14 @@
     var timeline = [];
 
     // press text
-    var presstext = '<div class="presstext">Kürzlich wurde ein Server der Universität Jena gehackt. Die Täter erhielten unter anderem Zugriff auf <strong>'+nonsecrets[0]+'</strong>, vor allem das Institut für <strong>'+nonsecrets[2]+'</strong> ist betroffen. Der Server war gesichert, der Schutz entsprach allerdings nicht dem aktuellen Stand der Technik. So konnten sich die Angreifer mit vergleichsweise einfachen Mitteln Zutritt verschaffen. Für den Angriff wurde offenbar das Programm <strong>'+nonsecrets[1]+'</strong> eingesetzt, ein unter Hackern weit verbreitetes Werkzeug.</div>';
+    var presstext = '<div class="presstext">Kürzlich wurde ein Server der Universität Jena gehackt. Die Täter erhielten unter anderem Zugriff auf <strong>'+nonsecrets[0]+'</strong>. Der Server war gesichert, der Schutz entsprach allerdings nicht dem aktuellen Stand der Technik. So konnten sich die Angreifer mit vergleichsweise einfachen Mitteln Zutritt verschaffen. Für den Angriff wurde offenbar das Programm <strong>'+nonsecrets[1]+'</strong> eingesetzt, ein unter Hackern weit verbreitetes Werkzeug.</div>';
 
 
     /*
      * Setup Tasks for RT experiment - Part 1 (matching stimuli only = 96 trials)
      */
 
+    /* 
     var tasksPart1 = [];
 
     for (i = 0; i < questions.length; i++) {
@@ -401,6 +402,8 @@
         }
     }
 
+    */
+
     
     /*
      * Setup Tasks for RT experiment - Part 2 (matching and nonmatching stimuli = 168 trials)
@@ -410,36 +413,42 @@
 
     // matching stimuli (86% = 144 trials)
 
+    // -- secrets (3 x 12 trials)
+
+    for (j = 0; j < 12; j++) {
+        task = {
+            question: questions[0],
+            secrecy: 'secret',
+            target: secrets[0],
+            matching: 'match'
+        };
+        tasksPart2.push(task);
+    }
+
+    for (j = 0; j < 12; j++) {
+        task = {
+            question: questions[1],
+            secrecy: 'secret',
+            target: secrets[1],
+            matching: 'match'
+        };
+        tasksPart2.push(task);
+    }
+
+    for (j = 0; j < 12; j++) {
+        task = {
+            question: questions[2],
+            secrecy: 'secret',
+            target: secrets[2+j%2],
+            matching: 'match'
+        };
+        tasksPart2.push(task);
+    }
+
+    // -- irrelevants (3 x 4 x 3 trials)
+
     for (i = 0; i < questions.length; i++) {
-        
-        // secret truth target (3 x 12 trials)
-
-        for (j = 0; j < 12; j++) {
-            task = {
-                question: questions[i],
-                secrecy: 'secret',
-                target: secrets[i],
-                matching: 'match'
-            };
-            tasksPart2.push(task);
-        }
-
-        // nonsecret truth target (3 x 24 trials)
-
-        for (j = 0; j < 24; j++) {
-            task = {
-                question: questions[i],
-                secrecy: 'nonsecret',
-                target: nonsecrets[i],
-                matching: 'match'
-            };
-            tasksPart2.push(task);
-        }
-
-        // untruth target (3 x 4 x 3 trials)
-
         for (j = 0; j < 3; j++) {
-
             for (k = 0; k < 4; k++) {
                 task = {
                     question: questions[i],
@@ -452,43 +461,75 @@
         }
     }
 
-    // nonmatching stimuli (14% = 24 trials)
+    // -- nonsecrets (for 2 of 3 questions, 2 x 36 trials)
 
-    for (i = 0; i < 3; i++){
-
-        // nonmatching secrets (3 x 2 trials)
-
-        nonmatchingSecrets = secrets.slice();
-        nonmatchingSecrets.splice(i, 1);
-
-        for (nonmatchingSecret of nonmatchingSecrets){
+    for (i = 0; i < questions.length-1; i++) {
+        for (j = 0; j < 36; j++) {
             task = {
                 question: questions[i],
-                secrecy: 'secret',
-                target: nonmatchingSecret,
-                matching: 'nonmatch'
+                secrecy: 'nonsecret',
+                target: nonsecrets[i],
+                matching: 'match'
             };
             tasksPart2.push(task);
         }
+    }
 
-        // nonmatching nonsecrets (3 x 2 x 2 trials)
+    // nonmatching stimuli (14% = 24 trials)
 
-        nonmatchingNonsecrets = nonsecrets.slice();
-        nonmatchingNonsecrets.splice(i, 1);
-        
-        for (j = 0; j < 2; j++) {
-            for (nonmatchingNonsecret of nonmatchingNonsecrets){
-                task = {
-                    question: questions[i],
-                    secrecy: 'nonsecret',
-                    target: nonmatchingNonsecret,
-                    matching: 'nonmatch'
-                };
-                tasksPart2.push(task);
-            }
-        }
-        
-        // nonmatching untruths (3 x 2 trials)
+    // -- secrets (2 trials per 3 questions)
+
+    task = {
+        question: questions[0],
+        secrecy: 'secret',
+        target: secrets[1],
+        matching: 'nonmatch'
+    };
+    tasksPart2.push(task);
+
+    task = {
+        question: questions[0],
+        secrecy: 'secret',
+        target: secrets[2],
+        matching: 'nonmatch'
+    };
+    tasksPart2.push(task);
+
+    task = {
+        question: questions[1],
+        secrecy: 'secret',
+        target: secrets[0],
+        matching: 'nonmatch'
+    };
+    tasksPart2.push(task);
+
+    task = {
+        question: questions[1],
+        secrecy: 'secret',
+        target: secrets[3],
+        matching: 'nonmatch'
+    };
+    tasksPart2.push(task);
+
+    task = {
+        question: questions[2],
+        secrecy: 'secret',
+        target: secrets[0],
+        matching: 'nonmatch'
+    };
+    tasksPart2.push(task);
+
+    task = {
+        question: questions[2],
+        secrecy: 'secret',
+        target: secrets[1],
+        matching: 'nonmatch'
+    };
+    tasksPart2.push(task);
+
+    // -- untruths (random selection of 2 trials for each of the 3 questions)
+
+    for (i = 0; i < 3; i++) {
 
         nonmatchingUntruths = untruths.slice();
         nonmatchingUntruths.splice(i, 1);
@@ -507,12 +548,40 @@
             };
             tasksPart2.push(task);
         }
-    }        
+    }
+
+    // -- nonsecrets (1 trial per 2 questions, 6 repeats each)
+
+    for (i = 0; i < 6; i++) {
+
+        task = {
+            question: questions[0],
+            secrecy: 'nonsecret',
+            target: nonsecrets[1],
+            matching: 'nonmatch'
+        };
+        tasksPart2.push(task);
+
+        task = {
+            question: questions[1],
+            secrecy: 'nonsecret',
+            target: nonsecrets[0],
+            matching: 'nonmatch'
+        };
+        tasksPart2.push(task);
+    }
+    
+
+       
+        
+         
     
     
     /*
      * JUST FOR TESTING PHASE
      */
+
+     /*
 
      var testing = {
         type: 'html-keyboard-response',
@@ -525,7 +594,7 @@
         }
     };
     timeline.push(testing);
-
+    */
 
     /*
      * Show welcome screen
@@ -534,9 +603,9 @@
     var welcome = {
         type: 'html-button-response',
         choices: ["Weiter"],
-        stimulus: '<div class="instruction" style="max-width: 600px; margin-top: 110px;"><div class="heading">Hi</div><div class="smalltext"> Vielen Dank für dein Interesse an der vorliegenden Studie. Im Falle einer Teilnahme sollst du verschiedene Aufgaben am <strong>PC oder Notebook</strong> bearbeiten. Hierfür benötigst du eine richtige Tastatur - Tablets oder Smartphones sind also nicht geeignet. Das Ganze wird etwa <strong>45 Minuten</strong> dauern.</div><div class="smalltext">Die Teilnahme an der Studie hat keine bekannten Risiken. Alle gesammelten Daten werden <strong>anonym</strong> ausgewertet, ausschließlich für nicht-kommerzielle Zwecke im Rahmen wissenschaftlicher Forschung verwendet und nicht an Dritte weitergegeben. Eine nachträgliche Identifizierung deiner Daten ist nicht möglich (Privacy by Design, §25 DSGVO).Rückfragen zum Datenschutz können an die Datenschutzbeauftragte der Universität gerichtet werden:</div><div class="smalltext">Stefanie Buchmann<br>+49 3641 931087<br>stefanie.buchmann@uni-jena.de</div><div class="smalltext">Du kannst die Bearbeitung zu jeder Zeit und ohne Angabe von Gründen beenden. Bitte beachte, dass dir bei einem Abbruch aus technischen Gründen keine Versuchspersonenstunde ausgestellt werden kann. Diese erhältst du nach Abschluss des Experiments.</div><div class="smalltext">Wenn du Fragen zur Studie hast oder an den Ergebnissen interessiert bist, sende bitte eine E-Mail an:<div><div class="smalltext">Philipp Sprengholz<br>FSU Jena, Institut für Psychologie<br>philipp.sprengholz@uni-jena.de</div><div class="smalltext"><strong>Durch Klicken des folgenden Buttons bestätigst du, dass du alle Informationen gelesen und verstanden hast und an der Studie teilnehmen möchtest.</strong></div></div>'
+        stimulus: '<div class="instruction" style="max-width: 600px; margin-top: 110px;"><div class="heading">Hi</div><div class="smalltext"> Vielen Dank für dein Interesse an der vorliegenden Studie. Im Falle einer Teilnahme sollst du verschiedene Aufgaben am <strong>PC oder Notebook</strong> bearbeiten. Hierfür benötigst du eine richtige Tastatur - Tablets oder Smartphones sind also nicht geeignet. Das Ganze wird etwa <strong>45 Minuten</strong> dauern.</div><div class="smalltext">Die Teilnahme an der Studie hat keine bekannten Risiken. Alle gesammelten Daten werden <strong>anonym</strong> ausgewertet, ausschließlich für nicht-kommerzielle Zwecke im Rahmen wissenschaftlicher Forschung verwendet und nicht an Dritte weitergegeben. Eine nachträgliche Identifizierung deiner Daten ist nicht möglich (Privacy by Design, §25 DSGVO). Rückfragen zum Datenschutz können an die Datenschutzbeauftragte der Universität gerichtet werden:</div><div class="smalltext">Stefanie Buchmann<br>+49 3641 931087<br>stefanie.buchmann@uni-jena.de</div><div class="smalltext">Du kannst die Bearbeitung zu jeder Zeit und ohne Angabe von Gründen beenden. Bitte beachte, dass dir bei einem Abbruch aus technischen Gründen keine Versuchspersonenstunde ausgestellt werden kann. Diese erhältst du nach Abschluss des Experiments.</div><div class="smalltext">Wenn du Fragen zur Studie hast oder an den Ergebnissen interessiert bist, sende bitte eine E-Mail an:<div><div class="smalltext">Philipp Sprengholz<br>FSU Jena, Institut für Psychologie<br>philipp.sprengholz@uni-jena.de</div><div class="smalltext"><strong>Durch Klicken des folgenden Buttons bestätigst du, dass du alle Informationen gelesen und verstanden hast und an der Studie teilnehmen möchtest.</strong></div></div>'
     };
-    //timeline.push(welcome);
+    timeline.push(welcome);
 
 
     /*
@@ -545,10 +614,10 @@
 
     var eligibility_check = {
         type: 'html-button-response',
-        choices: ["Ich habe nicht an der Studie im Januar teilgenommen"],
-        stimulus: '<div class="instruction-tac"><div class="heading">Wichtig</div> <div class="smalltext">Solltest du bereits im Januar an einer ähnlichen Studie teilgenommen haben, bei der es darum ging Prüfungsfragen von einem Computer zu stehlen, kannst du leider nicht am Experiment teilnehmen. Bitte schließe das Fenster in diesem Fall.</div> </div>'
+        choices: ["Ich habe nicht an einer ähnlichen Studie in 2019 teilgenommen"],
+        stimulus: '<div class="instruction-tac"><div class="heading">Wichtig</div> <div class="smalltext">Solltest du bereits in 2019 an einer ähnlichen Studie teilgenommen haben, bei der es darum ging Prüfungsfragen oder andere Dokumente von einem Computer der Universität zu stehlen, kannst du leider nicht am Experiment teilnehmen. Bitte schließe das Fenster in diesem Fall.</div> </div>'
     };
-    //timeline.push(eligibility_check);
+    timeline.push(eligibility_check);
 
 
     /*
@@ -560,7 +629,7 @@
         choices: ["Weiter"],
         stimulus: '<div class="instruction-tac"><div class="heading">Zum Ablauf</div> <div class="smalltext">Du wirst zunächst etwas über Cyberangriffe lernen. Ich möchte herausfinden, ob es dir mit einer einfachen Anleitung gelingt, einen Universitätsrechner zu hacken und Daten zu stehlen. Anschließend folgen einige Reaktionszeitaufgaben, in denen du besonders schnell auf bestimmte Wörter reagieren musst.</div></div>'
     };
-    //timeline.push(experiment_summary);
+    timeline.push(experiment_summary);
 
 
     /*
@@ -572,7 +641,7 @@
         choices: ["Weiter"],
         stimulus: '<div class="instruction-tac"><div class="heading">Ruhe bitte</div><div class="smalltext"> Bitte achte darauf, dass du während der Teilnahme nicht abgelenkt wirst. Suche dir einen <strong>ruhigen Raum</strong> und lege dein Telefon außer Sichtweite. <div></div>'
     };
-    //timeline.push(environment);
+    timeline.push(environment);
 
 
 
@@ -601,7 +670,7 @@
             data.sex = sex;
         }
     };
-    //timeline.push(demographics);
+    timeline.push(demographics);
 
 
     /*
@@ -632,7 +701,7 @@
             var checkedInstitutes = $("input[name='institutes']:checked").map(function () {
                 return this.value;
             }).get();
-            if (!(checkedInstitutes.includes(nonsecrets[2].toString()) && checkedInstitutes.includes(secrets[2].toString()) && (checkedInstitutes.length === 2))) {
+            if (!(checkedInstitutes.includes(secrets[2].toString()) && checkedInstitutes.includes(secrets[3].toString()) && (checkedInstitutes.length === 2))) {
                 answersCorrect = false;
             }
 
@@ -698,8 +767,8 @@
                             terminal.echo("----------------------------------------------");
                             terminal.echo("Folder               Files       Last accessed");
                             terminal.echo("----------------------------------------------");
-                            terminal.echo("+ "+nonsecrets[2].toString().padEnd(15, " ")+"    0             13 days ago");
-                            terminal.echo("+ "+secrets[2].toString().padEnd(15, " ")+"    0             18 days ago");
+                            terminal.echo("+ "+secrets[2].toString().padEnd(15, " ")+"    0             13 days ago");
+                            terminal.echo("+ "+secrets[3].toString().padEnd(15, " ")+"    0             18 days ago");
                             terminal.echo("----------------------------------------------");
                             clearInterval(interval);
                             terminal.resume();
@@ -721,30 +790,6 @@
                                 this.echo('[[;#E45F5F;black]Credentials missing. Run '+nonsecrets[1]+' first.]');
                             }
                         }
-                        else if (command.toLowerCase().replace(/\s/g, "") === 'open' + nonsecrets[2].toString().toLowerCase()) {
-
-                            filesToShow = []
-                            for (file of files) {
-                                if (file.includes(nonsecrets[2]) && file.includes(nonsecrets[0].toString().substring(0,5))) {
-                                    filesToShow.push(file);
-                                }
-                                if (file.includes(nonsecrets[2]) && file.includes(secrets[0].toString().substring(0,5))) {
-                                    filesToShow.push(file);
-                                }
-                            }
-
-                            this.echo("----------------------------------------------");
-                            this.echo("Folder '"+nonsecrets[2]+"' contains "+filesToShow.length+" files");
-                            this.echo("----------------------------------------------");
-
-                            for (file of filesToShow) {
-                                filename = file.substring(file.indexOf('/')+1);
-                                this.echo("<a href='files/"+file+"' style='color: #ffff8b;' target='_blank'>"+filename.padEnd(46, " ")+"</a>", { "raw": true });
-                            }
-
-                            this.echo("----------------------------------------------");
-
-                        }
                         else if (command.toLowerCase().replace(/\s/g, "") === 'open' + secrets[2].toString().toLowerCase()) {
 
                             filesToShow = []
@@ -759,6 +804,30 @@
 
                             this.echo("----------------------------------------------");
                             this.echo("Folder '"+secrets[2]+"' contains "+filesToShow.length+" files");
+                            this.echo("----------------------------------------------");
+
+                            for (file of filesToShow) {
+                                filename = file.substring(file.indexOf('/')+1);
+                                this.echo("<a href='files/"+file+"' style='color: #ffff8b;' target='_blank'>"+filename.padEnd(46, " ")+"</a>", { "raw": true });
+                            }
+
+                            this.echo("----------------------------------------------");
+
+                        }
+                        else if (command.toLowerCase().replace(/\s/g, "") === 'open' + secrets[3].toString().toLowerCase()) {
+
+                            filesToShow = []
+                            for (file of files) {
+                                if (file.includes(secrets[3]) && file.includes(nonsecrets[0].toString().substring(0,5))) {
+                                    filesToShow.push(file);
+                                }
+                                if (file.includes(secrets[3]) && file.includes(secrets[0].toString().substring(0,5))) {
+                                    filesToShow.push(file);
+                                }
+                            }
+
+                            this.echo("----------------------------------------------");
+                            this.echo("Folder '"+secrets[3]+"' contains "+filesToShow.length+" files");
                             this.echo("----------------------------------------------");
 
                             for (file of filesToShow) {
@@ -786,7 +855,7 @@
             clearAlerts();
         }
     };
-    //timeline.push(hacking);
+    timeline.push(hacking);
 
 
     /*
@@ -799,7 +868,7 @@
         message: '<div class="instruction-tac"><div class="heading">Wechsel in den Vollbildmodus</div><div class="smalltext">Mit deinem erfolgreichen Hack hast du den ersten Teil des Experiments bereits abgeschlossen. Der nun folgende zweite Teil wird im Vollbildmodus ablaufen. Wenn du das Experiment vorzeitig abbrechen möchtest, kannst du den Vollbildmodus durch Drücken der Tasten <span class="keyButton">Esc</span> oder <span class="keyButton">F11</span> verlassen und das Browserfenster schließen. Bitte beachte, dass ich dir aus technischen Gründen nur dann eine Versuchspersonenstunde ausstellen kann, wenn du bis zum Ende des Experiments dabei bleibst.</div></div>',
         button_label: 'Alles klar'
     };
-    //timeline.push(fullscreen);
+    timeline.push(fullscreen);
 
 
     /*
@@ -809,9 +878,9 @@
     var sherlock_intro = {
         type: 'html-button-response',
         choices: ["Sherlock starten"],
-        stimulus: '<div class="instruction-tac"><div class="heading">Achtung!</div><div class="smalltext">Der unbefugte Zugriff auf die Prüfungsfragen wurde durch einen Mitarbeiter des Dekanats bemerkt! Neben einigen anderen Studierenden wurdest du als möglicher Hacker identifiziert.</div><div class="smalltext">Alle Verdächtigen sollen nun einem Test durch ein neuartiges Ermittlungsprogramm namens <strong>Sherlock</strong> unterzogen werden, welches das Vorhandensein von Täterwissen überprüft und eine schuldige Person der Tat überführen kann. Auch du wirst gebeten, im Folgenden daran teilzunehmen.</div></div>'
+        stimulus: '<div class="instruction-tac"><div class="heading">Achtung!</div><div class="smalltext">Der unbefugte Zugriff wurde durch einen Mitarbeiter der Universität bemerkt! Neben einigen anderen Studierenden wurdest du als möglicher Hacker identifiziert.</div><div class="smalltext">Alle Verdächtigen sollen nun einem Test durch ein neuartiges Ermittlungsprogramm namens <strong>Sherlock</strong> unterzogen werden, welches das Vorhandensein von Täterwissen überprüft und eine schuldige Person der Tat überführen kann. Auch du wirst gebeten, im Folgenden daran teilzunehmen.</div></div>'
     };
-    //timeline.push(sherlock_intro);
+    timeline.push(sherlock_intro);
 
 
     /*
@@ -826,7 +895,7 @@
             showInvestigator();
         }
     };
-    //timeline.push(sherlock_welcome);
+    timeline.push(sherlock_welcome);
 
 
     /*
@@ -903,19 +972,6 @@
                 },
                 {
                     person: 'Ermittler',
-                    text: questions[2]
-                },
-                {
-                    person: 'Subject',
-                    evaluate_answer: true,
-                    nonsecret: nonsecrets[2],
-                    secret: secrets[2],
-                    nonsecret_message: 'Ok.',
-                    secret_message: 'Das konnten Sie nicht aus der Presseerklärung wissen! Verdächtig.',
-                    missing_message: 'Sie wissen mehr - allein aus der Presseerklärung! Also nochmal: ' + questions[2]
-                },
-                {
-                    person: 'Ermittler',
                     text: 'Danke. Sie werden nun zur nächsten Aufgabe weitergeleitet.'
                 }
             ];
@@ -924,7 +980,7 @@
 
         on_finish: function (data) { }
     };
-    //timeline.push(chat);
+    timeline.push(chat);
 
 
     /*
@@ -958,22 +1014,12 @@
             return '<div class="question">'+jsPsych.timelineVariable('question')()+'</div>';
         },
         duration: function(){
-            var min = 250 + jsPsych.timelineVariable('question')().length * 10;
-            var max = min + 3000;
+            var min = 2000; //250 + jsPsych.timelineVariable('question')().length * 10;
+            var max = 2000;
             return Math.random() < 0.5 ? min : max;
         }, 
         data: { rte_part: 'question' }
     };
-    
-    
-    /*var question = {
-        type: 'word-sequence',
-        stimulus: function () {
-            question = jsPsych.timelineVariable('question')();
-            return question;
-        },
-        data: { rte_part: 'question' }
-    };*/
 
 
     var target = {
@@ -1186,6 +1232,7 @@
      * RTE Part 1 - Match trials only
      */
 
+    /* 
     var rte_pt1_instruction = {
         type: 'external-html',
         url: "rte_pt1_instruction.html",
@@ -1238,15 +1285,15 @@
         randomize_order: true
     };
     timeline.push(rte_pt1);
-
+    */
 
     /*
      * RTE Part 2 - Match and nonmatch trials
      */
 
-     var rte_pt2_instruction = {
+    var rte_pt2_instruction = {
         type: 'external-html',
-        url: "rte_pt2_instruction.html",
+        url: "rte_pt1_instruction.html",
         cont_btn: "next",
         check_fn: function () {
 
@@ -1254,7 +1301,7 @@
             
             console.log(count);
 
-            if (count == 2){
+            if (count == 4){
                 return true;
             } else {
                 showAlert('Ihre Auswahl ist nicht korrekt. Bitte prüfen Sie Ihre Antworten.');
@@ -1263,11 +1310,10 @@
 
         },
         data: { 
-            rte_part: 'rte_pt1_instruction'
+            rte_part: 'rte_pt2_instruction'
         },
         on_load: function (data) {
             showInvestigator();
-            $('body').css('cursor', 'default');
         },
         on_finish: function (data) {
             clearAlerts();
@@ -1278,10 +1324,10 @@
 
     var rte_pt2_start = {
         type: 'html-keyboard-response',
-        stimulus: '<div class="rteInstructionContainer"><div class="instruction"><div class="smalltext-ms">Denken Sie daran, immer dann die Leertaste zu drücken, wenn die blaue Antwort nicht mit den Presseinformationen übereinstimmt und deshalb zurückgehalten werden soll. <strong>Wenn Sie bereit sind, positionieren Sie jetzt Ihre Finger auf der Leertaste.</strong> Es wird etwa 15 Minuten dauern, bis die nächste Pause kommt. Stellen Sie bitte sicher, dass Sie in dieser Zeit nicht gestört werden.</div><div class="smalltext-ms">Drücken Sie nun die <span class="keyButton">Leertaste</span> um zu beginnen.</div></div></div>',
+        stimulus: '<div class="rteInstructionContainer"><div class="instruction"><div class="smalltext-ms">Denken Sie daran, immer dann die Leertaste zu drücken, wenn die blaue Antwort nicht mit den Presseinformationen übereinstimmt und deshalb zurückgehalten werden soll. <strong>Wenn Sie bereit sind, positionieren Sie jetzt Ihre Finger auf der Leertaste.</strong> Es wird 15 bis 20 Minuten dauern, bis die nächste Pause kommt. Stellen Sie bitte sicher, dass Sie in dieser Zeit nicht gestört werden.</div><div class="smalltext-ms">Drücken Sie nun die <span class="keyButton">Leertaste</span> um zu beginnen.</div></div></div>',
         choices: [32],
         data: { 
-            rte_part: 'rte_pt1_start'
+            rte_part: 'rte_pt2_start'
         },
         on_load: function () {
             $('body').css('cursor', 'none');
