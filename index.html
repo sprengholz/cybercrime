@@ -34,7 +34,7 @@
 </head>
 
 <body>
-    <div style="position:fixed; font-size: 12px; color: #aaa; font-family: 'Open Sans', 'Arial', sans-serif; border: 1px solid #aaa; border-radius: 5px; padding: 3px; margin: 3px;">V1.3.1</div>
+    <div id="versionOverlay" style="position:fixed; font-size: 12px; color: #aaa; font-family: 'Open Sans', 'Arial', sans-serif; border: 1px solid #aaa; border-radius: 5px; padding: 3px; margin: 3px;">V1.3.1<span id="groupOverlay"></span></div>
     <div id="alertOverlay">
         <span id="alertText"></span>
     </div>
@@ -217,6 +217,9 @@
      * Global Variables
      */
 
+    // control group (0) or hacking group (1)
+    var group = Math.round(Math.random()); 
+    $('#groupOverlay').text(" - G"+group);
 
     // demographics
     var age;
@@ -229,7 +232,6 @@
     var questions = ['Was wurde gestohlen?',
         'Welches Werkzeug wurde verwendet?',
         'Welches Institut ist betroffen?'];
-
 
     // answers
     var documents = [
@@ -337,6 +339,7 @@
     ]
 
     // randomly pick secret and non-secret as well as untruth answers
+
     var secrets = [
         documents.splice(Math.random()*documents.length, 1)[0],
         tools.splice(Math.random()*tools.length, 1)[0],
@@ -467,7 +470,7 @@
     }
 
 
-    // create tutorial tasks from matching stimuli
+    // create 15 tutorial tasks from matching stimuli
 
     var tutorialTasks = tasksPart2.slice();
     tutorialTasks = shuffle(tutorialTasks);
@@ -577,7 +580,7 @@
         choices: ["Ich habe nicht an einer ähnlichen Studie in 2019 teilgenommen"],
         stimulus: '<div class="instruction-tac"><div class="heading">Wichtig</div> <div class="smalltext">Solltest du bereits in 2019 an einer ähnlichen Studie teilgenommen haben, bei der es darum ging Prüfungsfragen oder andere Dokumente von einem Computer der Universität zu stehlen, kannst du leider nicht am Experiment teilnehmen. Bitte schließe das Fenster in diesem Fall.</div> </div>'
     };
-    timeline.push(eligibility_check);
+    //timeline.push(eligibility_check);
 
 
     /*
@@ -587,7 +590,7 @@
     var experiment_summary = {
         type: 'html-button-response',
         choices: ["Weiter"],
-        stimulus: '<div class="instruction-tac"><div class="heading">Zum Ablauf</div> <div class="smalltext">Du wirst zunächst etwas über Cyberangriffe lernen. Ich möchte herausfinden, ob es dir mit einer einfachen Anleitung gelingt, einen Universitätsrechner zu hacken und Daten zu stehlen. Anschließend folgen einige Reaktionszeitaufgaben, in denen du besonders schnell auf bestimmte Wörter reagieren musst.</div></div>'
+        stimulus: '<div class="instruction-tac"><div class="heading">Zum Ablauf</div> <div class="smalltext">Du wirst dich zunächst kurz mit der Webseite der Universität Jena beschäftigen. Anschließend folgen einige Reaktionszeitaufgaben, in denen du besonders schnell auf bestimmte Wörter reagieren musst.</div></div>'
     };
     timeline.push(experiment_summary);
 
@@ -628,13 +631,14 @@
             clearAlerts();
             data.age = age;
             data.sex = sex;
+            data.group = group;
         }
     };
     timeline.push(demographics);
 
 
     /*
-     * Show Hacking Task
+     * Hacking or Web Research Task
      */
 
     var hacking = {
@@ -815,8 +819,45 @@
             clearAlerts();
         }
     };
-    timeline.push(hacking);
 
+    /*
+     * Attention Likert
+     */
+
+    var webresearchAnswers = [];
+
+    var webresearch = {
+        type: 'external-html',
+        url: "webresearch.html",
+        cont_btn: "next",
+        check_fn: function () {
+            webresearchAnswers = $("input:checked").map(function () {
+                return $(this).val();
+            }).toArray();
+
+            if (webresearchAnswers.length === 3) {
+                return true;
+            }
+            else {
+                showAlert('Bitte beantworte alle Items.', true);
+                return false;
+            }
+        },
+        on_finish: function (data) {
+            data.answers = webresearchAnswers;
+            clearAlerts();
+        }
+    };
+
+
+    if (group == 0) {
+        // control group: web research task
+        timeline.push(webresearch);
+    } else {
+        // hacking group: hacking task
+        timeline.push(hacking);
+    }
+    
 
     /*
      * Enter Fullscreen Mode
@@ -825,7 +866,7 @@
     var fullscreen = {
         type: 'fullscreen',
         fullscreen_mode: true,
-        message: '<div class="instruction-tac"><div class="heading">Wechsel in den Vollbildmodus</div><div class="smalltext">Mit deinem erfolgreichen Hack hast du den ersten Teil des Experiments bereits abgeschlossen. Der nun folgende zweite Teil wird im Vollbildmodus ablaufen. Wenn du das Experiment vorzeitig abbrechen möchtest, kannst du den Vollbildmodus durch Drücken der Tasten <span class="keyButton">Esc</span> oder <span class="keyButton">F11</span> verlassen und das Browserfenster schließen. Bitte beachte, dass ich dir aus technischen Gründen nur dann eine Versuchspersonenstunde ausstellen kann, wenn du bis zum Ende des Experiments dabei bleibst.</div></div>',
+        message: '<div class="instruction-tac"><div class="heading">Wechsel in den Vollbildmodus</div><div class="smalltext">Super, du hast den ersten Teil des Experiments bereits abgeschlossen! Der nun folgende zweite Teil wird im Vollbildmodus ablaufen. Wenn du das Experiment vorzeitig abbrechen möchtest, kannst du den Vollbildmodus durch Drücken der Tasten <span class="keyButton">Esc</span> oder <span class="keyButton">F11</span> verlassen und das Browserfenster schließen. Bitte beachte, dass ich dir aus technischen Gründen nur dann eine Versuchspersonenstunde ausstellen kann, wenn du bis zum Ende des Experiments dabei bleibst.</div></div>',
         button_label: 'Alles klar'
     };
     timeline.push(fullscreen);
@@ -838,7 +879,7 @@
     var sherlock_intro = {
         type: 'html-button-response',
         choices: ["Sherlock starten"],
-        stimulus: '<div class="instruction-tac"><div class="heading">Achtung!</div><div class="smalltext">Der unbefugte Zugriff wurde durch einen Mitarbeiter der Universität bemerkt! Neben einigen anderen Studierenden wurdest du als möglicher Hacker identifiziert.</div><div class="smalltext">Alle Verdächtigen sollen nun einem Test durch ein neuartiges Ermittlungsprogramm namens <strong>Sherlock</strong> unterzogen werden, welches das Vorhandensein von Täterwissen überprüft und eine schuldige Person der Tat überführen kann. Auch du wirst gebeten, im Folgenden daran teilzunehmen.</div></div>'
+        stimulus: '<div class="instruction-tac"><div class="heading">Achtung!</div><div class="smalltext">Es kam zu einem unbefugter Zugriff auf Daten der Universität. Ein Server wurde gehackt, sensible Dokumente wurden gestohlen. Neben einigen anderen Studierenden wurdest du als möglicher Hacker identifiziert.</div><div class="smalltext">Alle Verdächtigen sollen nun einem Test durch ein neuartiges Ermittlungsprogramm namens <strong>Sherlock</strong> unterzogen werden, welches das Vorhandensein von Täterwissen überprüft und eine schuldige Person der Tat überführen kann. Auch du wirst gebeten, im Folgenden daran teilzunehmen.</div></div>'
     };
     timeline.push(sherlock_intro);
 
@@ -1320,21 +1361,21 @@
 
 
     /*
-     * Likert
+     * Attention Likert
      */
 
-    var likertAnswers = [];
+    var attentionAnswers = [];
 
     var attention = {
         type: 'external-html',
         url: "attention.html",
         cont_btn: "next",
         check_fn: function () {
-            likertAnswers = $("input:checked").map(function () {
+            attentionAnswers = $("input:checked").map(function () {
                 return $(this).val();
             }).toArray();
 
-            if (likertAnswers.length === 8) {
+            if (attentionAnswers.length === 6) {
                 return true;
             }
             else {
@@ -1347,7 +1388,7 @@
             hideInvestigator();
         },
         on_finish: function (data) {
-            data.answers = likertAnswers;
+            data.answers = attentionAnswers;
             clearAlerts();
         }
     };
@@ -1360,7 +1401,15 @@
 
     var debriefing = {
         type: 'html-keyboard-response',
-        stimulus: '<div class="instruction-tac"><div class="heading">Geschafft!</div><div class="smalltext">Vielen Dank für deine Teilnahme. Du hast mir sehr geholfen.</div><div class="smalltext" id="uploadinfo">Deine Eingaben werden nun anonymisiert und verschlüsselt übertragen. Dies kann bis zu einer Minute dauern. Bitte warte...</div><img id="uploadimage" src="img/spinner.gif" alt="Übertragung läuft"><div class="smalltext" id="particitext"></div><div class="smalltext" id="particicode"></div><button class="navbutton" type="button" id="downloadbutton" style="display: none;" onclick="triggerDataDownload();">Daten speichern</button><div class="smalltext" id="finishtext" style="display: none;">Du kannst den Vollbildmodus durch Drücken der Tasten <span class="keyButton">Esc</span> oder <span class="keyButton">F11</span> verlassen und das Browserfenster dann einfach schließen.<br><b>Bitte beachte, dass dein Hacking-Angriff nur simuliert wurde und die heruntergeladenen Dokumenten anicht echt waren. Falls du Interesse an den Forschungsergebnissen und dem untersuchten Paradigma zur Aufdeckung von Täterwissen hast, kannst du weitere Informationen gern per E-Mail erfragen.</b></div></div>',
+        stimulus: function() {
+            if (group == 0) {
+                // control group debriefing
+                return '<div class="instruction-tac"><div class="heading">Geschafft!</div><div class="smalltext">Vielen Dank für deine Teilnahme. Du hast mir sehr geholfen.</div><div class="smalltext" id="uploadinfo">Deine Eingaben werden nun anonymisiert und verschlüsselt übertragen. Dies kann bis zu einer Minute dauern. Bitte warte...</div><img id="uploadimage" src="img/spinner.gif" alt="Übertragung läuft"><div class="smalltext" id="particitext"></div><div class="smalltext" id="particicode"></div><button class="navbutton" type="button" id="downloadbutton" style="display: none;" onclick="triggerDataDownload();">Daten speichern</button><div class="smalltext" id="finishtext" style="display: none;">Du kannst den Vollbildmodus durch Drücken der Tasten <span class="keyButton">Esc</span> oder <span class="keyButton">F11</span> verlassen und das Browserfenster dann einfach schließen.<br>Falls du Interesse an den Forschungsergebnissen und dem untersuchten Paradigma zur Aufdeckung von Täterwissen hast, kannst du weitere Informationen gern per E-Mail erfragen.</b></div></div>';
+            } else {
+                // hacking group debriefing
+                return '<div class="instruction-tac"><div class="heading">Geschafft!</div><div class="smalltext">Vielen Dank für deine Teilnahme. Du hast mir sehr geholfen.</div><div class="smalltext" id="uploadinfo">Deine Eingaben werden nun anonymisiert und verschlüsselt übertragen. Dies kann bis zu einer Minute dauern. Bitte warte...</div><img id="uploadimage" src="img/spinner.gif" alt="Übertragung läuft"><div class="smalltext" id="particitext"></div><div class="smalltext" id="particicode"></div><button class="navbutton" type="button" id="downloadbutton" style="display: none;" onclick="triggerDataDownload();">Daten speichern</button><div class="smalltext" id="finishtext" style="display: none;">Du kannst den Vollbildmodus durch Drücken der Tasten <span class="keyButton">Esc</span> oder <span class="keyButton">F11</span> verlassen und das Browserfenster dann einfach schließen.<br><b>Bitte beachte, dass dein Hacking-Angriff nur simuliert wurde und die heruntergeladenen Dokumenten nicht echt waren. Falls du Interesse an den Forschungsergebnissen und dem untersuchten Paradigma zur Aufdeckung von Täterwissen hast, kannst du weitere Informationen gern per E-Mail erfragen.</b></div></div>';
+            }
+        }, 
         choices: jsPsych.NO_KEYS,
         on_load: function () {
             // wait 3s before upload for visualization purposes
@@ -1409,7 +1458,7 @@
 
         $('#uploadimage').hide();
 
-        $('#particitext').text('Falls du eine Versuchspersonenstunde benötigst, notiere dir bitte folgenden Code und sende ihn an philipp.sprengholz@uni-jena.de.');
+        $('#particitext').text('<strong>Falls du eine Versuchspersonenstunde benötigst, notiere dir bitte folgenden Code und sende ihn an philipp.sprengholz@uni-jena.de.</strong> Deine E-Mail-Adresse wird natürlich vertraulich behandelt.');
         $('#particicode').text(idcode);
 
         $('#finishtext').show();
