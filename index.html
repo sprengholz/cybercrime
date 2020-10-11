@@ -429,9 +429,9 @@
 
     for (i = 0; i < questions.length; i++) {
         
-        // secret truth target (3 x 12 trials)
+        // secret truth target (3 x 16 trials)
 
-        for (j = 0; j < 12; j++) {
+        for (j = 0; j < 16; j++) {
             task = {
                 question: questions[i],
                 secrecy: 'secret',
@@ -441,9 +441,9 @@
             tasksPart2.push(task);
         }
 
-        // nonsecret truth target (3 x 24 trials)
+        // nonsecret truth target (3 x 32 trials)
 
-        for (j = 0; j < 24; j++) {
+        for (j = 0; j < 32; j++) {
             task = {
                 question: questions[i],
                 secrecy: 'nonsecret',
@@ -453,9 +453,9 @@
             tasksPart2.push(task);
         }
 
-        // untruth target (3 x 4 x 3 trials)
+        // untruth target (3 x 4 x 4 trials)
 
-        for (j = 0; j < 3; j++) {
+        for (j = 0; j < 4; j++) {
 
             for (k = 0; k < 4; k++) {
                 task = {
@@ -470,38 +470,40 @@
     }
 
 
-    // create 15 tutorial tasks from matching stimuli
+    // create 20 tutorial tasks from matching stimuli
 
     var tutorialTasks = tasksPart2.slice();
     tutorialTasks = shuffle(tutorialTasks);
-    tutorialTasks = tutorialTasks.slice(0,15);
+    tutorialTasks = tutorialTasks.slice(0,20);
 
 
-    // nonmatching stimuli (14% = 24 trials)
+    // nonmatching stimuli (16% = 36 trials)
 
     for (i = 0; i < 3; i++){
 
-        // nonmatching secrets (3 x 2 trials)
+        // nonmatching secrets (3 x 3 trials)
 
         nonmatchingSecrets = secrets.slice();
         nonmatchingSecrets.splice(i, 1);
 
-        for (nonmatchingSecret of nonmatchingSecrets){
-            task = {
-                question: questions[i],
-                secrecy: 'secret',
-                target: nonmatchingSecret,
-                matching: 'nonmatch'
-            };
-            tasksPart2.push(task);
+        for (j = 0; j < 2; j++) {
+            for (nonmatchingSecret of nonmatchingSecrets){
+                task = {
+                    question: questions[i],
+                    secrecy: 'secret',
+                    target: nonmatchingSecret,
+                    matching: 'nonmatch'
+                };
+                tasksPart2.push(task);
+            }
         }
 
-        // nonmatching nonsecrets (3 x 2 x 2 trials)
+        // nonmatching nonsecrets (3 x 2 x 4 trials)
 
         nonmatchingNonsecrets = nonsecrets.slice();
         nonmatchingNonsecrets.splice(i, 1);
         
-        for (j = 0; j < 2; j++) {
+        for (j = 0; j < 4; j++) {
             for (nonmatchingNonsecret of nonmatchingNonsecrets){
                 task = {
                     question: questions[i],
@@ -513,16 +515,18 @@
             }
         }
         
-        // nonmatching untruths (3 x 2 trials)
+        // nonmatching untruths (3 x 4 trials)
 
         nonmatchingUntruths = untruths.slice();
         nonmatchingUntruths.splice(i, 1);
         nonmatchingUntruths = nonmatchingUntruths.flat();
 
-        for (j = 0; j < 2; j++){
+        for (j = 0; j < 4; j++){
 
-            // randomly select the target
-            nonmatchingUntruth = nonmatchingUntruths[Math.floor(Math.random() * nonmatchingUntruths.length)];
+            // randomly select the target and remove from list to avoid duplicates
+            randomIndex = Math.floor(Math.random() * nonmatchingUntruths.length);
+            nonmatchingUntruth = nonmatchingUntruths[randomIndex];
+            nonmatchingUntruths.splice(randomIndex, 1);
 
             task = {
                 question: questions[i],
@@ -1028,8 +1032,8 @@
             return '<div class="question">'+jsPsych.timelineVariable('question')()+'</div>';
         },
         duration: function(){
-            var min = 2000; //250 + jsPsych.timelineVariable('question')().length * 10;
-            var max = 2000;
+            var min = 1000; //250 + jsPsych.timelineVariable('question')().length * 10;
+            var max = 1000;
             return Math.random() < 0.5 ? min : max;
         }, 
         data: { rte_part: 'question' }
@@ -1338,7 +1342,7 @@
 
     var rte_pt2_start = {
         type: 'html-keyboard-response',
-        stimulus: '<div class="rteInstructionContainer"><div class="instruction"><div class="smalltext-ms">Denken Sie daran, immer dann die Leertaste zu drücken, wenn die blaue Antwort nicht mit den Presseinformationen übereinstimmt und deshalb zurückgehalten werden soll. <strong>Wenn Sie bereit sind, positionieren Sie jetzt Ihre Finger auf der Leertaste.</strong> Es wird etwa 20 Minuten dauern, bis die nächste Pause kommt. Stellen Sie bitte sicher, dass Sie in dieser Zeit nicht gestört werden.</div><div class="smalltext-ms">Drücken Sie nun die <span class="keyButton">Leertaste</span> um zu beginnen.</div></div></div>',
+        stimulus: '<div class="rteInstructionContainer"><div class="instruction"><div class="smalltext-ms">Denken Sie daran, immer dann die Leertaste zu drücken, wenn die blaue Antwort nicht mit den Presseinformationen übereinstimmt und deshalb zurückgehalten werden soll. <strong>Wenn Sie bereit sind, positionieren Sie jetzt Ihre Finger auf der Leertaste.</strong> Das Ganze wird etwa 25 Minuten dauern. Stellen Sie bitte sicher, dass Sie in dieser Zeit nicht gestört werden.</div><div class="smalltext-ms">Drücken Sie nun die <span class="keyButton">Leertaste</span> um zu beginnen.</div></div></div>',
         choices: [32],
         data: { 
             rte_part: 'rte_pt2_start'
