@@ -425,13 +425,13 @@
 
     var tasksPart2 = [];
 
-    // matching stimuli (86% = 144 trials)
+    // matching stimuli (144 trials)
 
     for (i = 0; i < questions.length; i++) {
         
-        // secret truth target (3 x 16 trials)
+        // secret truth target (3 x 12 trials)
 
-        for (j = 0; j < 16; j++) {
+        for (j = 0; j < 12; j++) {
             task = {
                 question: questions[i],
                 secrecy: 'secret',
@@ -441,9 +441,9 @@
             tasksPart2.push(task);
         }
 
-        // nonsecret truth target (3 x 32 trials)
+        // nonsecret truth target (3 x 24 trials)
 
-        for (j = 0; j < 32; j++) {
+        for (j = 0; j < 24; j++) {
             task = {
                 question: questions[i],
                 secrecy: 'nonsecret',
@@ -453,9 +453,9 @@
             tasksPart2.push(task);
         }
 
-        // untruth target (3 x 4 x 4 trials)
+        // untruth target (3 x 4 x 3 trials)
 
-        for (j = 0; j < 4; j++) {
+        for (j = 0; j < 3; j++) {
 
             for (k = 0; k < 4; k++) {
                 task = {
@@ -477,16 +477,16 @@
     tutorialTasks = tutorialTasks.slice(0,20);
 
 
-    // nonmatching stimuli (16% = 36 trials)
+    // nonmatching stimuli (24 trials)
 
     for (i = 0; i < 3; i++){
 
-        // nonmatching secrets (3 x 3 trials)
+        // nonmatching secrets (3 x 2 trials)
 
         nonmatchingSecrets = secrets.slice();
         nonmatchingSecrets.splice(i, 1);
 
-        for (j = 0; j < 2; j++) {
+        for (j = 0; j < 1; j++) {
             for (nonmatchingSecret of nonmatchingSecrets){
                 task = {
                     question: questions[i],
@@ -503,7 +503,7 @@
         nonmatchingNonsecrets = nonsecrets.slice();
         nonmatchingNonsecrets.splice(i, 1);
         
-        for (j = 0; j < 4; j++) {
+        for (j = 0; j < 2; j++) {
             for (nonmatchingNonsecret of nonmatchingNonsecrets){
                 task = {
                     question: questions[i],
@@ -521,7 +521,7 @@
         nonmatchingUntruths.splice(i, 1);
         nonmatchingUntruths = nonmatchingUntruths.flat();
 
-        for (j = 0; j < 4; j++){
+        for (j = 0; j < 2; j++){
 
             // randomly select the target and remove from list to avoid duplicates
             randomIndex = Math.floor(Math.random() * nonmatchingUntruths.length);
